@@ -71,7 +71,7 @@ const DrawerSX = () => {
       '& .MuiPaper-root': {
         background: Imitation.state.theme.palette.background.main,
         boxShadow: `0px 8px 10px -5px ${Imitation.state.theme.palette.primary.main.replace(')', '')} ,0.2), 0px 16px 24px 2px ${Imitation.state.theme.palette.primary.main.replace(')', '')} ,0.14), 0px 6px 30px 5px ${Imitation.state.theme.palette.primary.main.replace(')', '')} ,0.12)`,
-        color: Imitation.state.theme.palette.primary.main
+        color: Imitation.state.theme.palette.primary.main,
       },
     }
   }
@@ -83,7 +83,7 @@ const DialogSX = () => {
       '& .MuiPaper-root': {
         background: Imitation.state.theme.palette.background.main,
         boxShadow: `0px 11px 15px -7px ${Imitation.state.theme.palette.primary.main.replace(')', '')} ,0.2), 0px 24px 38px 3px ${Imitation.state.theme.palette.primary.main.replace(')', '')} ,0.14), 0px 9px 46px 8px ${Imitation.state.theme.palette.primary.main.replace(')', '')} ,0.12)`,
-        color: Imitation.state.theme.palette.primary.main
+        color: Imitation.state.theme.palette.primary.main,
       },
     }
   }

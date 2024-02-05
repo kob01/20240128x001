@@ -11,7 +11,6 @@ ImitationINS.state = {
         main: 'rgb(255, 255, 255)'
       },
       primary: {
-        // main: 'rgb(25, 118, 210)'
         main: 'rgb(0, 0, 0)'
       },
       secondary: {
@@ -31,11 +30,7 @@ ImitationINS.state = {
 
   source: source,
 
-  router: 'Library',
-
-  ['page.navigation']: { drawer: false },
-
-  ['page.library']: { source: source, current: { index: 0, action: 0, direction: -1 }, filter: { dialog: false } },
+  router: 'Creator',
 }
 
 export default ImitationINS

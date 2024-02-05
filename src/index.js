@@ -13,8 +13,9 @@ link.href = icon
 document.head.append(link)
 
 document.body.addEventListener('touchmove', e => e.preventDefault(), { passive: false })
+document.body.addEventListener('contextmenu', e => e.preventDefault(), { passive: false })
 
-const styleCommon = () => {
+const styleAppendI = () => {
   const id = '*'
 
   const style = document.getElementById(id) || document.createElement('style')
@@ -35,9 +36,9 @@ const styleCommon = () => {
   document.head.appendChild(style)
 }
 
-styleCommon()
+styleAppendI()
 
-const styleAppend = () => {
+const styleAppendII = () => {
   const id = '**'
 
   const style = document.getElementById(id) || document.createElement('style')
@@ -54,8 +55,8 @@ const styleAppend = () => {
   document.head.appendChild(style)
 }
 
-styleAppend()
+styleAppendII()
 
-Imitation.register(styleAppend, state => JSON.stringify(state.theme))
+Imitation.register(styleAppendII, state => JSON.stringify(state.theme))
 
 ReactDOM.render(<App />, document.getElementById('root'))
