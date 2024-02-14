@@ -7,16 +7,21 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import Grid from '@mui/material/Grid'
 import CircularProgress from '@mui/material/CircularProgress'
+import Tabs from '@mui/material/Tabs'
+import Tab from '@mui/material/Tab'
+import Divider from '@mui/material/Divider'
 
 import EditIcon from '@mui/icons-material/Edit'
-import FilterAltIcon from '@mui/icons-material/FilterAlt'
+import AllOutIcon from '@mui/icons-material/AllOut'
+import SettingsIcon from '@mui/icons-material/Settings'
+import DoneIcon from '@mui/icons-material/Done'
 
-import Animation from './View.Component.Animation'
-import useDragControl from './View.Component.useDragControl'
+import { AnimationRAF, opacityAnimation } from './View.Component.AnimationRAF'
+import { DragControl } from './View.Component.DragControl'
 
 import Imitation from './utils.imitation'
-import { DialogSX } from './utils.mui.sx'
-import { hash } from './utils.common'
+import { DialogSX, TabsSX, DividerSX } from './utils.mui.sx'
+import { hash, throttle } from './utils.common'
 import { source } from './utils.source'
 
 Imitation.state['page.library'] = new Object()
@@ -25,101 +30,217 @@ Imitation.state['page.library'].size = undefined
 
 Imitation.state['page.library'].source = source
 
-Imitation.state['page.library'].current = { key: hash(), index: 0, source: source[0], animation: { action: 0, direction: 2 }, visible: true }
+Imitation.state['page.library'].render = [{ _hash: hash(), hash: source[0]._hash, direction: 2 }]
 
-Imitation.state['page.library'].previous = { key: hash(), index: 0, source: source[0], animation: { action: 0, direction: 2 }, visible: false }
+Imitation.state['page.library'].setting = new Object()
 
-Imitation.state['page.library'].filter = { dialog: false }
+Imitation.state['page.library'].setting.dialog = false
 
-const onSwitch = (content) => {
-  if (Imitation.state['page.library'].current.index === content.index) return
+Imitation.state['page.library'].setting.tab = 0
 
-  Imitation.state['page.library'].previous.key = Imitation.state['page.library'].current.key
-  Imitation.state['page.library'].previous.index = Imitation.state['page.library'].current.index
-  Imitation.state['page.library'].previous.source = Imitation.state['page.library'].source[Imitation.state['page.library'].current.index]
-  Imitation.state['page.library'].previous.animation = { action: 1, direction: content.direction }
-  Imitation.state['page.library'].previous.visible = true
+Imitation.state['page.library'].fullview = false
 
-  Imitation.state['page.library'].current.key = hash()
-  Imitation.state['page.library'].current.index = content.index
-  Imitation.state['page.library'].current.source = Imitation.state['page.library'].source[content.index]
-  Imitation.state['page.library'].current.animation = { action: 0, direction: content.direction }
-  Imitation.state['page.library'].current.visible = true
+Imitation.state['page.library.function'] = new Object()
+
+Imitation.state['page.library.function'].onSwitch = (content) => {
+  if (Imitation.state['page.library'].render[Imitation.state['page.library'].render.length - 1].hash === content.hash) return
+
+  const last = Imitation.state['page.library'].render[Imitation.state['page.library'].render.length - 1]
+
+  last.direction = content.direction
+
+  const r = { _hash: hash(), hash: content.hash, direction: content.direction }
+
+  Imitation.state['page.library'].render.push(r)
+
+  Imitation.state['page.library'].render = [...Imitation.state['page.library'].render]
 
   Imitation.dispatch()
 }
 
-Imitation.state['page.library'].onSwitch = onSwitch
+Imitation.state['page.library.memo'] = new Object()
 
-function FilterDialog() {
-  const close = () => {
-    Imitation.state['page.library'].filter.dialog = false
+Imitation.state['page.library.memo'].size = (dep = []) => React.useMemo(() => {
+  var size = undefined
+
+  const sizeInFullview = { width: Imitation.state['page.library'].size.width, height: Imitation.state['page.library'].size.height }
+  const sizeInOverview = { width: Imitation.state['page.library'].size.overviewWidth, height: Imitation.state['page.library'].size.overviewHeight }
+
+  if (Imitation.state['page.library'].fullview === true) size = sizeInFullview
+  if (Imitation.state['page.library'].fullview === false) size = sizeInOverview
+
+  return size
+}, [...dep, Imitation.state['page.library'].size, Imitation.state['page.library'].fullview])
+
+Imitation.state['page.library.memo'].sourceFind = (_hash, dep = []) => React.useMemo(() => {
+  return Imitation.state['page.library'].source.find(i => i._hash === _hash)
+}, [...dep, _hash, Imitation.state['page.library'].source])
+
+Imitation.state['page.library.memo'].sourceFindIndex = (_hash, dep = []) => React.useMemo(() => {
+  return Imitation.state['page.library'].source.findIndex(i => i._hash === _hash)
+}, [...dep, _hash, Imitation.state['page.library'].source])
+
+Imitation.state['page.library.memo'].renderFind = (_hash, dep = []) => React.useMemo(() => {
+  return Imitation.state['page.library'].render.find(i => i._hash === _hash)
+}, [...dep, _hash, Imitation.state['page.library'].render])
+
+Imitation.state['page.library.memo'].renderFindIndex = (_hash, dep = []) => React.useMemo(() => {
+  return Imitation.state['page.library'].render.findIndex(i => i._hash === _hash)
+}, [...dep, _hash, Imitation.state['page.library'].render])
+
+Imitation.state['page.library.memo'].renderFindIndexInLast = (_hash, dep = []) => React.useMemo(() => {
+  return Imitation.state['page.library'].render.findIndex(i => i._hash === _hash) === Imitation.state['page.library'].render.length - 1
+}, [...dep, _hash, Imitation.state['page.library'].render])
+
+
+function SettingDialog() {
+  const onClose = () => {
+    Imitation.state['page.library'].setting.dialog = false
     Imitation.dispatch()
   }
 
-  return <Dialog open={Imitation.state['page.library'].filter.dialog} sx={{ ...DialogSX().sx, '& .MuiDialog-paper': { width: '100%', maxWidth: 720 } }} onClose={() => close()}>
-    <DialogTitle style={{ fontSize: 16 }}>Filter</DialogTitle>
-    <DialogContent style={{ fontSize: 14 }}>
+  return <Dialog open={Imitation.state['page.library'].setting.dialog} sx={{ ...DialogSX().sx, '& .MuiDialog-paper': { width: '100%', maxWidth: 720 } }} onClose={() => onClose()}>
+    <DialogTitle>setting</DialogTitle>
+    <DialogContent dividers>
       <Grid container spacing={1}>
 
-        <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center' }}>
+        <Grid item xs={12}>
+          <Tabs {...TabsSX()} value={Imitation.state['page.library'].setting.tab} onChange={(e, v) => { Imitation.state['page.library'].setting.tab = v; Imitation.dispatch(); }}>
+            <Tab label='Canvas' value={0} />
+            <Tab label='Paint' value={1} />
+          </Tabs>
+        </Grid>
+
+        <Grid item xs={12}>
+          <Divider {...DividerSX()} />
         </Grid>
 
       </Grid>
     </DialogContent>
     <DialogActions>
-      {/* <Button variant='contained' onClick={() => { Imitation.assignState({ globalSetting: value.globalSetting, theme: value.theme, canvasAnimationUse: value.canvasAnimationUse }); close(); }}><SaveIcon style={{ marginRight: 4 }} />Save</Button> */}
+      <Button variant='contained' onClick={undefined} children={<EditIcon />} />
+      <Button variant='contained' onClick={onClose} children={<DoneIcon />} />
     </DialogActions>
   </Dialog>
 }
 
-function Tools() {
-  const sourceLength = Imitation.state['page.library'].source.length
+function ToolsAction() {
+  const styleButton = { padding: 0, width: 36, height: 36, minWidth: 'auto', transition: '1s all', flexShrink: 0, margin: 2 }
 
-  const sourceArray = new Array(sourceLength).fill().map((i, index) => index)
+  const styleButtonActive = (boolean) => ({ transform: boolean ? 'rotate(45deg)' : undefined })
 
-  const sourceArraySort = [...sourceArray.slice(Imitation.state['page.library'].current.index + 1, sourceLength), ...sourceArray.slice(0, Imitation.state['page.library'].current.index)]
-
-  const max = 4
-
-  const praevious = sourceArraySort.slice(-max)
-
-  const next = sourceArraySort.slice(0, max)
-
-  const style = { padding: 0, width: 36, height: 36, minWidth: 'auto', transition: '0.5s all', flexShrink: 0 }
-
-  return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'row-reverse', flexWrap: 'wrap' }}>
-
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+  return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    <AnimationRAF animation={opacityAnimation}>
       {
-        praevious.map((i, index) => {
-          return <Animation tag={Button} animation={[{ opacity: 0 }, { opacity: 0.25 + index / praevious.length * 0.75 }]} key={'P' + index} variant='text' style={{ ...style }} onClick={() => Imitation.state['page.library'].onSwitch({ index: i, direction: 0 })}>{String(i).padStart(2, '0')}</Animation>
-        })
+        ({ style }) => <Button variant='text' style={{ ...styleButton, ...style, transition: '1s all' }} onClick={() => { Imitation.state['page.library'].setting.dialog = true; Imitation.dispatch(); }} children={<SettingsIcon />} />
       }
+    </AnimationRAF>
 
-      <Animation tag={Button} animation={[{ opacity: 0 }, { opacity: 1 }]} key={'C'} variant='text' style={{ ...style }} color='primary' onClick={() => Imitation.state['page.library'].onSwitch({ index: Imitation.state['page.library'].current.index, direction: 2 })}>{String(Imitation.state['page.library'].current.index).padStart(2, '0')}</Animation>
-
+    <AnimationRAF animation={opacityAnimation}>
       {
-        next.map((i, index) => {
-          return <Animation tag={Button} animation={[{ opacity: 0 }, { opacity: 1 - index / next.length * 0.75 }]} key={'N' + index} variant='text' style={{ ...style }} onClick={() => Imitation.state['page.library'].onSwitch({ index: i, direction: 1 })}>{String(i).padStart(2, '0')}</Animation>
-        })
+        ({ style }) => <Button variant='text' style={{ ...styleButton, ...style, transition: '1s all' }} onClick={() => { Imitation.state['page.library'].fullview = !Imitation.state['page.library'].fullview; Imitation.dispatch(); }} children={<AllOutIcon style={{ ...styleButtonActive(Imitation.state['page.library'].fullview), transitionDuration: '1s', transitionProperty: 'transform' }} />} />
       }
-    </div>
-
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <Animation tag={Button} restore={true} animation={[{ opacity: 0 }, { opacity: 1 }]} variant='text' style={{ ...style }} onClick={() => { Imitation.state['page.library'].filter.dialog = true; Imitation.dispatch() }} children={<EditIcon />} />
-      <Animation tag={Button} restore={true} animation={[{ opacity: 0 }, { opacity: 1 }]} variant='text' style={{ ...style }} onClick={() => { Imitation.state['page.library'].filter.dialog = true; Imitation.dispatch() }} children={<FilterAltIcon />} />
-    </div>
-
+    </AnimationRAF>
   </div>
 }
 
-function Content(props) {
+function ToolsPagination() {
+  const styleButton = { padding: 0, width: 36, height: 36, minWidth: 'auto', transition: '1s all', flexShrink: 0, margin: 2 }
+
+  const sourceArray = Imitation.state['page.library'].source
+  const sourceLength = Imitation.state['page.library'].source.length
+
+  const sourceFindFirst = Imitation.state['page.library.memo'].sourceFind(Imitation.state['page.library'].render[0].hash)
+  const sourceFindIndexFirst = Imitation.state['page.library.memo'].sourceFindIndex(Imitation.state['page.library'].render[0].hash)
+
+  const sourceArrayMap = sourceArray.map((i, index) => ({ ...i, index: index }))
+  const sourceArraySort = [...sourceArrayMap.slice(sourceFindIndexFirst + 1, sourceLength), ...sourceArrayMap.slice(0, sourceFindIndexFirst)]
+
+  const max = 4
+  const previous = sourceArraySort.slice(-max)
+  const next = sourceArraySort.slice(0, max)
+
+  return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    {
+      previous.map((i, index) => {
+        return <AnimationRAF animation={opacityAnimation} key={'previous' + index}>
+          {
+            ({ style }) => <Button variant='text' style={{ ...styleButton, ...style, transition: '1s all' }} onClick={() => Imitation.state['page.library.function'].onSwitch({ hash: i._hash, direction: 0 })}>{String(Number(i.index) + 1).padStart(2, '0')}</Button>
+          }
+        </AnimationRAF>
+      })
+    }
+
+    <AnimationRAF animation={opacityAnimation}>
+      {
+        ({ style }) => <Button variant='contained' style={{ ...styleButton, ...style, transition: '1s all' }} color='primary' onClick={() => Imitation.state['page.library.function'].onSwitch({ hash: sourceFindFirst._hash, direction: 2 })}>{String(Number(sourceFindIndexFirst) + 1).padStart(2, '0')}</Button>
+      }
+    </AnimationRAF>
+
+    {
+      next.map((i, index) => {
+        return <AnimationRAF animation={opacityAnimation} key={'next' + index}>
+          {
+            ({ style }) => <Button variant='text' style={{ ...styleButton, ...style, transition: '1s all' }} onClick={() => Imitation.state['page.library.function'].onSwitch({ hash: i._hash, direction: 1 })}>{String(Number(i.index) + 1).padStart(2, '0')}</Button>
+          }
+        </AnimationRAF>
+      })
+    }
+  </div>
+
+}
+
+function Tools() {
+  return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', flexWrap: 'wrap' }}>
+    <ToolsPagination />
+    <ToolsAction />
+  </div>
+}
+
+function ContentRender(props) {
+  const source = Imitation.state['page.library'].source
+  const sourceLength = Imitation.state['page.library'].source.length
+  const renderLength = Imitation.state['page.library'].render.length
+
+  const sourceFind = Imitation.state['page.library.memo'].sourceFind(props.hash)
+  const sourceFindIndex = Imitation.state['page.library.memo'].sourceFindIndex(props.hash)
+  const renderFindIndex = Imitation.state['page.library.memo'].renderFindIndex(props._hash)
+  const renderFindIndexInLast = Imitation.state['page.library.memo'].renderFindIndexInLast(props._hash)
+
+  const size = Imitation.state['page.library.memo'].size()
+
+  const translateX = Imitation.state['page.library'].size.overviewWidth * 0.45
+
+  const caculateStyleAnimation = () => {
+    var r = []
+
+    if (renderFindIndexInLast === true) {
+      if (props.direction === 0) r = [{ opacity: 0, transform: `translateX(-${translateX}px)`, transitionProperty: 'none' }, { opacity: 1, transform: 'translateX(0px)' }]
+      if (props.direction === 1) r = [{ opacity: 0, transform: `translateX(${translateX}px)`, transitionProperty: 'none' }, { opacity: 1, transform: 'translateX(0px)' }]
+      if (props.direction === 2) r = [{ opacity: 0 }, { opacity: 1 }]
+    }
+
+    if (renderFindIndexInLast === true && renderLength > 1) r[1].transitionDelay = '1s'
+
+    if (renderFindIndexInLast === false) {
+      if (props.direction === 0) r = [{ opacity: 1, transform: 'translateX(0px)' }, { opacity: 0, transform: `translateX(${translateX}px)` }]
+      if (props.direction === 1) r = [{ opacity: 1, transform: 'translateX(0px)' }, { opacity: 0, transform: `translateX(-${translateX}px)` }]
+    }
+
+    return r
+  }
+
+  const imageRef = React.useRef()
+
+  const [dragControlEnable, setDragControlEnable] = React.useState(false)
+
   const [styleBackground, setStyleBackground] = React.useState()
 
-  const [styleAnimation, setStyleAnimation] = React.useState()
-
   const [styleDragControl, setStyleDragControl] = React.useState()
+
+  const [styleAnimation, setStyleAnimation] = React.useState(caculateStyleAnimation()[0])
+
+  const [styleWrapper, setStyleWrapper] = React.useState(size)
 
   const onChangeDragControl = (params) => {
     const status = params.status
@@ -128,118 +249,144 @@ function Content(props) {
 
     const currentX = styleDragControl ? Number(styleDragControl.transform.match(/[-\d\.]+/)[0]) : 0
 
-    var process = currentX + changedX / Imitation.state['page.library'].size.width * 2 * 30
+    var process = currentX + changedX
 
-    process = Math.min(process, 30)
-    process = Math.max(process, 30 * -1)
+    process = Math.min(process, translateX * 0.75)
+    process = Math.max(process, translateX * 0.75 * -1)
 
     if (status === 'afterMove') {
-      setStyleDragControl({ transform: `translateX(${process}%)`, transition: 'none' })
+      setStyleDragControl({ transform: `translateX(${process}px)`, transitionProperty: 'none' })
     }
 
     if (status === 'beforeEnd') {
       const content = { index: -1, direction: -1 }
 
-      if (Math.abs(process) > 15 && process > 0) {
-        content.index = Imitation.state['page.library'].current.index - 1
+      if (Math.abs(process) > translateX * 0.5 && process > 0) {
+        content.index = sourceFindIndex - 1
         content.direction = 0
       }
 
-      if (Math.abs(process) > 15 && process < 0) {
-        content.index = Imitation.state['page.library'].current.index + 1
+      if (Math.abs(process) > translateX * 0.5 && process < 0) {
+        content.index = sourceFindIndex + 1
         content.direction = 1
       }
 
-      if (Math.abs(process) > 15) {
-        if (content.index < 0) content.index = Imitation.state['page.library'].source.length - 1
-        if (content.index > Imitation.state['page.library'].source.length - 1) content.index = 0
+      if (Math.abs(process) > translateX * 0.5) {
+        if (content.index < 0) content.index = sourceLength - 1
+        if (content.index > sourceLength - 1) content.index = 0
 
-        Imitation.state['page.library'].onSwitch(content)
+        content.hash = source[content.index]._hash
+
+        Imitation.state['page.library.function'].onSwitch(content)
       }
 
       setStyleDragControl()
     }
+
+    if (status === 'beforeEnd') {
+      const continuedX = params.continuedX
+      const continuedY = params.continuedY
+
+      if (continuedX === 0 && continuedY === 0) {
+        Imitation.state['page.library'].fullview = !Imitation.state['page.library'].fullview
+        Imitation.dispatch()
+      }
+    }
   }
 
-  const { onMouseDown, onTouchStart } = useDragControl({ enable: props.animation.action === 0, onChange: onChangeDragControl })
+  const onTransitionEnd = () => {
+    if (renderFindIndexInLast === true) {
+      setDragControlEnable(true)
+    }
+    if (renderFindIndexInLast === false) {
+      Imitation.state['page.library'].render.splice(renderFindIndex, 1)
+      Imitation.dispatch()
+    }
+  }
+
+  const resizeImage = () => {
+    var r = {}
+
+    const imageRadio = imageRef.current.width / imageRef.current.height
+    const cardRadio = size.width / size.height
+
+    if (Imitation.state['page.library'].fullview === true && imageRadio <= cardRadio) r.height = size.height
+    if (Imitation.state['page.library'].fullview === true && imageRadio >= cardRadio) r.width = size.width
+    if (Imitation.state['page.library'].fullview === false && imageRadio >= cardRadio) r.height = size.height
+    if (Imitation.state['page.library'].fullview === false && imageRadio <= cardRadio) r.width = size.width
+
+    if (r.width === undefined) r.width = r.height * imageRadio
+    if (r.height === undefined) r.height = r.width / imageRadio
+
+    setStyleBackground(r)
+  }
 
   React.useEffect(() => {
-    var r = []
-
-    if (props.animation.action === 0) {
-      if (props.animation.direction === 0) r = [{ opacity: 0, transform: 'translateX(-45%)' }, { opacity: 1, transform: 'translateX(0%)' }]
-      if (props.animation.direction === 1) r = [{ opacity: 0, transform: 'translateX(45%)' }, { opacity: 1, transform: 'translateX(0%)' }]
-      if (props.animation.direction === 2) r = [{ opacity: 0 }, { opacity: 1 }]
-
-      setStyleAnimation(r[0])
-
-      setTimeout(() => setStyleAnimation(r[1]), 250)
-    }
-
-    if (props.animation.action === 1) {
-      if (props.animation.direction === 0) r = [{ opacity: 1, transform: 'translateX(0%)' }, { opacity: 0, transform: 'translateX(45%)' }]
-      if (props.animation.direction === 1) r = [{ opacity: 1, transform: 'translateX(0%)' }, { opacity: 0, transform: 'translateX(-45%)' }]
-
-      setStyleAnimation(r[1])
-    }
-  }, [props.animation.action, props.animation.direction])
+    if (renderFindIndexInLast === true) requestAnimationFrame(() => setStyleAnimation(caculateStyleAnimation()[1]))
+    if (renderFindIndexInLast === false) setStyleAnimation(caculateStyleAnimation()[1])
+  }, [renderLength])
 
   React.useEffect(() => {
-    const onload = (image) => {
-      const r = {}
-
-      const imageRadio = image.width / image.height
-      const cardRadio = Imitation.state['page.library'].size.width / Imitation.state['page.library'].size.height
-
-      if (imageRadio >= cardRadio) r.height = '100%'
-      if (imageRadio <= cardRadio) r.width = '100%'
-
-      setStyleBackground(r)
+    if (imageRef.current !== undefined && sourceFind.src === imageRef.current.src) {
+      resizeImage()
     }
+    if (imageRef.current === undefined || sourceFind.src !== imageRef.current.src) {
+      imageRef.current = new Image()
+      imageRef.current.src = sourceFind.src
+      imageRef.current.addEventListener('load', resizeImage)
+    }
+  }, [sourceFind, Imitation.state['page.library'].size, Imitation.state['page.library'].fullview])
 
-    const image = new Image()
+  React.useEffect(() => {
+    if (Imitation.state['page.library'].fullview === false) {
+      setStyleWrapper(size)
+    }
+    if (Imitation.state['page.library'].fullview === true && styleBackground !== undefined) {
+      setStyleWrapper({ width: Math.min(styleBackground.width, size.width), height: Math.min(styleBackground.height, size.height) })
+    }
+  }, [styleBackground, Imitation.state['page.library'].fullview])
 
-    image.src = props.source.src
-
-    image.onload = () => onload(image)
-  }, [props.source, Imitation.state['page.library'].size])
-
-  return <div style={{ ...Imitation.state['page.library'].size, position: 'absolute', zIndex: 1, overflow: 'hidden', borderRadius: 12, opacity: 0, background: Imitation.state.theme.palette.primary.main, transformOrigin: 'center bottom', transition: '0.5s all', ...styleAnimation, ...styleDragControl }} onMouseDown={onMouseDown} onTouchStart={onTouchStart}>
-
+  return <DragControl enable={dragControlEnable} onChange={onChangeDragControl}>
     {
-      styleBackground === undefined ?
-        <div style={{ position: 'absolute', zIndex: 1, width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <CircularProgress style={{ color: Imitation.state.theme.palette.background.main }} />
+      ({ onMouseDown, onTouchStart }) => {
+        return <div style={{ position: 'absolute', zIndex: 1, width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', transformOrigin: 'center center', transitionProperty: 'all', transitionDuration: '1s', ...styleAnimation, ...styleDragControl }} onMouseDown={onMouseDown} onTouchStart={onTouchStart} onTransitionEnd={onTransitionEnd}>
+
+          <div style={{ position: 'absolute', zIndex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', overflow: 'hidden', transitionProperty: 'all', transitionDuration: '1s', borderRadius: 12, background: Imitation.state.theme.palette.primary.main, opacity: styleBackground ? 0 : 1, ...styleWrapper }} onTransitionEnd={e => e.stopPropagation()}>
+            <CircularProgress style={{ color: Imitation.state.theme.palette.background.main }} />
+          </div>
+
+          <div style={{ position: 'absolute', zIndex: 2, display: 'flex', justifyContent: 'center', alignItems: 'center', overflow: 'hidden', transitionProperty: 'all', transitionDuration: '1s', borderRadius: 12, opacity: styleBackground ? 1 : 0, ...styleWrapper }} onTransitionEnd={e => e.stopPropagation()}>
+            <img style={{ transition: '1s all', ...styleBackground }} src={sourceFind.src}></img>
+          </div>
+
         </div>
-        : null
+      }
     }
-
-    {
-      styleBackground !== undefined ?
-        <div style={{ position: 'absolute', zIndex: 1, width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <img style={{ ...styleBackground }} src={props.source.src}></img>
-        </div>
-        : null
-    }
-
-    <div style={{ position: 'absolute', zIndex: 2, width: '100%', height: '100%' }}>
-
-    </div>
-
-  </div>
+  </DragControl>
 }
 
-function Contents() {
+function ContentRenders() {
+  return <>
+    {
+      Imitation.state['page.library'].render.map(i => <ContentRender key={i._hash} {...i} />)
+    }
+  </>
+}
+
+function Content() {
   const ref = React.useRef()
 
   React.useEffect(() => {
     const resizeObserver = new ResizeObserver(en => {
-      const width = en[0].contentRect.width
-      const height = en[0].contentRect.height
+      Imitation.state['page.library'].size = { width: en[0].contentRect.width, height: en[0].contentRect.height }
 
-      if (width * 1.5 > height) Imitation.state['page.library'].size = { width: height / 3 * 2, height: height }
-      if (width * 1.5 < height) Imitation.state['page.library'].size = { width: width, height: width * 1.5 }
-      if (width === height / 1.5) Imitation.state['page.library'].size = { width: width, height: height }
+      const size = Imitation.state['page.library'].size
+
+      if (size.width * 1.5 >= size.height) size.overviewHeight = size.height
+      if (size.width * 1.5 <= size.height) size.overviewWidth = size.width
+
+      if (size.overviewWidth === undefined) size.overviewWidth = size.overviewHeight / 3 * 2
+      if (size.overviewHeight === undefined) size.overviewHeight = size.overviewWidth * 1.5
 
       Imitation.dispatch()
     })
@@ -249,12 +396,9 @@ function Contents() {
     return () => resizeObserver.disconnect()
   }, [])
 
-  return <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }} ref={el => ref.current = el}>
+  return <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }} ref={el => ref.current = el}>
     {
-      Imitation.state['page.library'].size !== undefined && Imitation.state['page.library'].previous.visible === true ? <Content {...Imitation.state['page.library'].previous} /> : null
-    }
-    {
-      Imitation.state['page.library'].size !== undefined && Imitation.state['page.library'].current.visible === true ? <Content {...Imitation.state['page.library'].current} /> : null
+      Imitation.state['page.library'].size !== undefined && Imitation.state['page.library'].size.width !== 0 && Imitation.state['page.library'].size.height !== 0 ? <ContentRenders /> : null
     }
   </div>
 }
@@ -262,10 +406,8 @@ function Contents() {
 function App() {
   return <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
 
-    <div style={{ width: '100%', height: 16 }}></div>
-
     <div style={{ width: '100%', height: 0, flexGrow: 1 }}>
-      <Contents />
+      <Content />
     </div>
 
     <div style={{ width: '100%', height: 16 }}></div>
@@ -274,8 +416,9 @@ function App() {
       <Tools />
     </div>
 
-    <FilterDialog />
+    <SettingDialog />
 
+    <div style={{ width: '100%', height: 4 }}></div>
   </div>
 }
 

@@ -4,7 +4,7 @@ import Button from '@mui/material/Button'
 import Slider from '@mui/material/Slider'
 import Drawer from '@mui/material/Drawer'
 
-import Animation from './View.Component.Animation'
+import { AnimationRAF, opacityAnimation } from './View.Component.AnimationRAF'
 
 import Imitation from './utils.imitation'
 import { DrawerSX } from './utils.mui.sx'
@@ -43,14 +43,20 @@ function App() {
 
   return <>
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <Animation tag={Button} restore={true} animation={[{ opacity: 0 }, { opacity: 1 }]} variant='contained' style={{ padding: 0, width: 120, height: 4, minWidth: 'auto', transition: '0.5s all' }} onClick={() => setOpen(true)} />
+      <AnimationRAF animation={opacityAnimation}>
+        {
+          ({ style }) => {
+            return <Button variant='contained' style={{ padding: 0, width: 120, height: 4, minWidth: 'auto', transition: '1s all', ...style }} onClick={() => setOpen(true)} />
+          }
+        }
+      </AnimationRAF>
     </div>
 
     <Drawer {...DrawerSX()} anchor='right' open={open} onClose={() => setOpen(false)}>
       <div style={{ padding: 16, width: 240, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ width: '100%', height: 'fit-content', display: 'flex', flexDirection: 'column' }}>
           {
-            ['Library', 'Creator'].map(i => {
+            ['Library', 'Canvas'].map(i => {
               return <Button key={i} variant={i === Imitation.state.router ? 'contained' : 'outlined'} style={{ width: '100%', height: 32, marginBottom: 8 }} onClick={() => { Imitation.state.router = i; Imitation.dispatch() }}>{i}</Button>
             })
           }

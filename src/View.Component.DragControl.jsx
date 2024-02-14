@@ -1,6 +1,6 @@
 import React from 'react'
 
-const useDragControl = (props) => {
+const useState = (props) => {
   const position = React.useRef()
   const position_ = React.useRef()
   const position__ = React.useRef()
@@ -12,7 +12,7 @@ const useDragControl = (props) => {
     if (props.onChangeMemo) props.onChangeMemo(params)
   }, [props.onChange])
 
-  const onStart = React.useCallback((x, y) => {
+  const onStart = React.useCallback((e, x, y) => {
     if (props.enable === false) return
 
     position.current = [x, y]
@@ -21,10 +21,10 @@ const useDragControl = (props) => {
 
     setActive(true)
 
-    onChange({ status: 'afterStart' })
+    onChange({ e, x, y, status: 'afterStart' })
   }, [props.enable, props.onChange])
 
-  const onMove = React.useCallback((x, y) => {
+  const onMove = React.useCallback((e, x, y) => {
     if (props.enable === false) return
 
     if (position__.current === undefined) return
@@ -36,10 +36,10 @@ const useDragControl = (props) => {
 
     position__.current = [x, y]
 
-    onChange({ status: 'afterMove', changedX, changedY, continuedX, continuedY })
+    onChange({ e, x, y, status: 'afterMove', changedX, changedY, continuedX, continuedY })
   }, [props.enable, props.onChange])
 
-  const onEnd = React.useCallback(() => {
+  const onEnd = React.useCallback((e) => {
     if (props.enable === false) return
 
     if (position__.current === undefined) return
@@ -47,7 +47,7 @@ const useDragControl = (props) => {
     const continuedX = position__.current[0] - position.current[0]
     const continuedY = position__.current[1] - position.current[1]
 
-    onChange({ status: 'beforeEnd', continuedX, continuedY })
+    onChange({ e, status: 'beforeEnd', continuedX, continuedY })
 
     position.current = undefined
     position_.current = position__.current
@@ -59,8 +59,10 @@ const useDragControl = (props) => {
   }, [props.enable, props.onChange])
 
   React.useEffect(() => {
-    const _onMove = (e) => onMove(e.pageX, e.pageY)
-    const _onEnd = (e) => onEnd()
+    if (window.ontouchstart !== undefined) return
+
+    const _onMove = (e) => onMove(e, e.pageX, e.pageY)
+    const _onEnd = (e) => onEnd(e)
 
     window.addEventListener('mousemove', _onMove, { passive: true })
     window.addEventListener('mouseup', _onEnd)
@@ -72,8 +74,10 @@ const useDragControl = (props) => {
   }, [props.enable, props.onChange])
 
   React.useEffect(() => {
-    const _onMove = (e) => onMove(e.targetTouches[0].pageX, e.targetTouches[0].pageY)
-    const _onEnd = (e) => onEnd()
+    if (window.ontouchstart === undefined) return
+
+    const _onMove = (e) => onMove(e, e.targetTouches[0].pageX, e.targetTouches[0].pageY)
+    const _onEnd = (e) => onEnd(e)
 
     window.addEventListener('touchmove', _onMove, { passive: true })
     window.addEventListener('touchend', _onEnd)
@@ -84,12 +88,16 @@ const useDragControl = (props) => {
     }
   }, [props.enable, props.onChange])
 
-  const onMouseDown = (e) => onStart(e.pageX, e.pageY)
-  const onTouchStart = (e) => onStart(e.targetTouches[0].pageX, e.targetTouches[0].pageY)
+  const onMouseDown = window.ontouchstart === undefined ? (e) => onStart(e, e.pageX, e.pageY) : undefined
+  const onTouchStart = window.ontouchstart !== undefined ? (e) => onStart(e, e.targetTouches[0].pageX, e.targetTouches[0].pageY) : undefined
 
   const r = { active, onMouseDown, onTouchStart }
 
   return r
 }
 
-export default useDragControl
+const DragControl = (props) => { const state = useState(props); return props.children(state); }
+
+const useDragControl = (props) => { const state = useState(props); return state; }
+
+export { DragControl, useDragControl }

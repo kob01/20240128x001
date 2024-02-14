@@ -13,9 +13,11 @@ function App() {
 
     if (ref.current) clearTimeout(ref.current)
 
-    if (Imitation.state.loading !== '') ref.current = setTimeout(() => { Imitation.assignState({ message: '' }); setOpen(false); ref.current = null }, 1500)
+    if (Imitation.state.message !== '') ref.current = setTimeout(() => { Imitation.assignState({ message: '' }); setOpen(false); ref.current = null }, 1500)
 
-    if (Imitation.state.loading === '') setOpen(false)
+    if (Imitation.state.message !== '') setOpen(true)
+
+    if (Imitation.state.message === '') setOpen(false)
 
   }, [Imitation.state.message])
 

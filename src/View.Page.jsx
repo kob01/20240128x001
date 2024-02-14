@@ -2,7 +2,7 @@ import React from 'react'
 
 import Navigation from './View.Navigation'
 import Library from './View.Page.Library'
-import Creator from './View.Page.Creator'
+import Canvas from './View.Page.Canvas'
 
 import Imitation from './utils.imitation'
 
@@ -12,16 +12,14 @@ function App() {
     <div style={{ width: '100%', height: 0, flexGrow: 1 }}>
 
       {
-        Imitation.state.router === 'Library' ? <Library /> : null
+        Imitation.state.router === 'Library' ? <Library key='Library'/> : null
       }
 
       {
-        Imitation.state.router === 'Creator' ? <Creator /> : null
+        Imitation.state.router === 'Canvas' ? <Canvas key='Canvas'/> : null
       }
 
     </div>
-
-    <div style={{ width: '100%', height: 16 }}></div>
 
     <Navigation />
 

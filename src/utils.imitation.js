@@ -8,10 +8,10 @@ ImitationINS.state = {
   theme: {
     palette: {
       background: {
-        main: 'rgb(255, 255, 255)'
+        main: 'rgb(0, 0, 0)'
       },
       primary: {
-        main: 'rgb(0, 0, 0)'
+        main: 'rgb(255, 255, 255)'
       },
       secondary: {
         main: 'rgb(156, 39, 176)'
@@ -30,7 +30,7 @@ ImitationINS.state = {
 
   source: source,
 
-  router: 'Creator',
+  router: new URLSearchParams(new URL(window.location.href).search).get('router') || 'Library',
 }
 
 export default ImitationINS
