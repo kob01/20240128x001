@@ -62,10 +62,22 @@ const SelectSX = () => {
   return {
     sx: {
       '& .MuiSelect-select': { fontSize: '14px', padding: '10.5px 12px' },
-      '& label': { fontSize: '12px', lineHeight: 1, padding: 0, background: 'white' },
-      '& label.MuiFormLabel-filled, & label.Mui-focused, & .MuiInputLabel-shrink': { padding: '4px', marginTop: '2px', background: 'white' },
-      '& fieldset': { top: 0 },
-      '& fieldset legend': { display: 'none' }
+      // '& label': { fontSize: '12px', lineHeight: 1, padding: 0, background: 'white' },
+      // '& label.MuiFormLabel-filled, & label.Mui-focused, & .MuiInputLabel-shrink': { padding: '4px', marginTop: '2px', background: 'white' },
+      // '& fieldset': { top: 0 },
+      // '& fieldset legend': { display: 'none' },
+      '& input, & .MuiSelect-select': {
+        color: Imitation.state.theme.palette.primary.main
+      },
+      '& fieldset': {
+        borderColor: rgba(Imitation.state.theme.palette.primary.main, 0.7),
+      },
+      '& .MuiInputBase-root:hover fieldset': {
+        borderColor: Imitation.state.theme.palette.primary.main,
+      },
+      '& svg': {
+        fill: Imitation.state.theme.palette.primary.main
+      }
     },
     MenuProps: {
       sx: {

@@ -1,6 +1,6 @@
 import Imitation from 'imitation-imm/src/index'
 
-import { source } from './utils.source'
+import source from './utils.source'
 
 const ImitationINS = new Imitation()
 

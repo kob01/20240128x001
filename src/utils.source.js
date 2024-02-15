@@ -69,4 +69,4 @@ const source = [
 
 ]
 
-export { source }
+export default source
