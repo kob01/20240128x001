@@ -9,6 +9,10 @@ import SettingDialog from './View.Page.Library.SettingDialog'
 import Imitation from './utils.imitation'
 
 function App() {
+  React.useEffect(() => Imitation.state['page.library.function'].onLoad(), [])
+
+  if (Imitation.state['page.library'].load === false) return null
+
   return <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
 
     <div style={{ width: '100%', height: 0, flexGrow: 1 }}>

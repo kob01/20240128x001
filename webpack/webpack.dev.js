@@ -12,6 +12,7 @@ const config = Object.assign({}, common, {
       filename: 'index.html',
       chunks: ['index']
     }),
+    new webpack.HotModuleReplacementPlugin(),
     new webpack.DefinePlugin({ process: { env: JSON.stringify('dev') } })
   ]
 })

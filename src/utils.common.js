@@ -21,4 +21,8 @@ const throttle = (fn, time) => {
   return (...args) => { clearTimeout(timeout); timeout = setTimeout(() => fn(args), time); }
 }
 
-export { hash, rgba, throttle }
+const fixed = (number) => {
+  return Number(Number(number).toFixed())
+}
+
+export { hash, rgba, throttle, fixed }

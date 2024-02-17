@@ -18,13 +18,18 @@ import Select from '@mui/material/Select'
 
 import SaveIcon from '@mui/icons-material/Save'
 import DoneIcon from '@mui/icons-material/Done'
+import SendIcon from '@mui/icons-material/Send'
+import RemoveIcon from '@mui/icons-material/Remove'
 
 import Imitation from './utils.imitation'
+
+import { fixed } from './utils.common'
 
 import { DialogSX, TextFieldSX, TabsSX, DividerSX, SwitchSX, SelectSX } from './utils.mui.sx'
 
 function App() {
   const canvasFind = Imitation.state['page.canvas.memo'].canvasFind(Imitation.state['page.canvas'].control.hash)
+  const paintFind = Imitation.state['page.canvas.memo'].paintFind(Imitation.state['page.canvas'].paint.current)
 
   const onClose = () => {
     Imitation.state['page.canvas'].setting.dialog = false
@@ -41,7 +46,8 @@ function App() {
           <Tabs {...TabsSX()} value={Imitation.state['page.canvas'].setting.tab} onChange={(e, v) => { Imitation.state['page.canvas'].setting.tab = v; Imitation.dispatch(); }}>
             <Tab label='View' value={0} />
             <Tab label='Paint' value={1} />
-            <Tab label='Canvas Layer' value={2} />
+            <Tab label='Current Layer' value={2} />
+            <Tab label='Create Layer' value={3} />
           </Tabs>
         </Grid>
 
@@ -52,40 +58,45 @@ function App() {
         {
           Imitation.state['page.canvas'].setting.tab === 0 ?
             <>
-              <Grid item xs={12}>
-                Dpr {Imitation.state['page.canvas'].view.dpr}
-              </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>ScaleAll</div>
                 <div style={{ position: 'relative' }}>
-                  <Slider value={Imitation.state['page.canvas'].view.dpr} onChange={(e, v) => { Imitation.state['page.canvas'].view.dpr = v; Imitation.dispatch(); }} min={0} max={8} step={0.1} />
+                  <Switch {...SwitchSX()} checked={Imitation.state['page.canvas'].view.scaleAll} onChange={(e) => { Imitation.state['page.canvas'].view.scaleAll = e.target.checked; Imitation.dispatch(); }} disabled={Imitation.state['page.canvas'].view.perspective === true} />
                 </div>
               </Grid>
 
               <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>Fullview</div>
+                <div>Translate Layer</div>
                 <div>
-                  <Switch {...SwitchSX()} checked={Imitation.state['page.canvas'].fullview} onChange={(e) => { Imitation.state['page.canvas'].fullview = e.target.checked; Imitation.dispatch(); }} />
-                </div>
-              </Grid>
-
-              <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>Translate</div>
-                <div>
-                  <Switch {...SwitchSX()} checked={Imitation.state['page.canvas'].view.translate} onChange={(e) => { Imitation.state['page.canvas'].view.translateAll = false; Imitation.state['page.canvas'].view.translate = e.target.checked; Imitation.dispatch(); }} disabled={Imitation.state['page.canvas'].view.perspective === true} />
+                  <Switch {...SwitchSX()} checked={Imitation.state['page.canvas'].view.translateLayer} onChange={(e) => { Imitation.state['page.canvas'].view.translateAll = false; Imitation.state['page.canvas'].view.perspective = false; Imitation.state['page.canvas'].view.translateLayer = e.target.checked; Imitation.dispatch(); }} />
                 </div>
               </Grid>
 
               <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>Translate All</div>
                 <div>
-                  <Switch {...SwitchSX()} checked={Imitation.state['page.canvas'].view.translateAll} onChange={(e) => { Imitation.state['page.canvas'].view.translate = false; Imitation.state['page.canvas'].view.translateAll = e.target.checked; Imitation.dispatch(); }} disabled={Imitation.state['page.canvas'].view.perspective === true} />
+                  <Switch {...SwitchSX()} checked={Imitation.state['page.canvas'].view.translateAll} onChange={(e) => { Imitation.state['page.canvas'].view.translateLayer = false; Imitation.state['page.canvas'].view.perspective = false; Imitation.state['page.canvas'].view.translateAll = e.target.checked; Imitation.dispatch(); }} />
+                </div>
+              </Grid>
+
+              <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>Translate Fix</div>
+                <div>
+                  <Button variant='text' onClick={() => Imitation.state['page.canvas.function'].onTranslateFix()} children={<SendIcon />} />
+                </div>
+              </Grid>
+
+              <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>Fullview</div>
+                <div>
+                  <Switch {...SwitchSX()} checked={Imitation.state['page.canvas'].view.panorama} onChange={(e) => { Imitation.state['page.canvas'].view.panorama = e.target.checked; Imitation.dispatch(); }} />
                 </div>
               </Grid>
 
               <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>Perspective</div>
                 <div>
-                  <Switch {...SwitchSX()} checked={Imitation.state['page.canvas'].view.perspective} onChange={(e) => { Imitation.state['page.canvas'].view.perspective = e.target.checked; Imitation.dispatch(); }} disabled={Imitation.state['page.canvas'].view.translate === true || Imitation.state['page.canvas'].view.translateAll === true} />
+                  <Switch {...SwitchSX()} checked={Imitation.state['page.canvas'].view.perspective} onChange={(e) => { Imitation.state['page.canvas'].view.translateLayer = false; Imitation.state['page.canvas'].view.translateAll = false; Imitation.state['page.canvas'].view.perspective = e.target.checked; Imitation.dispatch(); }} />
                 </div>
               </Grid>
 
@@ -93,16 +104,16 @@ function App() {
                 Imitation.state['page.canvas'].view.perspective === true ?
                   <>
                     <Grid item xs={12}>
-                      Perspective Gap {Imitation.state['page.canvas'].view.perspectiveGap}
+                      Perspective Gap {fixed(Imitation.state['page.canvas'].view.perspectiveGap)}
                     </Grid>
                     <Grid item xs={12}>
                       <div style={{ position: 'relative' }}>
-                        <Slider value={Imitation.state['page.canvas'].view.perspectiveGap} onChange={(e, v) => { Imitation.state['page.canvas'].view.perspectiveGap = v; Imitation.dispatch(); }} min={0} max={200} step={1} />
+                        <Slider value={Imitation.state['page.canvas'].view.perspectiveGap} onChange={(e, v) => { Imitation.state['page.canvas'].view.perspectiveGap = v; Imitation.dispatch(); }} min={0} max={400} step={1} />
                       </div>
                     </Grid>
 
                     <Grid item xs={12}>
-                      Perspective Rotate X {Imitation.state['page.canvas'].view.perspectiveRotateX}
+                      Perspective Rotate X {fixed(Imitation.state['page.canvas'].view.perspectiveRotateX)}
                     </Grid>
                     <Grid item xs={12}>
                       <div style={{ position: 'relative' }}>
@@ -111,7 +122,7 @@ function App() {
                     </Grid>
 
                     <Grid item xs={12}>
-                      Perspective Rotate Y {Imitation.state['page.canvas'].view.perspectiveRotateY}
+                      Perspective Rotate Y {fixed(Imitation.state['page.canvas'].view.perspectiveRotateY)}
                     </Grid>
                     <Grid item xs={12}>
                       <div style={{ position: 'relative' }}>
@@ -129,38 +140,23 @@ function App() {
           Imitation.state['page.canvas'].setting.tab === 1 ?
             <>
               <Grid item xs={12}>
-                Color
-              </Grid>
-              <Grid item xs={12}>
-                <div style={{ position: 'relative' }}>
-                  <TextField {...TextFieldSX()} value={Imitation.state['page.canvas'].paint.setting.color} onChange={e => { Imitation.state['page.canvas'].paint.setting.color = e.target.value; Imitation.dispatch(); }} fullWidth autoComplete='off' />
-                  <TextField {...TextFieldSX()} value={Imitation.state['page.canvas'].paint.setting.color} onChange={e => { Imitation.state['page.canvas'].paint.setting.color = e.target.value; Imitation.dispatch(); }} fullWidth autoComplete='off' type='color' style={{ width: 64, position: 'absolute', top: 0, bottom: 0, right: 0, margin: 'auto' }} />
-                </div>
-              </Grid>
-
-              <Grid item xs={12}>
-                Alpha {Imitation.state['page.canvas'].paint.setting.alpha}
-              </Grid>
-              <Grid item xs={12}>
-                <div style={{ position: 'relative' }}>
-                  <Slider value={Imitation.state['page.canvas'].paint.setting.alpha} onChange={(e, v) => { Imitation.state['page.canvas'].paint.setting.alpha = v; Imitation.dispatch(); }} min={0} max={1} step={0.1} />
-                </div>
-              </Grid>
-
-              <Grid item xs={12}>
                 Current
               </Grid>
               <Grid item xs={12}>
                 <FormControl sx={SelectSX().sx} fullWidth>
-                  <Select {...SelectSX()} value={Imitation.state['page.canvas'].paint.current} onChange={e => { Imitation.state['page.canvas'].paint.current = v; Imitation.dispatch(); }}>
+                  <Select {...SelectSX()} value={Imitation.state['page.canvas'].paint.current} onChange={e => { Imitation.state['page.canvas.function'].onSwitchPaint(v) }}>
                     {
-                      Imitation.state['page.canvas'].paint.options.map(i => {
+                      Imitation.state['page.canvas.ref'].paint.map(i => {
                         return <MenuItem value={i._hash} key={i._hash}>{i.label}</MenuItem>
                       })
                     }
                   </Select>
                 </FormControl>
               </Grid>
+
+              {
+                paintFind.setting.map((I, index) => <I key={index} value={Imitation.state['page.canvas'].paint.setting} onChange={() => Imitation.dispatch()} />)
+              }
             </>
             : null
         }
@@ -185,6 +181,71 @@ function App() {
                   <TextField {...TextFieldSX()} value={canvasFind.height} onChange={e => { canvasFind.height = e.target.value; Imitation.dispatch(); }} fullWidth autoComplete='off' />
                 </div>
               </Grid>
+
+              <Grid item xs={12}>
+                Translate X
+              </Grid>
+              <Grid item xs={12}>
+                <div style={{ position: 'relative' }}>
+                  <TextField {...TextFieldSX()} value={canvasFind.translateX} onChange={e => { canvasFind.translateX = e.target.value; Imitation.dispatch(); }} fullWidth autoComplete='off' />
+                </div>
+              </Grid>
+
+              <Grid item xs={12}>
+                Translate Y
+              </Grid>
+              <Grid item xs={12}>
+                <div style={{ position: 'relative' }}>
+                  <TextField {...TextFieldSX()} value={canvasFind.translateY} onChange={e => { canvasFind.translateY = e.target.value; Imitation.dispatch(); }} fullWidth autoComplete='off' />
+                </div>
+              </Grid>
+
+              <Grid item xs={12}>
+                Scale {fixed(canvasFind.scale * 10)}
+              </Grid>
+              <Grid item xs={12}>
+                <div style={{ position: 'relative' }}>
+                  <Slider value={canvasFind.scale * 10} onChange={(e, v) => { canvasFind.scale = v * 0.1; Imitation.dispatch(); }} min={1} max={20} step={1} />
+                </div>
+              </Grid>
+
+              <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>Remove</div>
+                <div>
+                  <Button variant='text' onClick={() => Imitation.state['page.canvas.function'].onRemoveLayer(canvasFind._hash)} children={<SendIcon />} />
+                </div>
+              </Grid>
+            </>
+            : null
+        }
+
+        {
+          Imitation.state['page.canvas'].setting.tab === 3 ?
+            <>
+              <Grid item xs={12}>
+                Width
+              </Grid>
+              <Grid item xs={12}>
+                <div style={{ position: 'relative' }}>
+                  <TextField {...TextFieldSX()} value={Imitation.state['page.canvas'].layer.width} onChange={e => { Imitation.state['page.canvas'].layer.width = e.target.value; Imitation.dispatch(); }} fullWidth autoComplete='off' />
+                </div>
+              </Grid>
+
+              <Grid item xs={12}>
+                Height
+              </Grid>
+              <Grid item xs={12}>
+                <div style={{ position: 'relative' }}>
+                  <TextField {...TextFieldSX()} value={Imitation.state['page.canvas'].layer.height} onChange={e => { Imitation.state['page.canvas'].layer.height = e.target.value; Imitation.dispatch(); }} fullWidth autoComplete='off' />
+                </div>
+              </Grid>
+
+              <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>Create</div>
+                <div>
+                  <Button variant='text' onClick={() => Imitation.state['page.canvas.function'].onCreateLayer(Imitation.state['page.canvas'].layer)} children={<SendIcon />} />
+                </div>
+              </Grid>
             </>
             : null
         }
@@ -192,6 +253,7 @@ function App() {
       </Grid>
     </DialogContent>
     <DialogActions>
+      <Button variant='contained' onClick={() => Imitation.state['page.canvas.function'].onClear()} children={<RemoveIcon />} />
       <Button variant='contained' onClick={() => Imitation.state['page.canvas.function'].onSave()} children={<SaveIcon />} />
       <Button variant='contained' onClick={onClose} children={<DoneIcon />} />
     </DialogActions>

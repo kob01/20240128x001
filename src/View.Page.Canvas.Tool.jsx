@@ -4,6 +4,7 @@ import Button from '@mui/material/Button'
 
 import SettingsIcon from '@mui/icons-material/Settings'
 import AllOutIcon from '@mui/icons-material/AllOut'
+import MapIcon from '@mui/icons-material/Map'
 
 import { AnimationRAF, opacityAnimation } from './View.Component.AnimationRAF'
 
@@ -27,7 +28,13 @@ function ToolAction() {
 
       <AnimationRAF animation={opacityAnimation}>
         {
-          ({ style }) => <Button variant='text' style={{ ...styleButton, ...style, transition: '1s all' }} onClick={() => { Imitation.state['page.canvas'].fullview = !Imitation.state['page.canvas'].fullview; Imitation.dispatch(); }} children={<AllOutIcon style={{ ...styleButtonActive(Imitation.state['page.canvas'].fullview), transitionDuration: '1s', transitionProperty: 'transform' }} />} />
+          ({ style }) => <Button variant='text' style={{ ...styleButton, ...style, transition: '1s all' }} onClick={() => { Imitation.state['page.canvas'].view.panorama = !Imitation.state['page.canvas'].view.panorama; Imitation.dispatch(); }} children={<AllOutIcon style={{ ...styleButtonActive(Imitation.state['page.canvas'].view.panorama), transitionDuration: '1s', transitionProperty: 'transform' }} />} />
+        }
+      </AnimationRAF>
+
+      <AnimationRAF animation={opacityAnimation}>
+        {
+          ({ style }) => <Button variant='text' style={{ ...styleButton, ...style, transition: '1s all' }} onClick={() => { Imitation.state['page.canvas'].view.translateLayer = false; Imitation.state['page.canvas'].view.translateAll = false; Imitation.state['page.canvas'].view.perspective = !Imitation.state['page.canvas'].view.perspective; Imitation.dispatch(); }} children={<MapIcon style={{ ...styleButtonActive(Imitation.state['page.canvas'].view.perspective), transitionDuration: '1s', transitionProperty: 'transform' }} />} />
         }
       </AnimationRAF>
     </div>
@@ -56,7 +63,7 @@ function ToolPagination() {
       previous.map((i, index) => {
         return <AnimationRAF animation={opacityAnimation} key={'previous' + index}>
           {
-            ({ style }) => <Button variant='text' style={{ ...styleButton, ...style, transition: '1s all' }} onClick={() => Imitation.state['page.canvas.function'].onSwitch({ hash: i._hash, direction: 0 })}>{String(Number(i.index) + 1).padStart(2, '0')}</Button>
+            ({ style }) => <Button variant='text' style={{ ...styleButton, ...style, transition: '1s all' }} onClick={() => Imitation.state['page.canvas.function'].onSwitchLayer({ hash: i._hash, direction: 0 })}>{String(Number(i.index) + 1).padStart(2, '0')}</Button>
           }
         </AnimationRAF>
       })
@@ -64,7 +71,7 @@ function ToolPagination() {
 
     <AnimationRAF animation={opacityAnimation}>
       {
-        ({ style }) => <Button variant='contained' style={{ ...styleButton, ...style, transition: '1s all' }} color='primary' onClick={() => Imitation.state['page.canvas.function'].onSwitch({ hash: canvasFind._hash, direction: 2 })}>{String(Number(canvasFindIndex) + 1).padStart(2, '0')}</Button>
+        ({ style }) => <Button variant='contained' style={{ ...styleButton, ...style, transition: '1s all' }} color='primary' onClick={() => Imitation.state['page.canvas.function'].onSwitchLayer({ hash: canvasFind._hash, direction: 2 })}>{String(Number(canvasFindIndex) + 1).padStart(2, '0')}</Button>
       }
     </AnimationRAF>
 
@@ -72,7 +79,7 @@ function ToolPagination() {
       next.map((i, index) => {
         return <AnimationRAF animation={opacityAnimation} key={'next' + index}>
           {
-            ({ style }) => <Button variant='text' style={{ ...styleButton, ...style, transition: '1s all' }} onClick={() => Imitation.state['page.canvas.function'].onSwitch({ hash: i._hash, direction: 1 })}>{String(Number(i.index) + 1).padStart(2, '0')}</Button>
+            ({ style }) => <Button variant='text' style={{ ...styleButton, ...style, transition: '1s all' }} onClick={() => Imitation.state['page.canvas.function'].onSwitchLayer({ hash: i._hash, direction: 1 })}>{String(Number(i.index) + 1).padStart(2, '0')}</Button>
           }
         </AnimationRAF>
       })

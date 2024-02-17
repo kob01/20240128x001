@@ -23,7 +23,7 @@ function ToolAction() {
 
     <AnimationRAF animation={opacityAnimation}>
       {
-        ({ style }) => <Button variant='text' style={{ ...styleButton, ...style, transition: '1s all' }} onClick={() => { Imitation.state['page.library'].fullview = !Imitation.state['page.library'].fullview; Imitation.dispatch(); }} children={<AllOutIcon style={{ ...styleButtonActive(Imitation.state['page.library'].fullview), transitionDuration: '1s', transitionProperty: 'transform' }} />} />
+        ({ style }) => <Button variant='text' style={{ ...styleButton, ...style, transition: '1s all' }} onClick={() => { Imitation.state['page.library'].view.panorama = !Imitation.state['page.library'].view.panorama; Imitation.dispatch(); }} children={<AllOutIcon style={{ ...styleButtonActive(Imitation.state['page.library'].view.panorama), transitionDuration: '1s', transitionProperty: 'transform' }} />} />
       }
     </AnimationRAF>
   </div>

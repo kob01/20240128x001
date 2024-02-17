@@ -2,7 +2,7 @@ import React from 'react'
 
 import CircularProgress from '@mui/material/CircularProgress'
 
-import { DragControl } from './View.Component.DragControl'
+import { useDragControl } from './View.Component.DragControl'
 
 import Imitation from './utils.imitation'
 
@@ -97,7 +97,7 @@ function ContentRender(props) {
       const continuedY = params.continuedY
 
       if (continuedX === 0 && continuedY === 0) {
-        Imitation.state['page.library'].fullview = !Imitation.state['page.library'].fullview
+        Imitation.state['page.library'].view.panorama = !Imitation.state['page.library'].view.panorama
         Imitation.dispatch()
       }
     }
@@ -109,10 +109,11 @@ function ContentRender(props) {
     }
     if (renderFindIndexInLast === false) {
       Imitation.state['page.library'].render.splice(renderFindIndex, 1)
-      Imitation.state['page.library'].render = [...Imitation.state['page.library'].render]
       Imitation.dispatch()
     }
   }
+
+  const { onMouseDown, onTouchStart } = useDragControl({ enable: dragControlEnable, onChange: onChangeDragControl })
 
   const resizeImage = () => {
     var r = {}
@@ -120,10 +121,10 @@ function ContentRender(props) {
     const imageRadio = imageRef.current.width / imageRef.current.height
     const cardRadio = size.width / size.height
 
-    if (Imitation.state['page.library'].fullview === true && imageRadio <= cardRadio) r.height = size.height
-    if (Imitation.state['page.library'].fullview === true && imageRadio >= cardRadio) r.width = size.width
-    if (Imitation.state['page.library'].fullview === false && imageRadio >= cardRadio) r.height = size.height
-    if (Imitation.state['page.library'].fullview === false && imageRadio <= cardRadio) r.width = size.width
+    if (Imitation.state['page.library'].view.panorama === true && imageRadio <= cardRadio) r.height = size.height
+    if (Imitation.state['page.library'].view.panorama === true && imageRadio >= cardRadio) r.width = size.width
+    if (Imitation.state['page.library'].view.panorama === false && imageRadio >= cardRadio) r.height = size.height
+    if (Imitation.state['page.library'].view.panorama === false && imageRadio <= cardRadio) r.width = size.width
 
     if (r.width === undefined) r.width = r.height * imageRadio
     if (r.height === undefined) r.height = r.width / imageRadio
@@ -145,34 +146,28 @@ function ContentRender(props) {
       imageRef.current.src = sourceFind.src
       imageRef.current.addEventListener('load', resizeImage)
     }
-  }, [sourceFind, Imitation.state['page.library'].size, Imitation.state['page.library'].fullview])
+  }, [sourceFind, Imitation.state['page.library'].size, Imitation.state['page.library'].view.panorama])
 
   React.useEffect(() => {
-    if (Imitation.state['page.library'].fullview === false) {
+    if (Imitation.state['page.library'].view.panorama === false) {
       setStyleWrapper(size)
     }
-    if (Imitation.state['page.library'].fullview === true && styleBackground !== undefined) {
+    if (Imitation.state['page.library'].view.panorama === true && styleBackground !== undefined) {
       setStyleWrapper({ width: Math.min(styleBackground.width, size.width), height: Math.min(styleBackground.height, size.height) })
     }
-  }, [styleBackground, Imitation.state['page.library'].fullview])
+  }, [styleBackground, Imitation.state['page.library'].view.panorama])
 
-  return <DragControl enable={dragControlEnable} onChange={onChangeDragControl}>
-    {
-      ({ onMouseDown, onTouchStart }) => {
-        return <div style={{ position: 'absolute', zIndex: 1, width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', transformOrigin: 'center center', transitionProperty: 'all', transitionDuration: '1s', ...styleAnimation, ...styleDragControl }} onMouseDown={onMouseDown} onTouchStart={onTouchStart} onTransitionEnd={onTransitionEnd}>
+  return <div style={{ position: 'absolute', zIndex: 1, width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', transformOrigin: 'center center', transitionProperty: 'all', transitionDuration: '1s', ...styleAnimation, ...styleDragControl }} onMouseDown={onMouseDown} onTouchStart={onTouchStart} onTransitionEnd={onTransitionEnd}>
 
-          <div style={{ position: 'absolute', zIndex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', overflow: 'hidden', transitionProperty: 'all', transitionDuration: '1s', borderRadius: 12, background: Imitation.state.theme.palette.primary.main, opacity: styleBackground ? 0 : 1, ...styleWrapper }} onTransitionEnd={e => e.stopPropagation()}>
-            <CircularProgress style={{ color: Imitation.state.theme.palette.background.main }} />
-          </div>
+    <div style={{ position: 'absolute', zIndex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', overflow: 'hidden', transitionProperty: 'all', transitionDuration: '1s', borderRadius: 12, background: Imitation.state.theme.palette.primary.main, opacity: styleBackground ? 0 : 1, ...styleWrapper }} onTransitionEnd={e => e.stopPropagation()}>
+      <CircularProgress style={{ color: Imitation.state.theme.palette.background.main }} />
+    </div>
 
-          <div style={{ position: 'absolute', zIndex: 2, display: 'flex', justifyContent: 'center', alignItems: 'center', overflow: 'hidden', transitionProperty: 'all', transitionDuration: '1s', borderRadius: 12, opacity: styleBackground ? 1 : 0, ...styleWrapper }} onTransitionEnd={e => e.stopPropagation()}>
-            <img style={{ transition: '1s all', ...styleBackground }} src={sourceFind.src}></img>
-          </div>
+    <div style={{ position: 'absolute', zIndex: 2, display: 'flex', justifyContent: 'center', alignItems: 'center', overflow: 'hidden', transitionProperty: 'all', transitionDuration: '1s', borderRadius: 12, opacity: styleBackground ? 1 : 0, ...styleWrapper }} onTransitionEnd={e => e.stopPropagation()}>
+      <img style={{ transition: '1s all', ...styleBackground }} src={sourceFind.src}></img>
+    </div>
 
-        </div>
-      }
-    }
-  </DragControl>
+  </div>
 }
 
 function ContentRenders() {
