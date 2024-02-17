@@ -75,7 +75,7 @@ const useState = (props) => {
   React.useEffect(() => {
     if (window.ontouchstart === undefined) return
 
-    const _onMove = (e) => onMove(e, e.targetTouches[0].pageX, e.targetTouches[0].pageY, e.targetTouches.map(i => i.pageX), e.targetTouches.map(i => i.pageY))
+    const _onMove = (e) => onMove(e, e.targetTouches[0].pageX, e.targetTouches[0].pageY, [...e.targetTouches].map(i => i.pageX), [...e.targetTouches].map(i => i.pageY))
     const _onEnd = (e) => onEnd(e)
 
     window.addEventListener('touchmove', _onMove, { passive: true })
@@ -88,7 +88,7 @@ const useState = (props) => {
   }, [props.enable, props.onChange])
 
   const onMouseDown = window.ontouchstart === undefined ? (e) => onStart(e, e.pageX, e.pageY) : undefined
-  const onTouchStart = window.ontouchstart !== undefined ? (e) => onStart(e, e.targetTouches[0].pageX, e.targetTouches[0].pageY, e.targetTouches.map(i => i.pageX), e.targetTouches.map(i => i.pageY)) : undefined
+  const onTouchStart = window.ontouchstart !== undefined ? (e) => onStart(e, e.targetTouches[0].pageX, e.targetTouches[0].pageY, [...e.targetTouches].map(i => i.pageX), [...e.targetTouches].map(i => i.pageY)) : undefined
 
   const r = { active, onMouseDown, onTouchStart }
 

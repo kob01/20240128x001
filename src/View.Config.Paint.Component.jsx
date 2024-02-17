@@ -44,8 +44,6 @@ function Color(props) {
 function Alpha(props) {
   const { value, onChange } = props
 
-  console.log(value)
-
   return <>
     <Grid item xs={12}>
       Alpha {value.alpha}
