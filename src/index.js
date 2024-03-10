@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 
 import App from './View.App'
 
-import Imitation from './utils.imitation'
+import { ImitationGlobal } from './Imitation'
 
 import icon from '../static/icon.png'
 
@@ -42,7 +42,7 @@ const styleAppendII = () => {
   const style = document.getElementById(id) || document.createElement('style')
 
   const styleString = [
-    `body { background: ${Imitation.state.theme.palette.background.main}; color: ${Imitation.state.theme.palette.primary.main}; }`,
+    `body { background: ${ImitationGlobal.state.store.theme.palette.background.main}; color: ${ImitationGlobal.state.store.theme.palette.primary.main}; }`,
   ].join(' ')
 
   style.id = id
@@ -55,7 +55,7 @@ const styleAppendII = () => {
 
 styleAppendII()
 
-Imitation.register(styleAppendII, state => JSON.stringify(state.theme))
+ImitationGlobal.register(styleAppendII, state => JSON.stringify(state.store.theme))
 
 document.getElementById('root').addEventListener('touchmove', e => e.preventDefault())
 document.getElementById('root').addEventListener('contextmenu', e => e.preventDefault())

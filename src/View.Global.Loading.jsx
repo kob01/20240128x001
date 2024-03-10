@@ -3,7 +3,7 @@ import React from 'react'
 import Backdrop from '@mui/material/Backdrop'
 import CircularProgress from '@mui/material/CircularProgress'
 
-import Imitation from './utils.imitation'
+import { ImitationGlobal, withBindComponentPure } from './Imitation'
 
 function App() {
   const ref = React.useRef()
@@ -14,13 +14,13 @@ function App() {
 
     if (ref.current) clearTimeout(ref.current)
 
-    if (Imitation.state.loading !== 0) setOpen(true)
+    if (ImitationGlobal.state.store.loading !== 0) setOpen(true)
 
-    if (Imitation.state.loading === 0) ref.current = setTimeout(() => { setOpen(false); ref.current = null }, 500)
+    if (ImitationGlobal.state.store.loading === 0) ref.current = setTimeout(() => { setOpen(false); ref.current = null }, 500)
 
-  }, [Imitation.state.loading])
+  }, [ImitationGlobal.state.store.loading])
 
   return <Backdrop open={open} style={{ zIndex: 10000 }}><CircularProgress color='primary' /></Backdrop>
 }
 
-export default Imitation.withBindRender(App, state => [state.loading])
+export default withBindComponentPure(App, [{ instance: ImitationGlobal, dependence: state => [state.store.loading] }])

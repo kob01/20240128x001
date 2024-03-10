@@ -1,25 +1,34 @@
 import React from 'react'
 
-import './View.Page.Library.Imitation'
-
+import Navigation from './View.Navigation'
+import NavigationButton from './View.Navigation.Button'
 import Content from './View.Page.Library.Content'
 import Tool from './View.Page.Library.Tool'
-import SettingDialog from './View.Page.Library.SettingDialog'
+import Setting from './View.Page.Library.Setting'
 
-import Imitation from './utils.imitation'
+import { ImitationPageLibrary, withBindComponentPure } from './Imitation'
 
 function App() {
-  React.useEffect(() => Imitation.state['page.library.function'].onLoad(), [])
+  React.useEffect(() => ImitationPageLibrary.state.function.onLoad(), [])
+  React.useEffect(() => () => ImitationPageLibrary.state.function.onUnload(), [])
 
-  if (Imitation.state['page.library'].load === false) return null
+  if (ImitationPageLibrary.state.store.load === false) return null
 
   return <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
 
-    <div style={{ width: '100%', height: 0, flexGrow: 1 }}>
-      <Content />
+    <div style={{ width: '100%', height: 0, flexGrow: 1, display: 'flex' }}>
+      <div style={{ width: 'fit-content', height: '100%' }}>
+        <Setting />
+      </div>
+      <div style={{ width: 0, height: '100%', flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+        <Content />
+      </div>
+      <div style={{ width: 'fit-content', height: '100%' }}>
+        <Navigation />
+      </div>
     </div>
-
-    <div style={{ width: '100%', height: 16 }}></div>
+    
+    <div style={{ width: '100%', height: 4 }}></div>
 
     <div style={{ width: '100%', height: 'fit-content' }}>
       <Tool />
@@ -27,9 +36,9 @@ function App() {
 
     <div style={{ width: '100%', height: 4 }}></div>
 
-    <SettingDialog />
+    <NavigationButton />
 
   </div>
 }
 
-export default Imitation.withBindRender(App, state => [JSON.stringify(state['page.library'])])
+export default withBindComponentPure(App, [{ instance: ImitationPageLibrary, dependence: state => [state.update.now] }])

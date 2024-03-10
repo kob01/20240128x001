@@ -1,18 +1,27 @@
-import Imitation from './utils.imitation'
+import { ImitationGlobal } from './Imitation'
 import { rgba } from './utils.common'
 
-const TooltipSX = () => {
+const themeColor = (type, reverse = false) => {
+  if (type === 'background') {
+    return reverse ? ImitationGlobal.state.store.theme.palette.primary.main : ImitationGlobal.state.store.theme.palette.background.main
+  }
+  if (type === 'primary') {
+    return reverse ? ImitationGlobal.state.store.theme.palette.background.main : ImitationGlobal.state.store.theme.palette.primary.main
+  }
+}
+
+const TooltipSX = (reverse) => {
   return {
     PopperProps: {
       sx: {
         '& .MuiTooltip-tooltip':
-          { background: Imitation.state.theme.palette.background.main, color: Imitation.state.theme.palette.primary.main }
+          { background: themeColor('background', reverse), color: themeColor('primary', reverse) }
       }
     }
   }
 }
 
-const TextFieldSX = () => {
+const TextFieldSX = (reverse) => {
   return {
     sx: {
       '& input, & .MuiInputBase-multiline': { fontSize: '14px', padding: '12px' },
@@ -21,19 +30,19 @@ const TextFieldSX = () => {
       // '& fieldset': { top: 0 },
       // '& fieldset legend': { display: 'none' },
       '& input': {
-        color: Imitation.state.theme.palette.primary.main
+        color: themeColor('primary', reverse)
       },
       '& fieldset': {
-        borderColor: rgba(Imitation.state.theme.palette.primary.main, 0.7),
+        borderColor: rgba(themeColor('primary', reverse), 0.7),
       },
       '& .MuiInputBase-root:hover fieldset': {
-        borderColor: Imitation.state.theme.palette.primary.main,
+        borderColor: themeColor('primary', reverse),
       }
     }
   }
 }
 
-const AutocompleteSX = () => {
+const AutocompleteSX = (reverse) => {
   return {
     sx: {
       '& input': { fontSize: '14px' },
@@ -58,7 +67,7 @@ const AutocompleteSX = () => {
   }
 }
 
-const SelectSX = () => {
+const SelectSX = (reverse) => {
   return {
     sx: {
       '& .MuiSelect-select': { fontSize: '14px', padding: '10.5px 12px' },
@@ -67,16 +76,16 @@ const SelectSX = () => {
       // '& fieldset': { top: 0 },
       // '& fieldset legend': { display: 'none' },
       '& input, & .MuiSelect-select': {
-        color: Imitation.state.theme.palette.primary.main
+        color: themeColor('primary', reverse)
       },
       '& fieldset': {
-        borderColor: rgba(Imitation.state.theme.palette.primary.main, 0.7),
+        borderColor: rgba(themeColor('primary', reverse), 0.7),
       },
       '& .MuiInputBase-root:hover fieldset': {
-        borderColor: Imitation.state.theme.palette.primary.main,
+        borderColor: themeColor('primary', reverse),
       },
       '& svg': {
-        fill: Imitation.state.theme.palette.primary.main
+        fill: themeColor('primary', reverse)
       }
     },
     MenuProps: {
@@ -87,28 +96,28 @@ const SelectSX = () => {
   }
 }
 
-const DrawerSX = () => {
+const DrawerSX = (reverse) => {
   return {
     sx: {
-      '& .MuiPaper-root': {
-        background: Imitation.state.theme.palette.background.main,
-        boxShadow: `0px 8px 10px -5px ${rgba(Imitation.state.theme.palette.primary.main, 0.2)}, 0px 16px 24px 2px ${rgba(Imitation.state.theme.palette.primary.main, 0.14)}, 0px 6px 30px 5px ${rgba(Imitation.state.theme.palette.primary.main, 0.12)}`,
-        color: Imitation.state.theme.palette.primary.main,
+      '& .MuiDrawer-paper': {
+        background: themeColor('background', reverse),
+        boxShadow: `0px 8px 10px -5px ${rgba(themeColor('primary', reverse), 0.2)}, 0px 16px 24px 2px ${rgba(themeColor('primary', reverse), 0.14)}, 0px 6px 30px 5px ${rgba(themeColor('primary', reverse), 0.12)}`,
+        color: themeColor('primary', reverse),
       },
     }
   }
 }
 
-const DialogSX = () => {
+const DialogSX = (reverse) => {
   return {
     sx: {
-      '& .MuiPaper-root': {
-        background: rgba(Imitation.state.theme.palette.background.main, 0.75),
-        boxShadow: `0px 11px 15px -7px ${rgba(Imitation.state.theme.palette.primary.main, 0.2)}, 0px 24px 38px 3px ${rgba(Imitation.state.theme.palette.primary.main, 0.14)}, 0px 9px 46px 8px ${rgba(Imitation.state.theme.palette.primary.main, 0.12)}`,
-        color: Imitation.state.theme.palette.primary.main,
+      '& .MuiDialog-root': {
+        background: themeColor('background', reverse),
+        boxShadow: `0px 11px 15px -7px ${rgba(themeColor('primary', reverse), 0.2)}, 0px 24px 38px 3px ${rgba(themeColor('primary', reverse), 0.14)}, 0px 9px 46px 8px ${rgba(themeColor('primary', reverse), 0.12)}`,
+        color: themeColor('primary', reverse),
       },
       '& .MuiDialogContent-dividers': {
-        borderColor: Imitation.state.theme.palette.primary.main,
+        borderColor: themeColor('primary', reverse),
       },
       '& .MuiDialogTitle-root': {
         fontSize: '16px'
@@ -120,7 +129,7 @@ const DialogSX = () => {
   }
 }
 
-const TabsSX = () => {
+const TabsSX = (reverse) => {
   return {
     sx: {
       '&.MuiTabs-root': {
@@ -130,36 +139,65 @@ const TabsSX = () => {
         minHeight: 0,
         fontSize: '14px',
         padding: '12px',
-        color: rgba(Imitation.state.theme.palette.primary.main, 0.5),
+        color: rgba(themeColor('primary', reverse), 0.5),
       },
     }
   }
 }
 
-const DividerSX = () => {
+const DividerSX = (reverse) => {
   return {
     sx: {
       '&.MuiDivider-root': {
-        borderColor: Imitation.state.theme.palette.primary.main
+        borderColor: themeColor('primary', reverse)
       },
     }
   }
 }
 
-const SwitchSX = () => {
+const SwitchSX = (reverse) => {
   return {
     sx: {
-      '& .MuiSwitch-track': {
-        backgroundColor: Imitation.state.theme.palette.primary.main,
-        opacity: 0.25,
+      '&.MuiSwitch-root .MuiSwitch-track': {
+        backgroundColor: themeColor('primary', reverse),
+        opacity: 0.2,
       },
 
-      '& .Mui-checked .MuiSwitch-track': {
-        backgroundColor: Imitation.state.theme.palette.primary.main,
+      '&.MuiSwitch-root .Mui-checked+.MuiSwitch-track': {
+        backgroundColor: themeColor('primary', reverse),
         opacity: 0.5,
       },
+
+      '&.MuiSwitch-root .MuiSwitch-thumb': {
+        color: themeColor('primary', reverse),
+      }
     }
   }
 }
 
-export { TooltipSX, TextFieldSX, AutocompleteSX, SelectSX, DrawerSX, DialogSX, TabsSX, DividerSX, SwitchSX }
+const AccordionSX = (reverse) => {
+  return {
+    sx: {
+      '&.MuiAccordion-root': {
+        background: themeColor('background', reverse),
+        color: themeColor('primary', reverse),
+        boxShadow: `0px 2px 1px -1px ${rgba(themeColor('primary', reverse), 0.2)}, 0px 1px 1px 0px ${rgba(themeColor('primary', reverse), 0.14)}, 0px 1px 3px 0px ${rgba(themeColor('primary', reverse), 0.12)}`,
+        borderRadius: '4px',
+        margin: '0px'
+      }
+    }
+  }
+}
+
+const PaperSX = (reverse) => {
+  return {
+    sx: {
+      '&.MuiPaper-root': {
+        background: themeColor('background', reverse),
+        boxShadow: `0px 2px 1px -1px ${rgba(themeColor('primary', reverse), 0.2)}, 0px 1px 1px 0px ${rgba(themeColor('primary', reverse), 0.14)}, 0px 1px 3px 0px ${rgba(themeColor('primary', reverse), 0.12)}`,
+      }
+    }
+  }
+}
+
+export { TooltipSX, TextFieldSX, AutocompleteSX, SelectSX, DrawerSX, DialogSX, TabsSX, DividerSX, SwitchSX, AccordionSX, PaperSX }

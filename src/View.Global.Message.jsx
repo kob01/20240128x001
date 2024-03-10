@@ -2,7 +2,7 @@ import React from 'react'
 
 import Snackbar from '@mui/material/Snackbar'
 
-import Imitation from './utils.imitation'
+import { ImitationGlobal, withBindComponentPure } from './Imitation'
 
 function App() {
   const ref = React.useRef()
@@ -13,15 +13,15 @@ function App() {
 
     if (ref.current) clearTimeout(ref.current)
 
-    if (Imitation.state.message !== '') ref.current = setTimeout(() => { Imitation.assignState({ message: '' }); setOpen(false); ref.current = null }, 1500)
+    if (ImitationGlobal.state.store.message !== '') ref.current = setTimeout(() => { ImitationGlobal.assignState({ message: '' }); setOpen(false); ref.current = null }, 1500)
 
-    if (Imitation.state.message !== '') setOpen(true)
+    if (ImitationGlobal.state.store.message !== '') setOpen(true)
 
-    if (Imitation.state.message === '') setOpen(false)
+    if (ImitationGlobal.state.store.message === '') setOpen(false)
 
-  }, [Imitation.state.message])
+  }, [ImitationGlobal.state.store.message])
 
-  return <Snackbar open={open} message={Imitation.state.message} anchorOrigin={{ vertical: 'top', horizontal: 'center' }} />
+  return <Snackbar open={open} message={ImitationGlobal.state.store.message} anchorOrigin={{ vertical: 'top', horizontal: 'center' }} />
 }
 
-export default Imitation.withBindRender(App, state => [state.message])
+export default withBindComponentPure(App, [{ instance: ImitationGlobal, dependence: state => [state.store.message] }])

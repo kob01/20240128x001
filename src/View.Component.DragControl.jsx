@@ -1,10 +1,8 @@
 import React from 'react'
 
 const useState = (props) => {
-  const position_0 = React.useRef()
-  const position_1 = React.useRef()
-  const position_2 = React.useRef()
-  const position_3 = React.useRef()
+  const positionOrigin = React.useRef()
+  const positionTarget = React.useRef()
 
   const [active, setActive] = React.useState(false)
 
@@ -16,25 +14,25 @@ const useState = (props) => {
   const onStart = React.useCallback((e, x, y, xs, ys) => {
     if (props.enable === false) return
 
-    position_0.current = [x, y]
-    position_1.current = [x, y]
+    positionOrigin.current = { x, y, xs, ys }
+    positionTarget.current = { x, y, xs, ys }
 
     setActive(true)
 
-    onChange({ e, x, y, status: 'afterStart' })
+    onChange({ e, x, y, xs, ys, status: 'afterStart' })
   }, [props.enable, props.onChange])
 
   const onMove = React.useCallback((e, x, y, xs, ys) => {
     if (props.enable === false) return
 
-    if (position_1.current === undefined) return
+    if (positionTarget.current === undefined) return
 
-    const changedX = x - position_1.current[0]
-    const changedY = y - position_1.current[1]
-    const continuedX = position_1.current[0] - position_0.current[0]
-    const continuedY = position_1.current[1] - position_0.current[1]
+    const changedX = x - positionTarget.current.x
+    const changedY = y - positionTarget.current.y
+    const continuedX = positionTarget.current.x - positionOrigin.current.x
+    const continuedY = positionTarget.current.y - positionOrigin.current.y
 
-    position_1.current = [x, y]
+    positionTarget.current = { x, y }
 
     onChange({ e, x, y, status: 'afterMove', changedX, changedY, continuedX, continuedY })
   }, [props.enable, props.onChange])
@@ -42,15 +40,15 @@ const useState = (props) => {
   const onEnd = React.useCallback((e) => {
     if (props.enable === false) return
 
-    if (position_1.current === undefined) return
+    if (positionTarget.current === undefined) return
 
-    const continuedX = position_1.current[0] - position_0.current[0]
-    const continuedY = position_1.current[1] - position_0.current[1]
+    const continuedX = positionTarget.current.x - positionOrigin.current.x
+    const continuedY = positionTarget.current.y - positionOrigin.current.y
 
     onChange({ e, status: 'beforeEnd', continuedX, continuedY })
 
-    position_0.current = undefined
-    position_1.current = undefined
+    positionOrigin.current = undefined
+    positionTarget.current = undefined
 
     setActive(false)
 

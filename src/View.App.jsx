@@ -6,14 +6,14 @@ import Message from './View.Global.Message'
 import Loading from './View.Global.Loading'
 import Page from './View.Page'
 
-import Imitation from './utils.imitation'
+import { ImitationGlobal, withBindComponentPure } from './Imitation'
 
 function App() {
-  return <ThemeProvider theme={createTheme(Imitation.state.theme)}>
+  return <ThemeProvider theme={createTheme(ImitationGlobal.state.store.theme)}>
     <Loading />
     <Message />
     <Page />
   </ThemeProvider>
 }
 
-export default Imitation.withBindRender(App, state => [JSON.stringify(state.theme)])
+export default withBindComponentPure(App, [{ instance: ImitationGlobal, dependence: state => [JSON.stringify(state.store.theme)] }])

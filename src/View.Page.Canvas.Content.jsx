@@ -1,243 +1,153 @@
 import React from 'react'
 
+import Paper from '@mui/material/Paper'
+
 import { useDragControl } from './View.Component.DragControl'
 import { useKeyboardRecord } from './View.Component.KeyboardRecord'
 
-import Imitation from './utils.imitation'
+import { ImitationPageCanvas } from './Imitation'
 
-import { rgba, fixed } from './utils.common'
+import { PaperSX } from './utils.mui.sx'
+import { throttle } from './utils.common'
 
-function ContentCanvasRender(props) {
-  const canvasLength = Imitation.state['page.canvas'].canvas.length
+function ContentCanvasRender() {
+  const paintOriginFindMap = ImitationPageCanvas.state.memo.paintOriginFindMap()
 
-  const inControl = Imitation.state['page.canvas'].control.hash === props._hash
-  const inPerspective = Imitation.state['page.canvas'].view.perspective
-
-  const canvasFind = Imitation.state['page.canvas.memo'].canvasFind(props._hash)
-  const canvasFindIndex = Imitation.state['page.canvas.memo'].canvasFindIndex(props._hash)
-  const canvasRefFind = Imitation.state['page.canvas.memo'].canvasRefFind(props._hash)
-
-  const [styleBackground, setStyleBackground] = React.useState()
-
-  const [styleTransform, setStyleTransform] = React.useState()
+  const refFunction = el => ImitationPageCanvas.state.store.canvas.canvasRef = el
 
   React.useEffect(() => {
-    canvasRefFind.context = canvasRefFind.canvas.getContext('2d')
+    ImitationPageCanvas.state.store.canvas.contextRef = ImitationPageCanvas.state.store.canvas.canvasRef.getContext('2d')
   }, [])
 
   React.useEffect(() => {
-    const resizeObserver = new ResizeObserver(en => {
-      if (canvasRefFind.canvas) canvasRefFind.rect = canvasRefFind.canvas.getBoundingClientRect()
+    ImitationPageCanvas.state.store.canvas.contextRef.clearRect(0, 0, ImitationPageCanvas.state.store.canvas.canvasRef.width, ImitationPageCanvas.state.store.canvas.canvasRef.height)
+    ImitationPageCanvas.state.store.canvas.information.forEach(i => {
+      i.pixel.forEach(i => {
+        const target = {
+          ...i,
+          x: i.x + ImitationPageCanvas.state.store.rect.width / 2 / ImitationPageCanvas.state.store.view.scale,
+          y: i.y + ImitationPageCanvas.state.store.rect.height / 2 / ImitationPageCanvas.state.store.view.scale,
+        }
+        paintOriginFindMap[i._hash](ImitationPageCanvas.state.store.canvas.contextRef, target)
+      })
     })
+  }, [ImitationPageCanvas.state.update.canvas, ImitationPageCanvas.state.store.rect, ImitationPageCanvas.state.store.view.scale])
 
-    resizeObserver.observe(canvasRefFind.canvas)
-    resizeObserver.observe(document.body)
-
-    return () => {
-      resizeObserver.disconnect()
-    }
-  }, [])
-
-  React.useEffect(() => {
-    canvasFind.pixel.forEach(i => {
-      canvasRefFind.context.fillStyle = i.color
-      canvasRefFind.context.fillRect(i.x, i.y, 1, 1)
-    })
-  }, [])
-
-  React.useEffect(() => {
-    var r
-    if (inPerspective === true && inControl === true) r = { background: rgba(Imitation.state.theme.palette.background.main, 0.4) }
-    if (inPerspective === true && inControl === false) r = { background: rgba(Imitation.state.theme.palette.background.main, 0.1 + canvasFindIndex / (canvasLength - 1) * 0.1) }
-    if (inPerspective === false && inControl === true) r = { background: rgba(Imitation.state.theme.palette.background.main, 0.1) }
-    setStyleBackground(r)
-  }, [inPerspective, inControl, canvasFindIndex, canvasLength, Imitation.state.theme.palette.background.main])
-
-  React.useEffect(() => {
-    if (inPerspective === true) setStyleTransform({ transform: `translateX(${canvasFind.translateX}px) translateY(${canvasFind.translateY}px) translateZ(${(canvasFindIndex - canvasLength / 2 + 0.5) * Imitation.state['page.canvas'].view.perspectiveGap}px) scale(${canvasFind.scale})` })
-    if (inPerspective === false) setStyleTransform({ transform: `translateX(${canvasFind.translateX}px) translateY(${canvasFind.translateY}px) translateZ(0px) scale(${canvasFind.scale})` })
-  }, [inPerspective, canvasFindIndex, canvasLength, canvasFind.translateX, canvasFind.translateY, canvasFind.scale, Imitation.state['page.canvas'].view.perspectiveGap])
-
-  return <canvas
-    style={{ position: 'absolute', width: canvasFind.width, height: canvasFind.height, transitionDuration: '1s', transitionProperty: 'width, height, background, transform', ...styleTransform, ...styleBackground }}
-    width={canvasFind.width}
-    height={canvasFind.height}
-    ref={el => canvasRefFind.canvas = el}
-  />
-}
-
-function ContentCanvasRenders() {
-  const canvasFind = Imitation.state['page.canvas.memo'].canvasFind(Imitation.state['page.canvas'].control.hash)
-
-  const other = Imitation.state['page.canvas'].canvas.filter(i => i !== canvasFind)
-
-  const render = [...other, canvasFind]
-
-  return <>
-    {
-      render.map(i => <ContentCanvasRender key={i._hash} {...i} />)
-    }
-  </>
+  return <canvas style={{ position: 'absolute', width: ImitationPageCanvas.state.store.rect.width, height: ImitationPageCanvas.state.store.rect.height }} width={ImitationPageCanvas.state.store.rect.width / ImitationPageCanvas.state.store.view.scale} height={ImitationPageCanvas.state.store.rect.height / ImitationPageCanvas.state.store.view.scale} ref={refFunction} />
 }
 
 function ContentCanvasWrapper() {
-  const inTranslateLayer = Imitation.state['page.canvas'].view.translateLayer
-  const inTranslateAll = Imitation.state['page.canvas'].view.translateAll
-  const inPerspective = Imitation.state['page.canvas'].view.perspective
-
-  const canvasFind = Imitation.state['page.canvas.memo'].canvasFind(Imitation.state['page.canvas'].control.hash)
-  const canvasRefFind = Imitation.state['page.canvas.memo'].canvasRefFind(Imitation.state['page.canvas'].control.hash)
-  const paintFind = Imitation.state['page.canvas.memo'].paintFind(Imitation.state['page.canvas'].paint.current)
-
-  const paintFindRun = React.useMemo(() => paintFind.paint(), [paintFind])
-
-  const size = Imitation.state['page.canvas.memo'].size()
+  const canvasFind = ImitationPageCanvas.state.memo.canvasFind(ImitationPageCanvas.state.store.canvas.control)
+  const paintActionFindRun = ImitationPageCanvas.state.memo.paintActionFindRun(ImitationPageCanvas.state.store.paint.control)
 
   const dragControlType = React.useRef()
+  const dragControlProp = React.useRef()
 
   const { code } = useKeyboardRecord({ enable: true })
 
   const inSpace = code.includes('Space')
 
-  const [styleTransform, setStyleTransform] = React.useState()
-
-  const [styleTransformStyle, setStyleTransformStyle] = React.useState()
-
   const onChangeDragControl = (params) => {
     const status = params.status
 
-    if (status === 'afterStart' && dragControlType.current === undefined && (inTranslateLayer === false && inTranslateAll === false && inPerspective === false && inSpace === false)) {
+    if (status === 'afterStart' && dragControlType.current === undefined && (inSpace === false)) {
       dragControlType.current = 0
     }
-    if (status === 'afterStart' && dragControlType.current === undefined && (inTranslateLayer === true && inSpace === false)) {
+    if (status === 'afterStart' && dragControlType.current === undefined && (inSpace === false)) {
       dragControlType.current = 1
     }
-    if (status === 'afterStart' && dragControlType.current === undefined && (inTranslateAll === true || inSpace === true)) {
+    if (status === 'afterStart' && dragControlType.current === undefined && (inSpace === true)) {
       dragControlType.current = 2
-    }
-    if (status === 'afterStart' && dragControlType.current === undefined && (inPerspective === true && inSpace === false)) {
-      dragControlType.current = 3
     }
 
     if (status === 'afterStart' && dragControlType.current === 0) {
-      dragControlType.current = 0
-
-      canvasRefFind.rect = canvasRefFind.canvas.getBoundingClientRect()
-
       const x = params.x
       const y = params.y
-      const relativeX = (x - canvasRefFind.rect.left) / canvasFind.scale
-      const relativeY = (y - canvasRefFind.rect.top) / canvasFind.scale
+      const offsetX = ImitationPageCanvas.state.store.rect.width / 2 / ImitationPageCanvas.state.store.view.scale
+      const offsetY = ImitationPageCanvas.state.store.rect.height / 2 / ImitationPageCanvas.state.store.view.scale
+      const relativeX = (x - ImitationPageCanvas.state.store.rect.left) / ImitationPageCanvas.state.store.view.scale
+      const relativeY = (y - ImitationPageCanvas.state.store.rect.top) / ImitationPageCanvas.state.store.view.scale
 
-      paintFindRun(canvasRefFind, Imitation.state['page.canvas'].paint.setting, 0, fixed(relativeX), fixed(relativeY))
+      const r = paintActionFindRun(ImitationPageCanvas.state.store.canvas.canvasRef, ImitationPageCanvas.state.store.canvas.contextRef, ImitationPageCanvas.state.store.paint.setting, 0, relativeX, relativeY, offsetX, offsetY)
+
+      if (r) canvasFind.pixel.push(...r)
     }
 
     if (status === 'afterMove' && dragControlType.current === 0) {
       const x = params.x
       const y = params.y
-      const relativeX = (x - canvasRefFind.rect.left) / canvasFind.scale
-      const relativeY = (y - canvasRefFind.rect.top) / canvasFind.scale
+      const offsetX = ImitationPageCanvas.state.store.rect.width / 2 / ImitationPageCanvas.state.store.view.scale
+      const offsetY = ImitationPageCanvas.state.store.rect.height / 2 / ImitationPageCanvas.state.store.view.scale
+      const relativeX = (x - ImitationPageCanvas.state.store.rect.left) / ImitationPageCanvas.state.store.view.scale
+      const relativeY = (y - ImitationPageCanvas.state.store.rect.top) / ImitationPageCanvas.state.store.view.scale
 
-      paintFindRun(canvasRefFind, Imitation.state['page.canvas'].paint.setting, 1, fixed(relativeX), fixed(relativeY))
+      const r = paintActionFindRun(ImitationPageCanvas.state.store.canvas.canvasRef, ImitationPageCanvas.state.store.canvas.contextRef, ImitationPageCanvas.state.store.paint.setting, 1, relativeX, relativeY, offsetX, offsetY)
+
+      if (r) canvasFind.pixel.push(...r)
     }
 
     if (status === 'afterEnd' && dragControlType.current === 0) {
-      paintFindRun(canvasRefFind, Imitation.state['page.canvas'].paint.setting, 2)
+      const r = paintActionFindRun(ImitationPageCanvas.state.store.canvas.canvasRef, ImitationPageCanvas.state.store.canvas.contextRef, ImitationPageCanvas.state.store.paint.setting, 2)
+
+      if (r) canvasFind.pixel.push(...r)
     }
 
     if (status === 'afterMove' && dragControlType.current === 1) {
-      dragControlType.current = 1
+      const changedX = params.changedX / ImitationPageCanvas.state.store.view.scale
+      const changedY = params.changedY / ImitationPageCanvas.state.store.view.scale
 
-      const changedX = params.changedX
-      const changedY = params.changedY
+      canvasFind.pixel.forEach(i => {
+        i.x = i.x + changedX
+        i.y = i.y + changedY
+      })
 
-      canvasFind.translateX = canvasFind.translateX + changedX
-      canvasFind.translateY = canvasFind.translateY + changedY
-
-      canvasFind.translateX = fixed(canvasFind.translateX)
-      canvasFind.translateY = fixed(canvasFind.translateY)
-
-      Imitation.dispatch()
+      ImitationPageCanvas.state.update.canvas = performance.now()
+      ImitationPageCanvas.state.function.update()
     }
 
     if (status === 'afterMove' && dragControlType.current === 2) {
-      dragControlType.current = 2
+      const changedX = params.changedX / ImitationPageCanvas.state.store.view.scale
+      const changedY = params.changedY / ImitationPageCanvas.state.store.view.scale
 
-      const changedX = params.changedX
-      const changedY = params.changedY
-
-      Imitation.state['page.canvas'].canvas.forEach(i => {
-        i.translateX = i.translateX + changedX
-        i.translateY = i.translateY + changedY
-
-        i.translateX = fixed(i.translateX)
-        i.translateY = fixed(i.translateY)
+      ImitationPageCanvas.state.store.canvas.information.forEach(i => {
+        i.pixel.forEach(i => {
+          i.x = i.x + changedX
+          i.y = i.y + changedY
+        })
       })
 
-      Imitation.dispatch()
-    }
-
-    if (status === 'afterMove' && dragControlType.current === 3) {
-      dragControlType.current = 3
-
-      const changedX = params.changedX
-      const changedY = params.changedY
-
-      Imitation.state['page.canvas'].view.perspectiveRotateX = Imitation.state['page.canvas'].view.perspectiveRotateX - changedY / 5
-      Imitation.state['page.canvas'].view.perspectiveRotateY = Imitation.state['page.canvas'].view.perspectiveRotateY + changedX / 5
-
-      Imitation.state['page.canvas'].view.perspectiveRotateX = fixed(Imitation.state['page.canvas'].view.perspectiveRotateX - changedY / 5)
-      Imitation.state['page.canvas'].view.perspectiveRotateY = fixed(Imitation.state['page.canvas'].view.perspectiveRotateY + changedX / 5)
-
-      if (Imitation.state['page.canvas'].view.perspectiveRotateX > 360) Imitation.state['page.canvas'].view.perspectiveRotateX = 360
-      if (Imitation.state['page.canvas'].view.perspectiveRotateY > 360) Imitation.state['page.canvas'].view.perspectiveRotateY = 360
-      if (Imitation.state['page.canvas'].view.perspectiveRotateX < -360) Imitation.state['page.canvas'].view.perspectiveRotateX = -360
-      if (Imitation.state['page.canvas'].view.perspectiveRotateY < -360) Imitation.state['page.canvas'].view.perspectiveRotateY = -360
-
-      Imitation.dispatch()
+      ImitationPageCanvas.state.update.canvas = performance.now()
+      ImitationPageCanvas.state.function.update()
     }
 
     if (status === 'afterEnd') {
       dragControlType.current = undefined
+      dragControlProp.current = undefined
     }
   }
 
   const { onMouseDown, onTouchStart } = useDragControl({ enable: true, onChange: onChangeDragControl })
 
-  React.useEffect(() => {
-    if (inPerspective === true) setStyleTransform({ transform: `rotateX(${Imitation.state['page.canvas'].view.perspectiveRotateX}deg) rotateY(${Imitation.state['page.canvas'].view.perspectiveRotateY}deg)` })
-    if (inPerspective === false) setStyleTransform()
-  }, [inPerspective, Imitation.state['page.canvas'].view.perspectiveRotateX, Imitation.state['page.canvas'].view.perspectiveRotateY])
+  const styleInDrag = { position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', overflow: 'hidden', width: '100%', height: '100%', transitionProperty: 'width, height', transitionDuration: '1s' }
 
-  React.useEffect(() => {
-    if (inPerspective === true) setStyleTransformStyle({ transformStyle: 'preserve-3d', perspective: 10000000 })
-    if (inPerspective === false) setStyleTransformStyle({ transformStyle: 'preserve-3d', perspective: 10000000 })
-  }, [inPerspective,])
-
-  return <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: 12, overflow: 'hidden', transition: '1s all', background: Imitation.state.theme.palette.primary.main, ...styleTransformStyle, ...size }} onMouseDown={onMouseDown} onTouchStart={onTouchStart}>
-    <div style={{ width: 0, height: 0, position: 'absolute', display: 'flex', justifyContent: 'center', alignItems: 'center', transition: '1s all', ...styleTransformStyle, ...styleTransform }}>
-      <ContentCanvasRenders />
-    </div>
+  return <div style={styleInDrag} onMouseDown={onMouseDown} onTouchStart={onTouchStart}>
+    <ContentCanvasRender />
   </div>
 }
 
-function App() {
+function Content() {
   const ref = React.useRef()
 
   React.useEffect(() => {
-    const resizeObserver = new ResizeObserver(en => {
-      Imitation.state['page.canvas'].size = { width: en[0].contentRect.width, height: en[0].contentRect.height }
-
-      const size = Imitation.state['page.canvas'].size
-
-      if (size.width * 1.5 >= size.height) size.overviewHeight = size.height
-      if (size.width * 1.5 <= size.height) size.overviewWidth = size.width
-
-      if (size.overviewWidth === undefined) size.overviewWidth = size.overviewHeight / 3 * 2
-      if (size.overviewHeight === undefined) size.overviewHeight = size.overviewWidth * 1.5
-
-      Imitation.dispatch()
-    })
+    const resizeObserver = new ResizeObserver(
+      throttle(
+        en => {
+          ImitationPageCanvas.state.store.rect = en[0].target.getBoundingClientRect()
+          ImitationPageCanvas.state.function.update()
+        },
+        500
+      )
+    )
 
     resizeObserver.observe(ref.current)
 
@@ -246,9 +156,15 @@ function App() {
 
   return <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }} ref={el => ref.current = el}>
     {
-      Imitation.state['page.canvas'].size !== undefined && Imitation.state['page.canvas'].size.width !== 0 && Imitation.state['page.canvas'].size.height !== 0 ? <ContentCanvasWrapper /> : null
+      ImitationPageCanvas.state.store.rect !== undefined ? <ContentCanvasWrapper /> : null
     }
   </div>
+}
+
+function App() {
+  return <Paper {...PaperSX()} style={{ width: '100%', height: '100%' }}>
+    <Content />
+  </Paper>
 }
 
 export default App

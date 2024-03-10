@@ -3,71 +3,113 @@ import React from 'react'
 import Button from '@mui/material/Button'
 import Slider from '@mui/material/Slider'
 import Drawer from '@mui/material/Drawer'
+import Grid from '@mui/material/Grid'
+import Paper from '@mui/material/Paper'
+import Accordion from '@mui/material/Accordion'
+import AccordionSummary from '@mui/material/AccordionSummary'
+import AccordionDetails from '@mui/material/AccordionDetails'
+import Switch from '@mui/material/Switch'
+import MenuItem from '@mui/material/MenuItem'
+import FormControl from '@mui/material/FormControl'
+import Select from '@mui/material/Select'
 
 import { AnimationRAF, opacityAnimation } from './View.Component.AnimationRAF'
 
-import Imitation from './utils.imitation'
-import { DrawerSX } from './utils.mui.sx'
+import { ImitationGlobal, withBindComponentPure } from './Imitation'
+
+import { DialogSX, TextFieldSX, TabsSX, DividerSX, SwitchSX, SelectSX, DrawerSX, AccordionSX, PaperSX } from './utils.mui.sx'
 
 const average = (array) => array.reduce((t, i) => t + i, 0) / array.length
 
 const themeBase = 255
 const themeUnit = 15
 
-function App() {
-  const [open, setOpen] = React.useState(false)
-
+function Content() {
   const valueTheme = React.useMemo(() => {
-    const background = average(Imitation.state.theme.palette.background.main.match(/\d+/g).map(i => Number(i)))
-    const primary = average(Imitation.state.theme.palette.primary.main.match(/\d+/g).map(i => Number(i)))
+    const background = average(ImitationGlobal.state.store.theme.palette.background.main.match(/\d+/g).map(i => Number(i)))
+    const primary = average(ImitationGlobal.state.store.theme.palette.primary.main.match(/\d+/g).map(i => Number(i)))
 
-    const background_ = background / themeBase * themeUnit
-    const primary_ = (themeBase - primary) / themeBase * themeUnit
+    const backgroundLevel = background / themeBase * themeUnit
+    const primaryLevel = (themeBase - primary) / themeBase * themeUnit
 
-    const color = average([background_, primary_])
+    const color = Math.floor(average([backgroundLevel, primaryLevel]))
 
-    const color_ = Math.floor(color)
-
-    return color_
-  }, [JSON.stringify(Imitation.state.theme)])
+    return color
+  }, [JSON.stringify(ImitationGlobal.state.store.theme)])
 
   const onChangeTheme = (v) => {
     const background = `rgb(${v * themeBase / themeUnit}, ${v * themeBase / themeUnit}, ${v * themeBase / themeUnit})`
     const primary = `rgb(${themeBase - v * themeBase / themeUnit}, ${themeBase - v * themeBase / themeUnit}, ${themeBase - v * themeBase / themeUnit})`
 
-    Imitation.state.theme.palette.background.main = background
-    Imitation.state.theme.palette.primary.main = primary
+    ImitationGlobal.state.store.theme.palette.background.main = background
+    ImitationGlobal.state.store.theme.palette.primary.main = primary
 
-    Imitation.dispatch()
+    ImitationGlobal.dispatch()
   }
 
-  return <>
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <AnimationRAF animation={opacityAnimation}>
-        {
-          ({ style }) => {
-            return <Button variant='contained' style={{ padding: 0, width: 120, height: 4, minWidth: 'auto', transition: '1s all', ...style }} onClick={() => setOpen(true)} />
-          }
-        }
-      </AnimationRAF>
-    </div>
+  return <div style={{ width: 360, height: '100%', padding: 16 }}>
+      <Grid container spacing={1}>
 
-    <Drawer {...DrawerSX()} anchor='right' open={open} onClose={() => setOpen(false)}>
-      <div style={{ padding: 16, width: 240, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ width: '100%', height: 'fit-content', display: 'flex', flexDirection: 'column' }}>
-          {
-            ['Library', 'Canvas'].map(i => {
-              return <Button key={i} variant={i === Imitation.state.router ? 'contained' : 'outlined'} style={{ width: '100%', height: 32, marginBottom: 8 }} onClick={() => { Imitation.state.router = i; Imitation.dispatch() }}>{i}</Button>
-            })
-          }
-        </div>
+        <Grid item xs={12}>
+          <Accordion {...AccordionSX()} defaultExpanded={true}>
+            <AccordionSummary>View</AccordionSummary>
+            <AccordionDetails>
+              <Grid container spacing={1}>
+                <Grid item xs={12}>Theme Color</Grid>
+                <Grid item xs={12}>
+                  <Slider value={valueTheme} onChange={(e, v) => onChangeTheme(v)} min={0} max={themeUnit} step={1} />
+                </Grid>
+                <Grid item xs={12}>Drawer Mode</Grid>
+                <Grid item xs={12}>
+                  <FormControl sx={SelectSX().sx} fullWidth>
+                    <Select {...SelectSX()} value={ImitationGlobal.state.store.navigation.mode} onChange={(e) => { ImitationGlobal.state.store.navigation.mode = e.target.value; ImitationGlobal.state.function.update() }}>
+                      <MenuItem value={0}>Static</MenuItem>
+                      <MenuItem value={1}>Float</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+              </Grid>
+            </AccordionDetails>
+          </Accordion>
+        </Grid>
 
-        <div style={{ width: '100%', height: 'fit-content', display: 'flex', flexDirection: 'column' }}>
-          <Slider value={valueTheme} onChange={(e, v) => onChangeTheme(v)} min={0} max={themeUnit} step={1} />
-        </div>
-      </div>
-    </Drawer>
-  </>
+        <Grid item xs={12}>
+          <Accordion {...AccordionSX()} defaultExpanded={true}>
+            <AccordionSummary>Page</AccordionSummary>
+            <AccordionDetails>
+              <Grid container spacing={1}>
+                <Grid item xs={12}>
+                  <Button fullWidth variant={'Library' === ImitationGlobal.state.store.router ? 'contained' : 'outlined'} style={{ width: '100%', height: 32 }} onClick={() => { ImitationGlobal.state.store.router = 'Library'; ImitationGlobal.dispatch() }}>Library</Button>
+                </Grid>
+                <Grid item xs={12}>
+                  <Button fullWidth variant={'Canvas' === ImitationGlobal.state.store.router ? 'contained' : 'outlined'} style={{ width: '100%', height: 32 }} onClick={() => { ImitationGlobal.state.store.router = 'Canvas'; ImitationGlobal.dispatch() }}>Canvas</Button>
+                </Grid>
+              </Grid>
+            </AccordionDetails>
+          </Accordion>
+        </Grid>
+
+      </Grid>
+  </div>
 }
 
-export default Imitation.withBindRender(App, state => [JSON.stringify(state.theme), state.router])
+function App() {
+  const onChange = () => {
+    ImitationGlobal.state.store.navigation.open = !ImitationGlobal.state.store.navigation.open
+    ImitationGlobal.state.function.update()
+  }
+
+  if (ImitationGlobal.state.store.navigation.mode === 0) {
+    return <Paper {...PaperSX()} style={{ width: ImitationGlobal.state.store.navigation.open ? 360 : 0, marginLeft: ImitationGlobal.state.store.navigation.open ? 16 : 0, height: '100%', transitionProperty: 'width, margin', transitionDuration: '1s', overflow: 'hidden' }}>
+      <Content />
+    </Paper>
+  }
+
+  if (ImitationGlobal.state.store.navigation.mode === 1) {
+    return <Drawer {...DrawerSX()} anchor='right' open={ImitationGlobal.state.store.navigation.open} onClose={() => onChange()}>
+      <Content />
+    </Drawer>
+  }
+}
+
+export default withBindComponentPure(App, [{ instance: ImitationGlobal, dependence: state => [state.store.router, state.store.navigation.open, state.store.navigation.mode] }])
