@@ -2,8 +2,6 @@ import React from 'react'
 
 import Button from '@mui/material/Button'
 
-import { AnimationRAF, opacityAnimation } from './View.Component.AnimationRAF'
-
 import { ImitationGlobal } from './Imitation'
 
 function App() {
@@ -13,13 +11,7 @@ function App() {
   }
 
   return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-    <AnimationRAF animation={opacityAnimation}>
-      {
-        ({ style }) => {
-          return <Button variant='contained' style={{ padding: 0, width: 120, height: 4, minWidth: 'auto', transition: '1s all', ...style }} onClick={() => onChange()} />
-        }
-      }
-    </AnimationRAF>
+    <Button variant='contained' style={{ padding: 0, width: 120, height: 4, minWidth: 'auto' }} onClick={() => onChange()} />
   </div>
 }
 

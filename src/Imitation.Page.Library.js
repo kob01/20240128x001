@@ -2,6 +2,8 @@ import React from 'react'
 
 import Imitation from 'imitation-imm'
 
+import ImitationGlobal from './Imitation.Global'
+
 import { hash } from './utils.common'
 
 import mockSource from './mock.source'
@@ -10,7 +12,7 @@ const ImitationInstance = new Imitation()
 
 ImitationInstance.state = { update: {}, store: {}, function: {}, memo: {} }
 
-ImitationInstance.state.store = { setting: {}, view: {} }
+ImitationInstance.state.store = { navigation: {}, view: {} }
 
 ImitationInstance.state.update.now = performance.now()
 
@@ -22,9 +24,9 @@ ImitationInstance.state.store.source = []
 
 ImitationInstance.state.store.render = []
 
-ImitationInstance.state.store.setting.open = false
+ImitationInstance.state.store.navigation.open = false
 
-ImitationInstance.state.store.setting.tab = 0
+ImitationInstance.state.store.navigation.expand = [true, true]
 
 ImitationInstance.state.store.view.panorama = false
 
@@ -38,7 +40,6 @@ ImitationInstance.state.function.onLoad = () => {
   ImitationInstance.state.store.rect = undefined
   ImitationInstance.state.store.source = mockSource
   ImitationInstance.state.store.render = [{ _hash: hash(), hash: ImitationInstance.state.store.source[0]._hash, direction: 2 }]
-  ImitationInstance.state.store.setting.open = true
   ImitationInstance.state.function.update()
 }
 

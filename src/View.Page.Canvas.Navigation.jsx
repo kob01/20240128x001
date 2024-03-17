@@ -1,6 +1,7 @@
 import React from 'react'
 
 import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
@@ -20,30 +21,36 @@ import Accordion from '@mui/material/Accordion'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import AccordionDetails from '@mui/material/AccordionDetails'
 import Paper from '@mui/material/Paper'
+import Tooltip from '@mui/material/Tooltip'
 
 import SaveIcon from '@mui/icons-material/Save'
 import DoneIcon from '@mui/icons-material/Done'
 import SendIcon from '@mui/icons-material/Send'
 import RemoveIcon from '@mui/icons-material/Remove'
+import AddIcon from '@mui/icons-material/Add'
+import SettingsIcon from '@mui/icons-material/Settings'
+import DeleteIcon from '@mui/icons-material/Delete'
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 
 import { ImitationGlobal, ImitationPageCanvas, withBindComponentPure } from './Imitation'
 
 import { fixed } from './utils.common'
 
-import { DialogSX, TextFieldSX, TabsSX, DividerSX, SwitchSX, SelectSX, DrawerSX, AccordionSX, PaperSX } from './utils.mui.sx'
+import { DialogSX, TextFieldSX, TabsSX, DividerSX, SwitchSX, SelectSX, DrawerSX, AccordionSX, PaperSX, TooltipSX } from './utils.mui.sx'
 
 function Content() {
   const canvasFind = ImitationPageCanvas.state.memo.canvasFind(ImitationPageCanvas.state.store.canvas.control)
   const paintFind = ImitationPageCanvas.state.memo.paintFind(ImitationPageCanvas.state.store.paint.control)
 
-  return <div style={{ width: 360, height: '100%', padding: 16 }}>
-    <Grid container spacing={1}>
+  return <div style={{ width: 360, height: '100%', padding: 16, overflowY: 'auto' }}>
+    <Grid container spacing={2}>
 
       <Grid item xs={12}>
-        <Accordion {...AccordionSX()} defaultExpanded={true}>
+        <Accordion {...AccordionSX()} expanded={ImitationPageCanvas.state.store.navigation.expand[0]} onChange={(e, v) => { ImitationPageCanvas.state.store.navigation.expand[0] = v; ImitationPageCanvas.state.function.update() }}>
           <AccordionSummary>View</AccordionSummary>
           <AccordionDetails>
-            <Grid container spacing={1}>
+            <Grid container spacing={2}>
               {/* <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>Fullview</div>
                 <div>
@@ -57,14 +64,13 @@ function Content() {
               <Grid item xs={12}>
                 <Slider value={ImitationPageCanvas.state.store.view.scale} onChange={(e, v) => { ImitationPageCanvas.state.store.view.scale = v; ImitationPageCanvas.state.function.update(); }} min={0} max={4} step={0.1} />
               </Grid>
-
             </Grid>
           </AccordionDetails>
         </Accordion>
       </Grid>
 
       <Grid item xs={12}>
-        <Accordion {...AccordionSX()} defaultExpanded={true}>
+        <Accordion {...AccordionSX()} expanded={ImitationPageCanvas.state.store.navigation.expand[1]} onChange={(e, v) => { ImitationPageCanvas.state.store.navigation.expand[1] = v; ImitationPageCanvas.state.function.update() }}>
           <AccordionSummary>Paint</AccordionSummary>
           <AccordionDetails>
             <Grid container spacing={2}>
@@ -86,24 +92,53 @@ function Content() {
         </Accordion>
       </Grid>
 
+      <Grid item xs={12}>
+        <Accordion {...AccordionSX()} expanded={ImitationPageCanvas.state.store.navigation.expand[2]} onChange={(e, v) => { ImitationPageCanvas.state.store.navigation.expand[2] = v; ImitationPageCanvas.state.function.update() }}>
+          <AccordionSummary>Layer</AccordionSummary>
+          <AccordionDetails>
+            <Grid container spacing={2}>
+              {
+                ImitationPageCanvas.state.store.canvas.information.map(i => {
+                  return <Grid key={i._hash} item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Button fullWidth variant={ImitationPageCanvas.state.store.canvas.control === i._hash ? 'outlined' : 'text'} onClick={() => { ImitationPageCanvas.state.store.canvas.control = i._hash; ImitationPageCanvas.state.function.update() }} style={{ marginRight: 8 }}>{i._hash}</Button>
+                    <Tooltip {...TooltipSX()} title={
+                      <Paper {...PaperSX()} style={{ padding: 12 }}>
+                        <IconButton onClick={() => { ImitationPageCanvas.state.function.onRemoveLayer(i._hash) }}><DeleteIcon color='primary' /></IconButton>
+                        <IconButton onClick={() => { ImitationPageCanvas.state.function.onMoveLayer(i._hash, 0) }}><KeyboardArrowUpIcon /></IconButton>
+                        <IconButton onClick={() => { ImitationPageCanvas.state.function.onMoveLayer(i._hash, 1) }}><KeyboardArrowDownIcon /></IconButton>
+                      </Paper>
+                    }>
+                      <IconButton><SettingsIcon color='primary' /></IconButton>
+                    </Tooltip>
+                  </Grid>
+                })
+              }
+              <Grid item xs={12}>
+                <Button fullWidth variant='text' onClick={() => { ImitationPageCanvas.state.function.onCreateLayer() }}><AddIcon /></Button>
+              </Grid>
+            </Grid>
+          </AccordionDetails>
+        </Accordion>
+      </Grid>
+
     </Grid>
-  </div>
+  </div >
 }
 
 function App() {
   const onClose = () => {
-    ImitationPageCanvas.state.store.setting.open = false
+    ImitationPageCanvas.state.store.navigation.open = false
     ImitationPageCanvas.state.function.update()
   }
 
   if (ImitationGlobal.state.store.navigation.mode === 0) {
-    return <Paper {...PaperSX()} style={{ width: ImitationPageCanvas.state.store.setting.open ? 360 : 0, marginRight: ImitationPageCanvas.state.store.setting.open ? 16 : 0, height: '100%', transition: 'all 1s', overflow: 'hidden' }}>
+    return <Paper {...PaperSX()} style={{ width: ImitationPageCanvas.state.store.navigation.open ? 360 : 0, marginRight: ImitationPageCanvas.state.store.navigation.open ? 16 : 0, height: '100%', transitionProperty: 'width, margin-right', transitionDuration: '1s', overflow: 'hidden' }}>
       <Content />
     </Paper>
   }
 
   if (ImitationGlobal.state.store.navigation.mode === 1) {
-    return <Drawer {...DrawerSX()} anchor='left' open={ImitationPageCanvas.state.store.setting.open} onClose={() => onClose()}>
+    return <Drawer {...DrawerSX()} anchor='left' open={ImitationPageCanvas.state.store.navigation.open} onClose={() => onClose()}>
       <Content />
     </Drawer>
   }

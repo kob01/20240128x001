@@ -16,6 +16,8 @@ ImitationInstance.state.store.message = ''
 
 ImitationInstance.state.store.navigation.open = true
 
+ImitationInstance.state.store.navigation.expand = [true, true]
+
 ImitationInstance.state.store.navigation.mode = 0
 
 ImitationInstance.state.store.router = new URLSearchParams(new URL(window.location.href).search).get('router') || 'Library'

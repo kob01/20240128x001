@@ -13,9 +13,7 @@ import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import Select from '@mui/material/Select'
 
-import { AnimationRAF, opacityAnimation } from './View.Component.AnimationRAF'
-
-import { ImitationGlobal, withBindComponentPure } from './Imitation'
+import { ImitationGlobal, ImitationPageCanvas, ImitationPageLibrary, withBindComponentPure } from './Imitation'
 
 import { DialogSX, TextFieldSX, TabsSX, DividerSX, SwitchSX, SelectSX, DrawerSX, AccordionSX, PaperSX } from './utils.mui.sx'
 
@@ -47,49 +45,67 @@ function Content() {
     ImitationGlobal.dispatch()
   }
 
+  const onChangeMode = (e) => {
+    ImitationGlobal.state.store.navigation.mode = e.target.value
+
+    if (e.target.value === 0) {
+      ImitationPageCanvas.state.store.navigation.open = true
+      ImitationPageLibrary.state.store.navigation.open = true
+    }
+
+    if (e.target.value === 1) {
+      ImitationPageCanvas.state.store.navigation.open = false
+      ImitationPageLibrary.state.store.navigation.open = false
+    }
+
+    ImitationGlobal.state.function.update()
+    ImitationPageCanvas.state.function.update()
+    ImitationPageLibrary.state.function.update()
+  }
+
   return <div style={{ width: 360, height: '100%', padding: 16 }}>
-      <Grid container spacing={1}>
+    <Grid container spacing={2}>
 
-        <Grid item xs={12}>
-          <Accordion {...AccordionSX()} defaultExpanded={true}>
-            <AccordionSummary>View</AccordionSummary>
-            <AccordionDetails>
-              <Grid container spacing={1}>
-                <Grid item xs={12}>Theme Color</Grid>
-                <Grid item xs={12}>
-                  <Slider value={valueTheme} onChange={(e, v) => onChangeTheme(v)} min={0} max={themeUnit} step={1} />
-                </Grid>
-                <Grid item xs={12}>Drawer Mode</Grid>
-                <Grid item xs={12}>
-                  <FormControl sx={SelectSX().sx} fullWidth>
-                    <Select {...SelectSX()} value={ImitationGlobal.state.store.navigation.mode} onChange={(e) => { ImitationGlobal.state.store.navigation.mode = e.target.value; ImitationGlobal.state.function.update() }}>
-                      <MenuItem value={0}>Static</MenuItem>
-                      <MenuItem value={1}>Float</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Grid>
+      <Grid item xs={12}>
+        <Accordion {...AccordionSX()} expanded={ImitationGlobal.state.store.navigation.expand[0]} onChange={(e, v) => { ImitationGlobal.state.store.navigation.expand[0] = v; ImitationGlobal.state.function.update() }}>
+          <AccordionSummary>View</AccordionSummary>
+          <AccordionDetails>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>Theme Color</Grid>
+              <Grid item xs={12}>
+                <Slider value={valueTheme} onChange={(e, v) => onChangeTheme(v)} min={0} max={themeUnit} step={1} />
               </Grid>
-            </AccordionDetails>
-          </Accordion>
-        </Grid>
-
-        <Grid item xs={12}>
-          <Accordion {...AccordionSX()} defaultExpanded={true}>
-            <AccordionSummary>Page</AccordionSummary>
-            <AccordionDetails>
-              <Grid container spacing={1}>
-                <Grid item xs={12}>
-                  <Button fullWidth variant={'Library' === ImitationGlobal.state.store.router ? 'contained' : 'outlined'} style={{ width: '100%', height: 32 }} onClick={() => { ImitationGlobal.state.store.router = 'Library'; ImitationGlobal.dispatch() }}>Library</Button>
-                </Grid>
-                <Grid item xs={12}>
-                  <Button fullWidth variant={'Canvas' === ImitationGlobal.state.store.router ? 'contained' : 'outlined'} style={{ width: '100%', height: 32 }} onClick={() => { ImitationGlobal.state.store.router = 'Canvas'; ImitationGlobal.dispatch() }}>Canvas</Button>
-                </Grid>
+              <Grid item xs={12}>Drawer Mode</Grid>
+              <Grid item xs={12}>
+                <FormControl sx={SelectSX().sx} fullWidth>
+                  <Select {...SelectSX()} value={ImitationGlobal.state.store.navigation.mode} onChange={onChangeMode}>
+                    <MenuItem value={0}>Static</MenuItem>
+                    <MenuItem value={1}>Float</MenuItem>
+                  </Select>
+                </FormControl>
               </Grid>
-            </AccordionDetails>
-          </Accordion>
-        </Grid>
-
+            </Grid>
+          </AccordionDetails>
+        </Accordion>
       </Grid>
+
+      <Grid item xs={12}>
+        <Accordion {...AccordionSX()} expanded={ImitationGlobal.state.store.navigation.expand[1]} onChange={(e, v) => { ImitationGlobal.state.store.navigation.expand[1] = v; ImitationGlobal.state.function.update() }}>
+          <AccordionSummary>Page</AccordionSummary>
+          <AccordionDetails>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <Button fullWidth variant={'Library' === ImitationGlobal.state.store.router ? 'contained' : 'outlined'} style={{ width: '100%', height: 32 }} onClick={() => { ImitationGlobal.state.store.router = 'Library'; ImitationGlobal.dispatch() }}>Library</Button>
+              </Grid>
+              <Grid item xs={12}>
+                <Button fullWidth variant={'Canvas' === ImitationGlobal.state.store.router ? 'contained' : 'outlined'} style={{ width: '100%', height: 32 }} onClick={() => { ImitationGlobal.state.store.router = 'Canvas'; ImitationGlobal.dispatch() }}>Canvas</Button>
+              </Grid>
+            </Grid>
+          </AccordionDetails>
+        </Accordion>
+      </Grid>
+
+    </Grid>
   </div>
 }
 

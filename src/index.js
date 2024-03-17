@@ -23,7 +23,6 @@ const styleAppendI = () => {
     `body { padding: 0; margin: 0; font-size: 14px; }`,
     `body * { font-weight: bold !important; font-family: monospace !important; box-sizing: border-box; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }`,
     `img { pointer-events: none; }`,
-    `.MuiBackdrop-root { background: none !important; }`,
   ].join(' ')
 
   style.id = id

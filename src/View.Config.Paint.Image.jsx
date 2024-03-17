@@ -6,11 +6,9 @@ import Slider from '@mui/material/Slider'
 
 import { TextFieldSX } from './utils.mui.sx'
 
-import { hash } from './utils.common'
+const _hash = 'Image'
 
-const _hash = 'Line'
-
-const label = 'Line'
+const label = 'Image'
 
 function Color(props) {
   const { value, onChange } = props
@@ -58,34 +56,12 @@ function Width(props) {
 
 const settingComponent = [Color, Alpha, Width]
 
-const settingDefault = { color: '#000000', alpha: 1, width: 1 }
+const settingDefault = { color: '#000000', alpha: 1, width: 1, imagebase64: undefined }
 
-
-const caculateSlope = (sx, sy, ex, ey) => {
-  var rx = Math.abs(sx - ex)
-  var ry = Math.abs(sy - ey)
-
-  if (rx === 0) return Number.MIN_VALUE
-  if (ry === 0) return Number.MAX_VALUE
-
-  return rx / ry
-}
-
-const caculateWidth = (path, width, direction) => {
-  const min = new Array(Math.floor(width / 2)).fill().map((i, index) => index + 1).map(i => i * 1 * -1)
-  const max = new Array(Math.floor(width / 2)).fill().map((i, index) => index + 1).map(i => i * 1 * 1)
-
-  const total = [...min, ...max]
-
-  if (direction === 'x') return total.map(i => ({ ...path, x: path.x + i }))
-  if (direction === 'y') return total.map(i => ({ ...path, y: path.y + i }))
-}
-
-const paintOrigin = (context, action) => {
+const paintOrigin = (context, pixel) => {
   context.save()
-  context.globalAlpha = action.alpha
-  context.fillStyle = action.color
-  context.fillRect(action.x, action.y, 1, 1)
+  context.globalAlpha = pixel.alpha
+  context.drawImage(image, pixel.x, pixel.y, pixel.w, pixel.h, x, y, width, height)
   context.restore()
 }
 
@@ -169,8 +145,7 @@ const paintAction = () => {
           Object.assign(
             i,
             {
-              _hash: hash(),
-              type: _hash,
+              _hash: _hash,
               x: i.x - offsetX,
               y: i.y - offsetY,
               color: setting.color,
@@ -179,24 +154,16 @@ const paintAction = () => {
           )
         })
 
-        // path.forEach(i => {
-        //   paintOrigin(
-        //     context,
-        //     {
-        //       ...i,
-        //       x: i.x + offsetX,
-        //       y: i.y + offsetY,
-        //     }
-        //   )
-        //   paintOrigin(
-        //     sandboxContext,
-        //     {
-        //       ...i,
-        //       x: i.x + offsetX,
-        //       y: i.y + offsetY,
-        //     }
-        //   )
-        // })
+        path.forEach(i => {
+          paintOrigin(
+            context,
+            {
+              ...i,
+              x: i.x + offsetX,
+              y: i.y + offsetY,
+            }
+          )
+        })
 
         r.push(...path)
 

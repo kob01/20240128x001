@@ -2,6 +2,8 @@ import React from 'react'
 
 import Imitation from 'imitation-imm'
 
+import ImitationGlobal from './Imitation.Global'
+
 import { hash } from './utils.common'
 
 import Paint from './View.Config.Paint'
@@ -13,11 +15,13 @@ const ImitationInstance = new Imitation()
 
 ImitationInstance.state = { update: {}, store: {}, function: {}, memo: {} }
 
-ImitationInstance.state.store = { canvas: {}, paint: {}, setting: {}, view: {} }
+ImitationInstance.state.store = { canvas: {}, paint: {}, navigation: {}, view: {} }
 
 ImitationInstance.state.update.now = performance.now()
 
-ImitationInstance.state.update.canvas = performance.now()
+ImitationInstance.state.update.canvasAction = performance.now()
+
+ImitationInstance.state.update.canvasRender = performance.now()
 
 ImitationInstance.state.store.load = false
 
@@ -28,6 +32,8 @@ ImitationInstance.state.store.drag = true
 ImitationInstance.state.store.source = undefined
 
 ImitationInstance.state.store.canvas.information = undefined
+
+ImitationInstance.state.store.canvas.informationRender = undefined
 
 ImitationInstance.state.store.canvas.control = undefined
 
@@ -41,7 +47,9 @@ ImitationInstance.state.store.paint.control = undefined
 
 ImitationInstance.state.store.paint.setting = undefined
 
-ImitationInstance.state.store.setting.open = false
+ImitationInstance.state.store.navigation.open = false
+
+ImitationInstance.state.store.navigation.expand = [true, true, true]
 
 ImitationInstance.state.store.view.translateX = 0
 
@@ -62,17 +70,30 @@ ImitationInstance.state.function.update = () => {
   ImitationInstance.dispatch()
 }
 
+ImitationInstance.state.function.updateCanvasAction = () => {
+  ImitationInstance.state.update.canvasAction = performance.now()
+  ImitationInstance.dispatch()
+}
+
+ImitationInstance.state.function.updateCanvasRender = () => {
+  ImitationInstance.state.update.canvasRender = performance.now()
+  ImitationInstance.dispatch()
+}
+
 ImitationInstance.state.function.onLoad = () => {
   ImitationInstance.state.store.load = true
   ImitationInstance.state.store.rect = undefined
   ImitationInstance.state.store.drag = true
   ImitationInstance.state.store.source = JSON.parse(JSON.stringify(mockSource[0]))
   ImitationInstance.state.store.canvas.information = localStorage.getItem('canvas') ? JSON.parse(localStorage.getItem('canvas')) : mockCanvas()
+
+  ImitationInstance.state.function.onCreateLayer()
+  ImitationInstance.state.function.onCreateLayer()
+
   ImitationInstance.state.store.canvas.control = ImitationInstance.state.store.canvas.information[0]._hash
   ImitationInstance.state.store.paint.information = Paint
   ImitationInstance.state.store.paint.control = ImitationInstance.state.store.paint.information[0]._hash
   ImitationInstance.state.store.paint.setting = JSON.parse(JSON.stringify(ImitationInstance.state.store.paint.information[0].settingDefault))
-  ImitationInstance.state.store.setting.open = true
 
   ImitationInstance.state.function.update()
 }
@@ -127,23 +148,52 @@ ImitationInstance.state.function.onSave = () => {
   navigator.clipboard.writeText(JSON.stringify(pixelArray))
 }
 
-ImitationInstance.state.function.onCreateLayer = (content) => {
-  const i = { _hash: hash(), translateX: 0, translateY: 0, scale: 0.5, pixel: [], ...content }
+ImitationInstance.state.function.onCreateLayer = () => {
+  const i = {
+    _hash: hash(),
+    action: [],
+    offscreenBase64: undefined,
+    offscreenBase64Image: undefined,
+    offscreenCanvasRef: undefined,
+    offscreenContextRef: undefined,
+    actionShouldUpdate: false,
+    offscreenBase64ShouldUpdate: false,
+  }
 
-  ImitationInstance.state.store.canvas.push(i)
+  ImitationInstance.state.store.canvas.information.push(i)
 
   ImitationInstance.state.function.update()
 }
 
 ImitationInstance.state.function.onRemoveLayer = (_hash) => {
-  if (ImitationInstance.state.store.canvas.length === 1) return
+  ImitationInstance.state.store.canvas.information = ImitationInstance.state.store.canvas.information.filter(i => i._hash !== _hash)
 
-  ImitationInstance.state.store.canvas = ImitationInstance.state.store.canvas.filter(i => i._hash !== _hash)
-
-  if (ImitationInstance.state.store.control.hash === _hash) ImitationInstance.state.store.control.hash = ImitationInstance.state.store.canvas[0]._hash
+  ImitationInstance.state.store.canvas.control = undefined
 
   ImitationInstance.state.function.update()
+  ImitationInstance.state.function.updateCanvas()
 }
+
+ImitationInstance.state.function.onMoveLayer = (_hash, type) => {
+  const index = ImitationInstance.state.store.canvas.information.findIndex(i => i._hash === _hash)
+
+  if (type === 0 && index !== 0) {
+    const [a, b] = [ImitationInstance.state.store.canvas.information[index - 1], ImitationInstance.state.store.canvas.information[index]]
+    ImitationInstance.state.store.canvas.information[index - 1] = b
+    ImitationInstance.state.store.canvas.information[index] = a
+  }
+
+  if (type === 1 && index !== ImitationInstance.state.store.canvas.information.length - 1) {
+    const [a, b] = [ImitationInstance.state.store.canvas.information[index], ImitationInstance.state.store.canvas.information[index + 1]]
+    ImitationInstance.state.store.canvas.information[index] = b
+    ImitationInstance.state.store.canvas.information[index + 1] = a
+  }
+
+  ImitationInstance.state.function.update()
+  ImitationInstance.state.function.updateCanvas()
+}
+
+
 
 ImitationInstance.state.function.onSwitchLayer = (content) => {
   if (ImitationInstance.state.store.control.hash === content.hash) return
@@ -187,6 +237,10 @@ ImitationInstance.state.memo.canvasFindIndex = (_hash, dep = []) => React.useMem
   return ImitationInstance.state.store.canvas.information.findIndex(i => i._hash === _hash)
 }, [...dep, _hash, ImitationInstance.state.store.canvas.information])
 
+ImitationInstance.state.memo.canvasRenderFind = (_hash, dep = []) => React.useMemo(() => {
+  return ImitationInstance.state.store.canvas.render.find(i => i._hash === _hash)
+}, [...dep, _hash, ImitationInstance.state.store.canvas.render])
+
 ImitationInstance.state.memo.paintFind = (_hash, dep = []) => React.useMemo(() => {
   return ImitationInstance.state.store.paint.information.find(i => i._hash === _hash)
 }, [...dep, _hash, ImitationInstance.state.store.paint.information])
@@ -195,8 +249,8 @@ ImitationInstance.state.memo.paintActionFindRun = (_hash, dep = []) => React.use
   return ImitationInstance.state.store.paint.information.find(i => i._hash === _hash).paintAction()
 }, [...dep, _hash, ImitationInstance.state.store.paint.information])
 
-ImitationInstance.state.memo.paintOriginFindMap = (dep = []) => React.useMemo(() => {
-  return ImitationInstance.state.store.paint.information.reduce((t, i) => ({ ...t, [i._hash]: i.paintOrigin }), {})
+ImitationInstance.state.memo.paintOriginFindTypeMap = (dep = []) => React.useMemo(() => {
+  return ImitationInstance.state.store.paint.information.reduce((t, i) => ({ ...t, [i.type]: i.paintOrigin }), {})
 }, [...dep, ImitationInstance.state.store.paint.information])
 
 export default ImitationInstance

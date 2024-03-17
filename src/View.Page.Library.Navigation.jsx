@@ -16,11 +16,11 @@ import { ImitationGlobal, ImitationPageLibrary, withBindComponentPure } from './
 import { DialogSX, TextFieldSX, TabsSX, DividerSX, SwitchSX, SelectSX, DrawerSX, AccordionSX, PaperSX } from './utils.mui.sx'
 
 function Content() {
-  return <div style={{ width: 360, height: '100%', padding: 16 }}>
-    <Grid container spacing={1}>
+  return <div style={{ width: 360, height: '100%', padding: 16, overflowY: 'auto' }}>
+    <Grid container spacing={2}>
 
       <Grid item xs={12}>
-        <Accordion {...AccordionSX()} defaultExpanded={true}>
+        <Accordion {...AccordionSX()} expanded={ImitationPageLibrary.state.store.navigation.expand[0]} onChange={(e, v) => { ImitationPageLibrary.state.store.navigation.expand[0] = v; ImitationPageLibrary.state.function.update() }}>
           <AccordionSummary>View</AccordionSummary>
           <AccordionDetails>
             <Grid container spacing={2}>
@@ -36,10 +36,10 @@ function Content() {
       </Grid>
 
       <Grid item xs={12}>
-        <Accordion {...AccordionSX()} defaultExpanded={true}>
+        <Accordion {...AccordionSX()} expanded={ImitationPageLibrary.state.store.navigation.expand[1]} onChange={(e, v) => { ImitationPageLibrary.state.store.navigation.expand[1] = v; ImitationPageLibrary.state.function.update() }}>
           <AccordionSummary>Action</AccordionSummary>
           <AccordionDetails>
-            <Grid container spacing={1}>
+            <Grid container spacing={2}>
               <Grid item xs={12}>
                 <Button fullWidth variant='contained' onClick={undefined} children={<EditIcon />} />
               </Grid>
@@ -54,18 +54,18 @@ function Content() {
 
 function App() {
   const onChange = () => {
-    ImitationPageLibrary.state.store.setting.open = false
+    ImitationPageLibrary.state.store.navigation.open = false
     ImitationPageLibrary.state.function.update()
   }
 
   if (ImitationGlobal.state.store.navigation.mode === 0) {
-    return <Paper {...PaperSX()} style={{ width: ImitationPageLibrary.state.store.setting.open ? 360 : 0, marginRight: ImitationPageLibrary.state.store.setting.open ? 16 : 0, height: '100%', transitionProperty: 'width, margin', transitionDuration: '1s', overflow: 'hidden' }}>
+    return <Paper {...PaperSX()} style={{ width: ImitationPageLibrary.state.store.navigation.open ? 360 : 0, marginRight: ImitationPageLibrary.state.store.navigation.open ? 16 : 0, height: '100%', transitionProperty: 'width, margin-right', transitionDuration: '1s', overflow: 'hidden' }}>
       <Content />
     </Paper>
   }
 
   if (ImitationGlobal.state.store.navigation.mode === 1) {
-    return <Drawer {...DrawerSX()} anchor='left' open={ImitationPageLibrary.state.store.setting.open} onClose={() => onChange()}>
+    return <Drawer {...DrawerSX()} anchor='left' open={ImitationPageLibrary.state.store.navigation.open} onClose={() => onChange()}>
       <Content />
     </Drawer>
   }
