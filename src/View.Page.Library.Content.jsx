@@ -19,8 +19,8 @@ function Pagination() {
   const sourceArray = ImitationPageLibrary.state.store.source
   const sourceLength = ImitationPageLibrary.state.store.source.length
 
-  const sourceFindFirst = ImitationPageLibrary.state.memo.sourceFind(ImitationPageLibrary.state.store.render[0].hash)
-  const sourceFindIndexFirst = ImitationPageLibrary.state.memo.sourceFindIndex(ImitationPageLibrary.state.store.render[0].hash)
+  const sourceFindFirst = ImitationPageLibrary.state.memo.sourceFind(ImitationPageLibrary.state.store.render[0].hashSource)
+  const sourceFindIndexFirst = ImitationPageLibrary.state.memo.sourceFindIndex(ImitationPageLibrary.state.store.render[0].hashSource)
 
   const sourceArrayMap = sourceArray.map((i, index) => ({ ...i, index: index }))
   const sourceArraySort = [...sourceArrayMap.slice(sourceFindIndexFirst + 1, sourceLength), ...sourceArrayMap.slice(0, sourceFindIndexFirst)]
@@ -34,7 +34,7 @@ function Pagination() {
       previous.map((i, index) => {
         return <AnimationRAF animation={opacityAnimation} key={'previous' + index}>
           {
-            ({ style }) => <Button variant='text' style={{ ...styleButton, ...style, transitionProperty: 'opacity', transitionDuration: '1s' }} onClick={() => ImitationPageLibrary.state.function.onSwitch({ hash: i._hash, direction: 0 })}>{String(Number(i.index) + 1).padStart(2, '0')}</Button>
+            ({ style }) => <Button variant='text' style={{ ...styleButton, ...style, transitionProperty: 'opacity', transitionDuration: '1s' }} onClick={() => ImitationPageLibrary.state.function.onSwitch({ hashSource: i._hash, direction: 0 })}>{String(Number(i.index) + 1).padStart(2, '0')}</Button>
           }
         </AnimationRAF>
       })
@@ -42,7 +42,7 @@ function Pagination() {
 
     <AnimationRAF animation={opacityAnimation}>
       {
-        ({ style }) => <Button variant='contained' style={{ ...styleButton, ...style, transitionProperty: 'opacity', transitionDuration: '1s' }} color='primary' onClick={() => ImitationPageLibrary.state.function.onSwitch({ hash: sourceFindFirst._hash, direction: 2 })}>{String(Number(sourceFindIndexFirst) + 1).padStart(2, '0')}</Button>
+        ({ style }) => <Button variant='contained' style={{ ...styleButton, ...style, transitionProperty: 'opacity', transitionDuration: '1s' }} color='primary' onClick={() => ImitationPageLibrary.state.function.onSwitch({ hashSource: sourceFindFirst._hash, direction: 2 })}>{String(Number(sourceFindIndexFirst) + 1).padStart(2, '0')}</Button>
       }
     </AnimationRAF>
 
@@ -50,7 +50,7 @@ function Pagination() {
       next.map((i, index) => {
         return <AnimationRAF animation={opacityAnimation} key={'next' + index}>
           {
-            ({ style }) => <Button variant='text' style={{ ...styleButton, ...style, transitionProperty: 'opacity', transitionDuration: '1s' }} onClick={() => ImitationPageLibrary.state.function.onSwitch({ hash: i._hash, direction: 1 })}>{String(Number(i.index) + 1).padStart(2, '0')}</Button>
+            ({ style }) => <Button variant='text' style={{ ...styleButton, ...style, transitionProperty: 'opacity', transitionDuration: '1s' }} onClick={() => ImitationPageLibrary.state.function.onSwitch({ hashSource: i._hash, direction: 1 })}>{String(Number(i.index) + 1).padStart(2, '0')}</Button>
           }
         </AnimationRAF>
       })
@@ -65,8 +65,8 @@ function ContentRender(props) {
   const renderLength = ImitationPageLibrary.state.store.render.length
 
   const size = ImitationPageLibrary.state.memo.size()
-  const sourceFind = ImitationPageLibrary.state.memo.sourceFind(props.hash)
-  const sourceFindIndex = ImitationPageLibrary.state.memo.sourceFindIndex(props.hash)
+  const sourceFind = ImitationPageLibrary.state.memo.sourceFind(props.hashSource)
+  const sourceFindIndex = ImitationPageLibrary.state.memo.sourceFindIndex(props.hashSource)
   const renderFindIndexInLast = ImitationPageLibrary.state.memo.renderFindIndexInLast(props._hash)
 
   const caculateStyleAnimation = () => {
@@ -132,7 +132,7 @@ function ContentRender(props) {
         if (content.index < 0) content.index = sourceLength - 1
         if (content.index > sourceLength - 1) content.index = 0
 
-        content.hash = source[content.index]._hash
+        content.hashSource = source[content.index]._hash
 
         ImitationPageLibrary.state.function.onSwitch(content)
       }

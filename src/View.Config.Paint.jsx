@@ -1,4 +1,4 @@
-import OriginLine from './View.Config.Paint.OriginLine'
+import OriginLine from './View.Config.Paint.Origin.Line'
 import Line from './View.Config.Paint.Line'
 import Rubber from './View.Config.Paint.Rubber'
 

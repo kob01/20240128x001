@@ -79,7 +79,7 @@ function Content() {
                 <FormControl sx={SelectSX().sx} fullWidth>
                   <Select {...SelectSX()} value={ImitationPageCanvas.state.store.paint.control} onChange={(e) => { ImitationPageCanvas.state.function.onSwitchPaint(e.target.value) }}>
                     {
-                      ImitationPageCanvas.state.store.paint.information.map(i => <MenuItem value={i._hash} key={i._hash}>{i.label}</MenuItem>)
+                      ImitationPageCanvas.state.store.paint.information.map(i => <MenuItem value={i._hash} key={i._hash}>{i.name}</MenuItem>)
                     }
                   </Select>
                 </FormControl>

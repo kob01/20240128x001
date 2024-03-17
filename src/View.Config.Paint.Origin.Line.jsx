@@ -10,9 +10,7 @@ import { hash } from './utils.common'
 
 const _hash = 'OriginLine'
 
-const type = 'OriginLine'
-
-const label = 'OriginLine'
+const name = 'OriginLine'
 
 function Color(props) {
   const { value, onChange } = props
@@ -86,7 +84,7 @@ const paintAction = () => {
     const r = []
 
     if (status === 0) {
-      ref.action = { _hash: hash(), type: type, path: [{ x: x, y: y }], setting: setting, offset: { x: 0, y: 0 } }
+      ref.action = { _hash: hash(), hashPaint: _hash, path: [{ x: x, y: y }], setting: JSON.parse(JSON.stringify(setting)), offset: { x: 0, y: 0 } }
     }
 
     if (status === 0) {
@@ -105,6 +103,6 @@ const paintAction = () => {
   }
 }
 
-const r = { _hash: _hash, type: type, label: label, paintOrigin: paintOrigin, paintAction: paintAction, settingComponent: settingComponent, settingDefault: settingDefault }
+const r = { _hash: _hash, name: name, paintOrigin: paintOrigin, paintAction: paintAction, settingComponent: settingComponent, settingDefault: settingDefault }
 
 export default r

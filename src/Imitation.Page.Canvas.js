@@ -245,12 +245,12 @@ ImitationInstance.state.memo.paintFind = (_hash, dep = []) => React.useMemo(() =
   return ImitationInstance.state.store.paint.information.find(i => i._hash === _hash)
 }, [...dep, _hash, ImitationInstance.state.store.paint.information])
 
-ImitationInstance.state.memo.paintActionFindRun = (_hash, dep = []) => React.useMemo(() => {
+ImitationInstance.state.memo.paintActionRunFind = (_hash, dep = []) => React.useMemo(() => {
   return ImitationInstance.state.store.paint.information.find(i => i._hash === _hash).paintAction()
 }, [...dep, _hash, ImitationInstance.state.store.paint.information])
 
-ImitationInstance.state.memo.paintOriginFindTypeMap = (dep = []) => React.useMemo(() => {
-  return ImitationInstance.state.store.paint.information.reduce((t, i) => ({ ...t, [i.type]: i.paintOrigin }), {})
+ImitationInstance.state.memo.paintOriginFindMap = (key, dep = []) => React.useMemo(() => {
+  return ImitationInstance.state.store.paint.information.reduce((t, i) => ({ ...t, [i[key]]: i.paintOrigin }), {})
 }, [...dep, ImitationInstance.state.store.paint.information])
 
 export default ImitationInstance

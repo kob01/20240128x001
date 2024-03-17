@@ -39,7 +39,7 @@ ImitationInstance.state.function.onLoad = () => {
   ImitationInstance.state.store.load = true
   ImitationInstance.state.store.rect = undefined
   ImitationInstance.state.store.source = mockSource
-  ImitationInstance.state.store.render = [{ _hash: hash(), hash: ImitationInstance.state.store.source[0]._hash, direction: 2 }]
+  ImitationInstance.state.store.render = [{ _hash: hash(), hashSource: ImitationInstance.state.store.source[0]._hash, direction: 2 }]
   ImitationInstance.state.function.update()
 }
 
@@ -50,11 +50,11 @@ ImitationInstance.state.function.onUnload = () => {
 }
 
 ImitationInstance.state.function.onSwitch = (content) => {
-  if (ImitationInstance.state.store.render[ImitationInstance.state.store.render.length - 1].hash === content.hash) return
+  if (ImitationInstance.state.store.render[ImitationInstance.state.store.render.length - 1].hashSource === content.hashSource) return
 
   const last = ImitationInstance.state.store.render[ImitationInstance.state.store.render.length - 1]
   last.direction = content.direction
-  const r = { _hash: hash(), hash: content.hash, direction: content.direction }
+  const r = { _hash: hash(), hashSource: content.hashSource, direction: content.direction }
 
   ImitationInstance.state.store.render.push(r)
   ImitationInstance.state.function.update()

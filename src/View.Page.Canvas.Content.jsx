@@ -13,8 +13,7 @@ import { PaperSX } from './utils.mui.sx'
 import { throttle, fixed, canvasDrawImageCenter } from './utils.common'
 
 function ContentCanvasRender() {
-  const canvasFind = ImitationPageCanvas.state.memo.canvasFind(ImitationPageCanvas.state.store.canvas.control)
-  const paintOriginFindTypeMap = ImitationPageCanvas.state.memo.paintOriginFindTypeMap()
+  const paintOriginFindTypeMap = ImitationPageCanvas.state.memo.paintOriginFindMap('_hash')
 
   const refFunction = el => ImitationPageCanvas.state.store.canvas.canvasRef = el
 
@@ -26,7 +25,7 @@ function ContentCanvasRender() {
     }
   })
 
-  const renderAction = (context, actions) => actions.forEach(i => paintOriginFindTypeMap[i.type](context, actionPositionAssign(i)))
+  const renderAction = (context, actions) => actions.forEach(i => paintOriginFindTypeMap[i.hashPaint](context, actionPositionAssign(i)))
 
   React.useEffect(() => {
     ImitationPageCanvas.state.store.canvas.contextRef = ImitationPageCanvas.state.store.canvas.canvasRef.getContext('2d')
@@ -49,35 +48,35 @@ function ContentCanvasRender() {
 
   React.useEffect(() => {
     ImitationPageCanvas.state.store.canvas.information.forEach(i => {
-      if (i.offscreenBase64Image === undefined && i.offscreenBase64 !== undefined) {
-        new Promise(r => {
-          const image = new Image()
-          image.src = i.offscreenBase64
-          image.onload = () => { i.offscreenBase64Image = image; r(); }
-        }).then(() => {
-          if (i._hash === ImitationPageCanvas.state.store.canvas.control) {
-            canvasDrawImageCenter(i.offscreenCanvasRef, i.offscreenContextRef, i.offscreenBase64Image)
-            i.action.forEach(i_ => paintOriginFindTypeMap[i_.type](i.offscreenContextRef, i_))
-          }
-          if (i._hash !== ImitationPageCanvas.state.store.canvas.control) {
-            canvasDrawImageCenter(i.offscreenCanvasRef, i.offscreenContextRef, i.offscreenBase64Image)
-          }
-          ImitationPageCanvas.state.function.updateCanvasRender()
-          ImitationPageCanvas.state.function.update()
-        })
-      }
+      // if (i.offscreenBase64Image === undefined && i.offscreenBase64 !== undefined) {
+      //   new Promise(r => {
+      //     const image = new Image()
+      //     image.src = i.offscreenBase64
+      //     image.onload = () => { i.offscreenBase64Image = image; r(); }
+      //   }).then(() => {
+      //     if (i._hash === ImitationPageCanvas.state.store.canvas.control) {
+      //       canvasDrawImageCenter(i.offscreenCanvasRef, i.offscreenContextRef, i.offscreenBase64Image)
+      //       i.action.forEach(i_ => paintOriginFindTypeMap[i_.type](i.offscreenContextRef, i_))
+      //     }
+      //     if (i._hash !== ImitationPageCanvas.state.store.canvas.control) {
+      //       canvasDrawImageCenter(i.offscreenCanvasRef, i.offscreenContextRef, i.offscreenBase64Image)
+      //     }
+      //     ImitationPageCanvas.state.function.updateCanvasRender()
+      //     ImitationPageCanvas.state.function.update()
+      //   })
+      // }
 
-      if (i.offscreenBase64Image !== undefined && i.offscreenBase64 !== undefined) {
-        if (i._hash === ImitationPageCanvas.state.store.canvas.control) {
-          canvasDrawImageCenter(i.offscreenCanvasRef, i.offscreenContextRef, i.offscreenBase64Image)
-          i.action.forEach(i_ => paintOriginFindTypeMap[i_.type](i.offscreenContextRef, i_))
-        }
-        if (i._hash !== ImitationPageCanvas.state.store.canvas.control) {
-          canvasDrawImageCenter(i.offscreenCanvasRef, i.offscreenContextRef, i.offscreenBase64Image)
-        }
-        ImitationPageCanvas.state.function.updateCanvasRender()
-        ImitationPageCanvas.state.function.update()
-      }
+      // if (i.offscreenBase64Image !== undefined && i.offscreenBase64 !== undefined) {
+      //   if (i._hash === ImitationPageCanvas.state.store.canvas.control) {
+      //     canvasDrawImageCenter(i.offscreenCanvasRef, i.offscreenContextRef, i.offscreenBase64Image)
+      //     i.action.forEach(i_ => paintOriginFindTypeMap[i_.type](i.offscreenContextRef, i_))
+      //   }
+      //   if (i._hash !== ImitationPageCanvas.state.store.canvas.control) {
+      //     canvasDrawImageCenter(i.offscreenCanvasRef, i.offscreenContextRef, i.offscreenBase64Image)
+      //   }
+      //   ImitationPageCanvas.state.function.updateCanvasRender()
+      //   ImitationPageCanvas.state.function.update()
+      // }
 
       if (i.offscreenBase64 === undefined) {
         i.offscreenContextRef.clearRect(0, 0, ImitationPageCanvas.state.store.canvas.canvasRef.width, ImitationPageCanvas.state.store.canvas.canvasRef.height)
@@ -99,9 +98,8 @@ function ContentCanvasRender() {
 }
 
 function ContentCanvasWrapper() {
-  const paintOriginFindTypeMap = ImitationPageCanvas.state.memo.paintOriginFindTypeMap()
   const canvasFind = ImitationPageCanvas.state.memo.canvasFind(ImitationPageCanvas.state.store.canvas.control)
-  const paintActionFindRun = ImitationPageCanvas.state.memo.paintActionFindRun(ImitationPageCanvas.state.store.paint.control)
+  const paintActionRunFind = ImitationPageCanvas.state.memo.paintActionRunFind(ImitationPageCanvas.state.store.paint.control)
 
   const dragControlType = React.useRef()
   const dragControlProp = React.useRef()
@@ -131,7 +129,7 @@ function ContentCanvasWrapper() {
       const relativeX = (x - ImitationPageCanvas.state.store.rect.left) / ImitationPageCanvas.state.store.view.scale
       const relativeY = (y - ImitationPageCanvas.state.store.rect.top) / ImitationPageCanvas.state.store.view.scale
 
-      paintActionFindRun(ImitationPageCanvas.state.store.canvas.canvasRef, ImitationPageCanvas.state.store.canvas.contextRef, ImitationPageCanvas.state.store.paint.setting, canvasFind.action, 0, relativeX - offsetX, relativeY - offsetY)
+      paintActionRunFind(ImitationPageCanvas.state.store.canvas.canvasRef, ImitationPageCanvas.state.store.canvas.contextRef, ImitationPageCanvas.state.store.paint.setting, canvasFind.action, 0, relativeX - offsetX, relativeY - offsetY)
       
       ImitationPageCanvas.state.function.updateCanvasAction()
       ImitationPageCanvas.state.function.update()
@@ -145,14 +143,14 @@ function ContentCanvasWrapper() {
       const relativeX = (x - ImitationPageCanvas.state.store.rect.left) / ImitationPageCanvas.state.store.view.scale
       const relativeY = (y - ImitationPageCanvas.state.store.rect.top) / ImitationPageCanvas.state.store.view.scale
 
-      paintActionFindRun(ImitationPageCanvas.state.store.canvas.canvasRef, ImitationPageCanvas.state.store.canvas.contextRef, ImitationPageCanvas.state.store.paint.setting, canvasFind.action, 1, relativeX - offsetX, relativeY - offsetY)
+      paintActionRunFind(ImitationPageCanvas.state.store.canvas.canvasRef, ImitationPageCanvas.state.store.canvas.contextRef, ImitationPageCanvas.state.store.paint.setting, canvasFind.action, 1, relativeX - offsetX, relativeY - offsetY)
       
       ImitationPageCanvas.state.function.updateCanvasAction()
       ImitationPageCanvas.state.function.update()
     }
 
     if (status === 'afterEnd' && dragControlType.current === 0 && canvasFind !== undefined) {
-      paintActionFindRun(ImitationPageCanvas.state.store.canvas.canvasRef, ImitationPageCanvas.state.store.canvas.contextRef, ImitationPageCanvas.state.store.paint.setting, canvasFind.action, 2)
+      paintActionRunFind(ImitationPageCanvas.state.store.canvas.canvasRef, ImitationPageCanvas.state.store.canvas.contextRef, ImitationPageCanvas.state.store.paint.setting, canvasFind.action, 2)
       
       ImitationPageCanvas.state.function.updateCanvasAction()
       ImitationPageCanvas.state.function.update()

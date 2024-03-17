@@ -1,4 +1,4 @@
-import { withBindComponentPure, useBindComponentPure } from 'imitation-imm/build/cmj'
+import { withBindComponentPure, useBindComponentPure } from 'imitation-imm'
 
 import ImitationGlobal from './Imitation.Global'
 import ImitationPageCanvas from './Imitation.Page.Canvas'
