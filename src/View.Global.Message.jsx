@@ -13,7 +13,7 @@ function App() {
 
     if (ref.current) clearTimeout(ref.current)
 
-    if (ImitationGlobal.state.store.message !== '') ref.current = setTimeout(() => { ImitationGlobal.assignState({ message: '' }); setOpen(false); ref.current = null }, 1500)
+    if (ImitationGlobal.state.store.message !== '') ref.current = setTimeout(() => { ImitationGlobal.state.store.message = ''; ImitationGlobal.state.function.update(); setOpen(false); ref.current = null }, 1500)
 
     if (ImitationGlobal.state.store.message !== '') setOpen(true)
 
@@ -24,4 +24,6 @@ function App() {
   return <Snackbar open={open} message={ImitationGlobal.state.store.message} anchorOrigin={{ vertical: 'top', horizontal: 'center' }} />
 }
 
-export default withBindComponentPure(App, [{ instance: ImitationGlobal, dependence: state => [state.store.message] }])
+const dependence = [{ instance: ImitationGlobal, dependence: state => [state.store.message] }]
+
+export default withBindComponentPure(App, dependence)

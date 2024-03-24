@@ -1,7 +1,5 @@
 import React from 'react'
 
-import Navigation from './View.Navigation'
-import NavigationButton from './View.Navigation.Button'
 import Content from './View.Page.Canvas.Content'
 import Tool from './View.Page.Canvas.Tool'
 import PageNavigation from './View.Page.Canvas.Navigation'
@@ -28,9 +26,6 @@ function App() {
             <div style={{ width: 0, height: '100%', flexGrow: 1 }}>
               <Content />
             </div>
-            <div style={{ width: 'fit-content', height: '100%' }}>
-              <Navigation />
-            </div>
           </div>
 
           <div style={{ width: '100%', height: 4 }}></div>
@@ -39,15 +34,12 @@ function App() {
             <Tool />
           </div>
 
-          <div style={{ width: '100%', height: 4 }}></div>
-
-          <NavigationButton />
-
         </div>
       }
     }
   </AnimationRAF>
-
 }
 
-export default withBindComponentPure(App, [{ instance: ImitationPageCanvas, dependence: state => [state.update.now] }])
+const dependence = [{ instance: ImitationPageCanvas, dependence: state => [state.update.now] }]
+
+export default withBindComponentPure(App, dependence)

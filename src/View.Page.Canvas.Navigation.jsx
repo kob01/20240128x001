@@ -1,18 +1,8 @@
 import React from 'react'
 
 import Button from '@mui/material/Button'
-import IconButton from '@mui/material/IconButton'
-import Dialog from '@mui/material/Dialog'
-import DialogTitle from '@mui/material/DialogTitle'
-import DialogContent from '@mui/material/DialogContent'
-import DialogActions from '@mui/material/DialogActions'
 import Grid from '@mui/material/Grid'
-import TextField from '@mui/material/TextField'
-import Tabs from '@mui/material/Tabs'
-import Tab from '@mui/material/Tab'
-import Divider from '@mui/material/Divider'
 import Slider from '@mui/material/Slider'
-import Switch from '@mui/material/Switch'
 import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import Select from '@mui/material/Select'
@@ -21,48 +11,36 @@ import Accordion from '@mui/material/Accordion'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import AccordionDetails from '@mui/material/AccordionDetails'
 import Paper from '@mui/material/Paper'
-import Tooltip from '@mui/material/Tooltip'
+import Switch from '@mui/material/Switch'
 
-import SaveIcon from '@mui/icons-material/Save'
-import DoneIcon from '@mui/icons-material/Done'
-import SendIcon from '@mui/icons-material/Send'
-import RemoveIcon from '@mui/icons-material/Remove'
 import AddIcon from '@mui/icons-material/Add'
-import SettingsIcon from '@mui/icons-material/Settings'
+import SaveIcon from '@mui/icons-material/Save'
 import DeleteIcon from '@mui/icons-material/Delete'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 
 import { ImitationGlobal, ImitationPageCanvas, withBindComponentPure } from './Imitation'
 
-import { fixed } from './utils.common'
-
 import { DialogSX, TextFieldSX, TabsSX, DividerSX, SwitchSX, SelectSX, DrawerSX, AccordionSX, PaperSX, TooltipSX } from './utils.mui.sx'
 
 function Content() {
   const canvasFind = ImitationPageCanvas.state.memo.canvasFind(ImitationPageCanvas.state.store.canvas.control)
+  const canvasActionVisibilityTrackFindIndex = ImitationPageCanvas.state.memo.canvasActionVisibilityTrackFindIndex(ImitationPageCanvas.state.store.canvas.control, canvasFind ? [canvasFind.action.map(i => i.visibility).join('')]: [''])
   const paintFind = ImitationPageCanvas.state.memo.paintFind(ImitationPageCanvas.state.store.paint.control)
 
   return <div style={{ width: 360, height: '100%', padding: 16, overflowY: 'auto' }}>
     <Grid container spacing={2}>
 
       <Grid item xs={12}>
-        <Accordion {...AccordionSX()} expanded={ImitationPageCanvas.state.store.navigation.expand[0]} onChange={(e, v) => { ImitationPageCanvas.state.store.navigation.expand[0] = v; ImitationPageCanvas.state.function.update() }}>
+        <Accordion {...AccordionSX()} expanded={ImitationPageCanvas.state.store.navigation.expand[0]} onChange={(e, v) => { ImitationPageCanvas.state.function.onNavigationExpandChange(0, v) }}>
           <AccordionSummary>View</AccordionSummary>
           <AccordionDetails>
             <Grid container spacing={2}>
-              {/* <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>Fullview</div>
-                <div>
-                  <Switch {...SwitchSX()} checked={ImitationPageCanvas.state.store.view.panorama} onChange={(e) => { ImitationPageCanvas.state.store.view.panorama = e.target.checked; ImitationPageCanvas.state.function.update(); }} />
-                </div>
-              </Grid> */}
-
               <Grid item xs={12}>
                 Scale {ImitationPageCanvas.state.store.view.scale}
               </Grid>
               <Grid item xs={12}>
-                <Slider value={ImitationPageCanvas.state.store.view.scale} onChange={(e, v) => { ImitationPageCanvas.state.store.view.scale = v; ImitationPageCanvas.state.function.update(); }} min={0} max={4} step={0.1} />
+                <Slider value={ImitationPageCanvas.state.store.view.scale} onChange={(e, v) => { ImitationPageCanvas.state.function.onViewScaleChange(v) }} min={0} max={4} step={0.1} />
               </Grid>
             </Grid>
           </AccordionDetails>
@@ -70,16 +48,26 @@ function Content() {
       </Grid>
 
       <Grid item xs={12}>
-        <Accordion {...AccordionSX()} expanded={ImitationPageCanvas.state.store.navigation.expand[1]} onChange={(e, v) => { ImitationPageCanvas.state.store.navigation.expand[1] = v; ImitationPageCanvas.state.function.update() }}>
+        <Accordion {...AccordionSX()} expanded={ImitationPageCanvas.state.store.navigation.expand[1]} onChange={(e, v) => { ImitationPageCanvas.state.function.onNavigationExpandChange(1, v) }}>
           <AccordionSummary>Paint</AccordionSummary>
           <AccordionDetails>
             <Grid container spacing={2}>
               <Grid item xs={12}>Control</Grid>
-              <Grid item xs={12}>
-                <FormControl sx={SelectSX().sx} fullWidth>
-                  <Select {...SelectSX()} value={ImitationPageCanvas.state.store.paint.control} onChange={(e) => { ImitationPageCanvas.state.function.onSwitchPaint(e.target.value) }}>
+              <Grid item xs={12} style={{ display: 'flex' }}>
+                <FormControl sx={SelectSX().sx} style={{ width: 100, marginRight: 8 }}>
+                  <Select {...SelectSX()} value={ImitationPageCanvas.state.store.paint.filter[0]} onChange={(e) => { ImitationPageCanvas.state.function.onPaintFilterTypeSwitch(e.target.value) }}>
                     {
-                      ImitationPageCanvas.state.store.paint.information.map(i => <MenuItem value={i._hash} key={i._hash}>{i.name}</MenuItem>)
+                      Array.from(new Set(ImitationPageCanvas.state.store.paint.information.map(i => i.type)))
+                        .map(i => <MenuItem value={i} key={i}>{i}</MenuItem>)
+                    }
+                  </Select>
+                </FormControl>
+                <FormControl sx={SelectSX().sx} style={{ width: 0, flexGrow: 1 }}>
+                  <Select {...SelectSX()} value={ImitationPageCanvas.state.store.paint.control} onChange={(e) => { ImitationPageCanvas.state.function.onPaintSwitch(e.target.value) }}>
+                    {
+                      ImitationPageCanvas.state.store.paint.information
+                        .filter(i => i.type === ImitationPageCanvas.state.store.paint.filter[0])
+                        .map(i => <MenuItem value={i._hash} key={i._hash}>{i.name}</MenuItem>)
                     }
                   </Select>
                 </FormControl>
@@ -93,28 +81,102 @@ function Content() {
       </Grid>
 
       <Grid item xs={12}>
-        <Accordion {...AccordionSX()} expanded={ImitationPageCanvas.state.store.navigation.expand[2]} onChange={(e, v) => { ImitationPageCanvas.state.store.navigation.expand[2] = v; ImitationPageCanvas.state.function.update() }}>
+        <Accordion {...AccordionSX()} expanded={ImitationPageCanvas.state.store.navigation.expand[2]} onChange={(e, v) => { ImitationPageCanvas.state.function.onNavigationExpandChange(2, v) }}>
           <AccordionSummary>Layer</AccordionSummary>
           <AccordionDetails>
-            <Grid container spacing={2}>
+            <Grid container spacing={1}>
               {
                 ImitationPageCanvas.state.store.canvas.information.map(i => {
-                  return <Grid key={i._hash} item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Button fullWidth variant={ImitationPageCanvas.state.store.canvas.control === i._hash ? 'outlined' : 'text'} onClick={() => { ImitationPageCanvas.state.store.canvas.control = i._hash; ImitationPageCanvas.state.function.update() }} style={{ marginRight: 8 }}>{i._hash}</Button>
-                    <Tooltip {...TooltipSX()} title={
-                      <Paper {...PaperSX()} style={{ padding: 12 }}>
-                        <IconButton onClick={() => { ImitationPageCanvas.state.function.onRemoveLayer(i._hash) }}><DeleteIcon color='primary' /></IconButton>
-                        <IconButton onClick={() => { ImitationPageCanvas.state.function.onMoveLayer(i._hash, 0) }}><KeyboardArrowUpIcon /></IconButton>
-                        <IconButton onClick={() => { ImitationPageCanvas.state.function.onMoveLayer(i._hash, 1) }}><KeyboardArrowDownIcon /></IconButton>
-                      </Paper>
-                    }>
-                      <IconButton><SettingsIcon color='primary' /></IconButton>
-                    </Tooltip>
+                  return <Grid key={i._hash} item xs={12}>
+                    <Button fullWidth variant={ImitationPageCanvas.state.store.canvas.control === i._hash ? 'contained' : 'outlined'} onClick={() => { ImitationPageCanvas.state.store.canvas.control = i._hash; ImitationPageCanvas.state.function.update() }} style={{ marginRight: 8 }}>{i._hash}</Button>
                   </Grid>
                 })
               }
-              <Grid item xs={12}>
-                <Button fullWidth variant='text' onClick={() => { ImitationPageCanvas.state.function.onCreateLayer() }}><AddIcon /></Button>
+              <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>
+                <div>Action</div>
+                <div>
+                  <Button variant='outlined' style={{ padding: 5, minWidth: 'auto', marginLeft: 4 }} onClick={() => { ImitationPageCanvas.state.function.onCanvasLayerCreate() }}><AddIcon /></Button>
+                </div>
+              </Grid>
+            </Grid>
+          </AccordionDetails>
+        </Accordion>
+      </Grid>
+
+      {
+        canvasFind !== undefined ?
+          <Grid item xs={12}>
+            <Accordion {...AccordionSX()} expanded={ImitationPageCanvas.state.store.navigation.expand[3]} onChange={(e, v) => { ImitationPageCanvas.state.function.onNavigationExpandChange(3, v) }}>
+              <AccordionSummary>Layer Setting</AccordionSummary>
+              <AccordionDetails>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>Visibility</div>
+                    <div>
+                      <Switch {...SwitchSX()} checked={canvasFind.visibility} onChange={(e) => { ImitationPageCanvas.state.function.onCanvasLayerVisibility(canvasFind._hash, e.target.checked) }} />
+                    </div>
+                  </Grid>
+
+                  <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>Action</div>
+                    <div>
+                      <Button variant='outlined' style={{ padding: 5, minWidth: 'auto', marginLeft: 4 }} onClick={() => { ImitationPageCanvas.state.function.onCanvasLayerMove(canvasFind._hash, 0) }}><KeyboardArrowUpIcon color='primary' /></Button>
+                      <Button variant='outlined' style={{ padding: 5, minWidth: 'auto', marginLeft: 4 }} onClick={() => { ImitationPageCanvas.state.function.onCanvasLayerMove(canvasFind._hash, 1) }}><KeyboardArrowDownIcon color='primary' /></Button>
+                      <Button variant='outlined' style={{ padding: 5, minWidth: 'auto', marginLeft: 4 }} onClick={() => { ImitationPageCanvas.state.function.onCanvasLayerRemove(canvasFind._hash) }}><DeleteIcon color='primary' /></Button>
+                    </div>
+                  </Grid>
+                </Grid>
+              </AccordionDetails>
+            </Accordion>
+          </Grid>
+          : null
+      }
+
+      {
+        canvasFind !== undefined ?
+          <Grid item xs={12}>
+            <Accordion {...AccordionSX()} expanded={ImitationPageCanvas.state.store.navigation.expand[4]} onChange={(e, v) => { ImitationPageCanvas.state.function.onNavigationExpandChange(4, v) }}>
+              <AccordionSummary>Layer Action</AccordionSummary>
+              <AccordionDetails>
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    Visibility Track {canvasActionVisibilityTrackFindIndex}
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Slider value={canvasActionVisibilityTrackFindIndex} onChange={(e, v) => { ImitationPageCanvas.state.function.onCanvasLayerActionVisibilityTracks(canvasFind._hash, v) }} min={0} max={canvasFind.action.length} step={1} />
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    Visibility
+                  </Grid>
+                  <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Grid container spacing={1}>
+                      {
+                        new Array(canvasFind.action.length).fill().map((i, index) => {
+                          return <Grid item key={index}>
+                            <Button variant={canvasFind.action[index].visibility ? 'contained' : 'outlined'} style={{ padding: 0, width: 36, height: 36, minWidth: 'auto' }} color='primary' onClick={() => ImitationPageCanvas.state.function.onCanvasLayerActionVisibilityTrack(canvasFind._hash, index)}>{String(index + 1).padStart(2, '0')}</Button>
+                          </Grid>
+                        })
+                      }
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </AccordionDetails>
+            </Accordion>
+          </Grid>
+          : null
+      }
+
+      <Grid item xs={12}>
+        <Accordion {...AccordionSX()} expanded={ImitationPageCanvas.state.store.navigation.expand[5]} onChange={(e, v) => { ImitationPageCanvas.state.function.onNavigationExpandChange(5, v) }}>
+          <AccordionSummary>Action</AccordionSummary>
+          <AccordionDetails>
+            <Grid container spacing={1}>
+              <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Button fullWidth style={{ position: 'relative' }} variant='outlined' onClick={() => { ImitationPageCanvas.state.function.onSave(0) }}><SaveIcon style={{ position: 'absolute', left: 8, top: 0, bottom: 0, margin: 'auto' }} />Save Source</Button>
+              </Grid>
+              <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Button fullWidth style={{ position: 'relative' }} variant='outlined' onClick={() => { ImitationPageCanvas.state.function.onSave(1) }}><SaveIcon style={{ position: 'absolute', left: 8, top: 0, bottom: 0, margin: 'auto' }} />Save Canvas</Button>
               </Grid>
             </Grid>
           </AccordionDetails>
@@ -144,232 +206,8 @@ function App() {
   }
 
   return null
-
-  return <Dialog open={ImitationPageCanvas.state.store.setting.dialog} sx={{ ...DialogSX().sx, '& .MuiDialog-paper': { width: '100%', maxWidth: 720 } }} onClose={onClose}>
-    <DialogTitle>Setting</DialogTitle>
-    <DialogContent dividers>
-
-      <Grid container spacing={2}>
-
-        <Grid item xs={12}>
-          <Tabs {...TabsSX()} value={ImitationPageCanvas.state.store.setting.tab} onChange={(e, v) => { ImitationPageCanvas.state.store.setting.tab = v; ImitationPageCanvas.state.function.update(); }}>
-            <Tab label='View' value={0} />
-            <Tab label='Paint' value={1} />
-            <Tab label='Layer' value={2} />
-          </Tabs>
-        </Grid>
-
-        <Grid item xs={12}>
-          <Divider {...DividerSX()} />
-        </Grid>
-
-        {
-          ImitationPageCanvas.state.store.setting.tab === 0 ?
-            <>
-              <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>Scale Layer All</div>
-                <div>
-                  <Switch {...SwitchSX()} checked={ImitationPageCanvas.state.store.view.scaleLayerAll} onChange={(e) => { ImitationPageCanvas.state.store.view.scaleLayerAll = e.target.checked; ImitationPageCanvas.state.function.update(); }} disabled={ImitationPageCanvas.state.store.view.perspective === true} />
-                </div>
-              </Grid>
-
-              <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>Translate Layer</div>
-                <div>
-                  <Switch {...SwitchSX()} checked={ImitationPageCanvas.state.store.view.translateLayer} onChange={(e) => { ImitationPageCanvas.state.function.onSwitchTranslateLayer(e.target.checked) }} />
-                </div>
-              </Grid>
-
-              <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>Translate Layer All</div>
-                <div>
-                  <Switch {...SwitchSX()} checked={ImitationPageCanvas.state.store.view.translateLayerAll} onChange={(e) => { ImitationPageCanvas.state.function.onSwitchTranslateLayerAll(e.target.checked) }} />
-                </div>
-              </Grid>
-
-              <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>Translate Fix</div>
-                <div>
-                  <Button variant='text' onClick={() => ImitationPageCanvas.state.function.onTranslateFix()} children={<SendIcon />} />
-                </div>
-              </Grid>
-
-              <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>Resize</div>
-                <div>
-                  <Switch {...SwitchSX()} checked={ImitationPageCanvas.state.store.view.resizeLayer} onChange={(e) => { ImitationPageCanvas.state.function.onSwitchRisezeLayer(e.target.checked) }} />
-                </div>
-              </Grid>
-
-              <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>Fullview</div>
-                <div>
-                  <Switch {...SwitchSX()} checked={ImitationPageCanvas.state.store.view.panorama} onChange={(e) => { ImitationPageCanvas.state.store.view.panorama = e.target.checked; ImitationPageCanvas.state.function.update(); }} />
-                </div>
-              </Grid>
-
-              <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>Perspective</div>
-                <div>
-                  <Switch {...SwitchSX()} checked={ImitationPageCanvas.state.store.view.perspective} onChange={(e) => { ImitationPageCanvas.state.function.onSwitchPerspective(e.target.checked) }} />
-                </div>
-              </Grid>
-
-              {
-                ImitationPageCanvas.state.store.view.perspective === true ?
-                  <>
-                    <Grid item xs={12}>
-                      Perspective Gap {fixed(ImitationPageCanvas.state.store.view.perspectiveGap)}
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Slider value={ImitationPageCanvas.state.store.view.perspectiveGap} onChange={(e, v) => { ImitationPageCanvas.state.store.view.perspectiveGap = v; ImitationPageCanvas.state.function.update(); }} min={0} max={400} step={1} />
-                    </Grid>
-
-                    <Grid item xs={12}>
-                      Perspective Rotate X {fixed(ImitationPageCanvas.state.store.view.perspectiveRotateX)}
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Slider value={ImitationPageCanvas.state.store.view.perspectiveRotateX} onChange={(e, v) => { ImitationPageCanvas.state.store.view.perspectiveRotateX = v; ImitationPageCanvas.state.function.update(); }} min={-360} max={360} step={1} />
-                    </Grid>
-
-                    <Grid item xs={12}>
-                      Perspective Rotate Y {fixed(ImitationPageCanvas.state.store.view.perspectiveRotateY)}
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Slider value={ImitationPageCanvas.state.store.view.perspectiveRotateY} onChange={(e, v) => { ImitationPageCanvas.state.store.view.perspectiveRotateY = v; ImitationPageCanvas.state.function.update(); }} min={-360} max={360} step={1} />
-                    </Grid>
-                  </>
-                  : null
-              }
-            </>
-            : null
-        }
-
-        {
-          ImitationPageCanvas.state.store.setting.tab === 1 ?
-            <>
-              <Grid item xs={12}>
-                Current
-              </Grid>
-              <Grid item xs={12}>
-                <FormControl sx={SelectSX().sx} fullWidth>
-                  <Select {...SelectSX()} value={ImitationPageCanvas.state.store.paint.current} onChange={(e) => { ImitationPageCanvas.state.function.onSwitchPaint(e.target.value) }}>
-                    {
-                      ImitationPageCanvas.state.store.paint.option.map(i => {
-                        return <MenuItem value={i._hash} key={i._hash}>{i.label}</MenuItem>
-                      })
-                    }
-                  </Select>
-                </FormControl>
-              </Grid>
-
-              {
-                paintFind.settingComponent.map((I, index) => <I key={index} value={ImitationPageCanvas.state.store.paint.setting} onChange={() => ImitationPageCanvas.state.function.update()} />)
-              }
-            </>
-            : null
-        }
-
-        {
-          ImitationPageCanvas.state.store.setting.tab === 2 ?
-            <>
-              <Grid item xs={12}>
-                <Tabs {...TabsSX()} value={ImitationPageCanvas.state.store.setting.tabLayer} onChange={(e, v) => { ImitationPageCanvas.state.store.setting.tabLayer = v; ImitationPageCanvas.state.function.update(); }}>
-                  <Tab label='Current' value={0} />
-                  <Tab label='Create' value={1} />
-                </Tabs>
-              </Grid>
-
-              <Grid item xs={12}>
-                <Divider {...DividerSX()} />
-              </Grid>
-
-              {
-                ImitationPageCanvas.state.store.setting.tabLayer === 0 ?
-                  <>
-                    <Grid item xs={12}>
-                      Width
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField {...TextFieldSX()} value={canvasFind.width} onChange={e => { canvasFind.width = e.target.value; ImitationPageCanvas.state.function.update(); }} fullWidth autoComplete='off' />
-                    </Grid>
-
-                    <Grid item xs={12}>
-                      Height
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField {...TextFieldSX()} value={canvasFind.height} onChange={e => { canvasFind.height = e.target.value; ImitationPageCanvas.state.function.update(); }} fullWidth autoComplete='off' />
-                    </Grid>
-
-                    <Grid item xs={12}>
-                      Translate X
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField {...TextFieldSX()} value={canvasFind.translateX} onChange={e => { canvasFind.translateX = e.target.value; ImitationPageCanvas.state.function.update(); }} fullWidth autoComplete='off' />
-                    </Grid>
-
-                    <Grid item xs={12}>
-                      Translate Y
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField {...TextFieldSX()} value={canvasFind.translateY} onChange={e => { canvasFind.translateY = e.target.value; ImitationPageCanvas.state.function.update(); }} fullWidth autoComplete='off' />
-                    </Grid>
-
-                    <Grid item xs={12}>
-                      Scale {fixed(canvasFind.scale * 10)}
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Slider value={canvasFind.scale * 10} onChange={(e, v) => { canvasFind.scale = v * 0.1; ImitationPageCanvas.state.function.update(); }} min={1} max={20} step={1} />
-                    </Grid>
-
-                    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div>Remove</div>
-                      <div>
-                        <Button variant='text' onClick={() => ImitationPageCanvas.state.function.onRemoveLayer(canvasFind._hash)} children={<SendIcon />} />
-                      </div>
-                    </Grid>
-                  </>
-                  : null
-              }
-
-              {
-                ImitationPageCanvas.state.store.setting.tabLayer === 1 ?
-                  <>
-                    <Grid item xs={12}>
-                      Width
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField {...TextFieldSX()} value={ImitationPageCanvas.state.store.layer.width} onChange={e => { ImitationPageCanvas.state.store.layer.width = e.target.value; ImitationPageCanvas.state.function.update(); }} fullWidth autoComplete='off' />
-                    </Grid>
-
-                    <Grid item xs={12}>
-                      Height
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField {...TextFieldSX()} value={ImitationPageCanvas.state.store.layer.height} onChange={e => { ImitationPageCanvas.state.store.layer.height = e.target.value; ImitationPageCanvas.state.function.update(); }} fullWidth autoComplete='off' />
-                    </Grid>
-
-                    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div>Create</div>
-                      <div>
-                        <Button variant='text' onClick={() => ImitationPageCanvas.state.function.onCreateLayer(ImitationPageCanvas.state.store.layer)} children={<SendIcon />} />
-                      </div>
-                    </Grid>
-                  </>
-                  : null
-              }
-            </>
-            : null
-        }
-
-      </Grid>
-    </DialogContent>
-    <DialogActions>
-      <Button variant='contained' onClick={() => ImitationPageCanvas.state.function.onClear()} children={<RemoveIcon />} />
-      <Button variant='contained' onClick={() => ImitationPageCanvas.state.function.onSave()} children={<SaveIcon />} />
-      <Button variant='contained' onClick={onClose} children={<DoneIcon />} />
-    </DialogActions>
-  </Dialog >
 }
 
-export default withBindComponentPure(App, [{ instance: ImitationGlobal, dependence: state => [state.store.navigation.mode] }, { instance: ImitationPageCanvas, dependence: state => [state.store.update] }])
+const dependence = [{ instance: ImitationGlobal, dependence: state => [state.store.navigation.mode] }]
+
+export default withBindComponentPure(App, dependence)

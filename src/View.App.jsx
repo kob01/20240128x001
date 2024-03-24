@@ -16,4 +16,6 @@ function App() {
   </ThemeProvider>
 }
 
-export default withBindComponentPure(App, [{ instance: ImitationGlobal, dependence: state => [JSON.stringify(state.store.theme)] }])
+const dependence = [{ instance: ImitationGlobal, dependence: state => [...Object.values(state.store.theme.palette).map(i => i.main)] }]
+
+export default withBindComponentPure(App, dependence)

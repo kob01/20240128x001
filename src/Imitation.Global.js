@@ -14,7 +14,7 @@ ImitationInstance.state.store.loading = 0
 
 ImitationInstance.state.store.message = ''
 
-ImitationInstance.state.store.navigation.open = true
+ImitationInstance.state.store.navigation.open = false
 
 ImitationInstance.state.store.navigation.expand = [true, true]
 

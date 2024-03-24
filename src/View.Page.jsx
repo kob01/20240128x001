@@ -1,23 +1,33 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
 
+import Navigation from './View.Page.Navigation'
 import Library from './View.Page.Library'
 import Canvas from './View.Page.Canvas'
 
 import { ImitationGlobal, withBindComponentPure } from './Imitation'
 
 function App() {
-  return <div style={{ position: 'absolute', width: '100%', height: '100%', padding: 16, overflow: 'hidden' }}>
+  return <div style={{ position: 'absolute', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 16, overflow: 'hidden' }}>
 
-    {
-      ImitationGlobal.state.store.router === 'Library' ? <Library key='Library' /> : null
-    }
+    <div style={{ width: '100%', height: 0, flexGrow: 1 }}>
 
-    {
-      ImitationGlobal.state.store.router === 'Canvas' ? <Canvas key='Canvas' /> : null
-    }
+      {
+        ImitationGlobal.state.store.router === 'Library' ? <Library key='Library' /> : null
+      }
+
+      {
+        ImitationGlobal.state.store.router === 'Canvas' ? <Canvas key='Canvas' /> : null
+      }
+
+    </div>
+
+    <div style={{ width: '100%', height: 4 }}></div>
+
+    <Navigation />
 
   </div>
 }
 
-export default withBindComponentPure(App, [{ instance: ImitationGlobal, dependence: state => [state.store.router] }])
+const dependence = [{ instance: ImitationGlobal, dependence: state => [state.store.router] }]
+
+export default withBindComponentPure(App, dependence)

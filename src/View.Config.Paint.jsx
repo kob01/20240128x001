@@ -1,11 +1,7 @@
-import OriginLine from './View.Config.Paint.Origin.Line'
-import Line from './View.Config.Paint.Line'
-import Rubber from './View.Config.Paint.Rubber'
+import _2dLine from './View.Config.Paint.2d-Line'
 
 const r = []
 
-// r.push(Line)
-// r.push(Rubber)
-r.push(OriginLine)
+r.push(_2dLine)
 
 export default r

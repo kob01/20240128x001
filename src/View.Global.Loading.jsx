@@ -23,4 +23,6 @@ function App() {
   return <Backdrop open={open} style={{ zIndex: 10000 }}><CircularProgress color='primary' /></Backdrop>
 }
 
-export default withBindComponentPure(App, [{ instance: ImitationGlobal, dependence: state => [state.store.loading] }])
+const dependence = [{ instance: ImitationGlobal, dependence: state => [state.store.loading] }]
+
+export default withBindComponentPure(App, dependence)

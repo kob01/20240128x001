@@ -71,4 +71,6 @@ function App() {
   }
 }
 
-export default withBindComponentPure(App, [{ instance: ImitationGlobal, dependence: state => [state.store.navigation.mode] }, { instance: ImitationPageLibrary, dependence: state => [state.store.update] }])
+const dependence = [{ instance: ImitationGlobal, dependence: state => [state.store.navigation.mode] }]
+
+export default withBindComponentPure(App, dependence)

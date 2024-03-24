@@ -10,6 +10,8 @@ import { hash } from './utils.common'
 
 const _hash = 'Line'
 
+const type = '2d'
+
 const label = 'Line'
 
 function Color(props) {
@@ -81,7 +83,7 @@ const caculateWidth = (path, width, direction) => {
   if (direction === 'y') return total.map(i => ({ ...path, y: path.y + i }))
 }
 
-const paintOrigin = (context, action) => {
+const paintRender = (context, action) => {
   context.save()
   context.globalAlpha = action.alpha
   context.fillStyle = action.color
@@ -179,25 +181,6 @@ const paintAction = () => {
           )
         })
 
-        // path.forEach(i => {
-        //   paintOrigin(
-        //     context,
-        //     {
-        //       ...i,
-        //       x: i.x + offsetX,
-        //       y: i.y + offsetY,
-        //     }
-        //   )
-        //   paintOrigin(
-        //     sandboxContext,
-        //     {
-        //       ...i,
-        //       x: i.x + offsetX,
-        //       y: i.y + offsetY,
-        //     }
-        //   )
-        // })
-
         r.push(...path)
 
         ref.positionTarget = { x: sx, y: sy }
@@ -215,6 +198,6 @@ const paintAction = () => {
   }
 }
 
-const r = { _hash: _hash, label: label, paintOrigin: paintOrigin, paintAction: paintAction, settingComponent: settingComponent, settingDefault: settingDefault }
+const r = { _hash: _hash, type: type, label: label, paintRender: paintRender, paintAction: paintAction, settingComponent: settingComponent, settingDefault: settingDefault }
 
 export default r

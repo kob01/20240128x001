@@ -8,9 +8,11 @@ import { TextFieldSX } from './utils.mui.sx'
 
 import { hash } from './utils.common'
 
-const _hash = 'OriginLine'
+const _hash = '2d-Line'
 
-const name = 'OriginLine'
+const type = '2d'
+
+const name = 'Line'
 
 function Color(props) {
   const { value, onChange } = props
@@ -60,7 +62,7 @@ const settingComponent = [Color, Alpha, Width]
 
 const settingDefault = { color: '#000000', alpha: 1, width: 1 }
 
-const paintOrigin = (context, action) => {
+const paintRender = (context, action) => {
   context.save()
 
   context.globalAlpha = action.setting.alpha
@@ -69,6 +71,7 @@ const paintOrigin = (context, action) => {
 
   action.path.forEach((i, index) => {
     if (index === 0) context.beginPath(i.x + action.offset.x, i.y + action.offset.y)
+    if (index === 0) context.lineTo(i.x + action.offset.x, i.y + action.offset.y)
     if (index !== 0) context.lineTo(i.x + action.offset.x, i.y + action.offset.y)
   })
 
@@ -81,10 +84,9 @@ const paintAction = () => {
   const ref = { _hash: undefined, action: undefined }
 
   return (canvas, context, setting, action, status, x, y) => {
-    const r = []
 
     if (status === 0) {
-      ref.action = { _hash: hash(), hashPaint: _hash, path: [{ x: x, y: y }], setting: JSON.parse(JSON.stringify(setting)), offset: { x: 0, y: 0 } }
+      ref.action = { _hash: hash(), hashPaint: _hash, path: [{ x: Math.floor(x), y: Math.floor(y) }], setting: JSON.parse(JSON.stringify(setting)), offset: { x: 0, y: 0 }, visibility: true }
     }
 
     if (status === 0) {
@@ -92,17 +94,29 @@ const paintAction = () => {
     }
 
     if (status === 1) {
-      ref.action.path.push({ x: x, y: y })
+      if (Math.floor(x) !== ref.action.path[ref.action.path.length - 1].x || Math.floor(y) !== ref.action.path[ref.action.path.length - 1].y) {
+        ref.action.path.push({ x: Math.floor(x), y: Math.floor(y) })
+        while (
+          ref.action.path[ref.action.path.length - 1] !== undefined &&
+          ref.action.path[ref.action.path.length - 2] !== undefined &&
+          ref.action.path[ref.action.path.length - 3] !== undefined &&
+          (
+            (ref.action.path[ref.action.path.length - 1].x === ref.action.path[ref.action.path.length - 2].x && ref.action.path[ref.action.path.length - 2].x === ref.action.path[ref.action.path.length - 3].x) ||
+            (ref.action.path[ref.action.path.length - 1].y === ref.action.path[ref.action.path.length - 2].y && ref.action.path[ref.action.path.length - 2].y === ref.action.path[ref.action.path.length - 3].y)
+          )
+        ) {
+          ref.action.path = ref.action.path.filter((i) => i !== ref.action.path[ref.action.path.length - 2])
+        }
+      }
     }
 
     if (status === 2) {
       ref.action = undefined
     }
 
-    return r
   }
 }
 
-const r = { _hash: _hash, name: name, paintOrigin: paintOrigin, paintAction: paintAction, settingComponent: settingComponent, settingDefault: settingDefault }
+const r = { _hash: _hash, type: type, name: name, paintRender: paintRender, paintAction: paintAction, settingComponent: settingComponent, settingDefault: settingDefault }
 
 export default r

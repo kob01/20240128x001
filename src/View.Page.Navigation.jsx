@@ -13,6 +13,8 @@ import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import Select from '@mui/material/Select'
 
+import MapIcon from '@mui/icons-material/Map'
+
 import { ImitationGlobal, ImitationPageCanvas, ImitationPageLibrary, withBindComponentPure } from './Imitation'
 
 import { DialogSX, TextFieldSX, TabsSX, DividerSX, SwitchSX, SelectSX, DrawerSX, AccordionSX, PaperSX } from './utils.mui.sx'
@@ -93,12 +95,12 @@ function Content() {
         <Accordion {...AccordionSX()} expanded={ImitationGlobal.state.store.navigation.expand[1]} onChange={(e, v) => { ImitationGlobal.state.store.navigation.expand[1] = v; ImitationGlobal.state.function.update() }}>
           <AccordionSummary>Page</AccordionSummary>
           <AccordionDetails>
-            <Grid container spacing={2}>
+            <Grid container spacing={1}>
               <Grid item xs={12}>
-                <Button fullWidth variant={'Library' === ImitationGlobal.state.store.router ? 'contained' : 'outlined'} style={{ width: '100%', height: 32 }} onClick={() => { ImitationGlobal.state.store.router = 'Library'; ImitationGlobal.dispatch() }}>Library</Button>
+                <Button fullWidth style={{ position: 'relative' }} variant={'Library' === ImitationGlobal.state.store.router ? 'contained' : 'outlined'} onClick={() => { ImitationGlobal.state.store.router = 'Library'; ImitationGlobal.dispatch() }}><MapIcon style={{ position: 'absolute', left: 8, top: 0, bottom: 0, margin: 'auto' }} />Library</Button>
               </Grid>
               <Grid item xs={12}>
-                <Button fullWidth variant={'Canvas' === ImitationGlobal.state.store.router ? 'contained' : 'outlined'} style={{ width: '100%', height: 32 }} onClick={() => { ImitationGlobal.state.store.router = 'Canvas'; ImitationGlobal.dispatch() }}>Canvas</Button>
+                <Button fullWidth style={{ position: 'relative' }} variant={'Canvas' === ImitationGlobal.state.store.router ? 'contained' : 'outlined'} onClick={() => { ImitationGlobal.state.store.router = 'Canvas'; ImitationGlobal.dispatch() }}><MapIcon style={{ position: 'absolute', left: 8, top: 0, bottom: 0, margin: 'auto' }} />Canvas</Button>
               </Grid>
             </Grid>
           </AccordionDetails>
@@ -115,17 +117,17 @@ function App() {
     ImitationGlobal.state.function.update()
   }
 
-  if (ImitationGlobal.state.store.navigation.mode === 0) {
-    return <Paper {...PaperSX()} style={{ width: ImitationGlobal.state.store.navigation.open ? 360 : 0, marginLeft: ImitationGlobal.state.store.navigation.open ? 16 : 0, height: '100%', transitionProperty: 'width, margin', transitionDuration: '1s', overflow: 'hidden' }}>
-      <Content />
-    </Paper>
-  }
+  return <>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <Button variant='contained' style={{ padding: 0, width: 120, height: 4, minWidth: 'auto' }} onClick={() => onChange()} />
+    </div>
 
-  if (ImitationGlobal.state.store.navigation.mode === 1) {
-    return <Drawer {...DrawerSX()} anchor='right' open={ImitationGlobal.state.store.navigation.open} onClose={() => onChange()}>
+    <Drawer {...DrawerSX()} anchor='right' open={ImitationGlobal.state.store.navigation.open} onClose={() => onChange()}>
       <Content />
     </Drawer>
-  }
+  </>
 }
 
-export default withBindComponentPure(App, [{ instance: ImitationGlobal, dependence: state => [state.store.router, state.store.navigation.open, state.store.navigation.mode] }])
+const dependence = [{ instance: ImitationGlobal, dependence: state => [state.store.router, state.store.navigation.open, state.store.navigation.mode, ...state.store.navigation.expand] }]
+
+export default withBindComponentPure(App, dependence)

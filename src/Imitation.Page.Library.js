@@ -20,6 +20,8 @@ ImitationInstance.state.store.load = false
 
 ImitationInstance.state.store.rect = undefined
 
+ImitationInstance.state.store.recting = false
+
 ImitationInstance.state.store.source = []
 
 ImitationInstance.state.store.render = []
