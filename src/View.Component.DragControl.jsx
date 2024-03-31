@@ -32,9 +32,26 @@ const useState = (props) => {
     const continuedX = positionTarget.current.x - positionOrigin.current.x
     const continuedY = positionTarget.current.y - positionOrigin.current.y
 
-    positionTarget.current = { x, y }
+    if (xs && ys) {
+      var changedXs = []
+      var changedYs = []
+      var continuedXs = []
+      var continuedYs = []
 
-    onChange({ e, x, y, status: 'afterMove', changedX, changedY, continuedX, continuedY })
+      xs.forEach((x, index) => {
+        changedXs[index] = x - positionTarget.current.xs[index]
+        continuedXs[index] = positionTarget.current.xs[index] - positionOrigin.current.xs[index]
+      })
+
+      ys.forEach((y, index) => {
+        changedYs[index] = y - positionTarget.current.ys[index]
+        continuedYs[index] = positionTarget.current.ys[index] - positionOrigin.current.ys[index]
+      })
+    }
+
+    positionTarget.current = { x, y, xs, ys }
+
+    onChange({ e, x, y, xs, ys, status: 'afterMove', changedX, changedY, continuedX, continuedY, changedXs, changedYs, continuedXs, continuedYs })
   }, [props.enable, props.onChange])
 
   const onEnd = React.useCallback((e) => {

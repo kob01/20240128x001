@@ -2,8 +2,6 @@ import React from 'react'
 
 import Imitation from 'imitation-imm'
 
-import ImitationGlobal from './Imitation.Global'
-
 import { hash } from './utils.common'
 
 import mockSource from './mock.source'
@@ -14,7 +12,15 @@ ImitationInstance.state = { update: {}, store: {}, function: {}, memo: {} }
 
 ImitationInstance.state.store = { navigation: {}, view: {} }
 
+ImitationInstance.state.store.navigation = { basic: {}, content: {} }
+
+ImitationInstance.state.store.navigation.basic = { expand: {} }
+
+ImitationInstance.state.store.navigation.content = { expand: {} }
+
+
 ImitationInstance.state.update.now = performance.now()
+
 
 ImitationInstance.state.store.load = false
 
@@ -26,11 +32,18 @@ ImitationInstance.state.store.source = []
 
 ImitationInstance.state.store.render = []
 
-ImitationInstance.state.store.navigation.open = false
+ImitationInstance.state.store.navigation.basic.open = false
 
-ImitationInstance.state.store.navigation.expand = [true, true]
+ImitationInstance.state.store.navigation.basic.expand.view = false
+
+ImitationInstance.state.store.navigation.content.open = false
+
+ImitationInstance.state.store.navigation.content.expand.inforamtion = false
+
+ImitationInstance.state.store.navigation.content.expand.action = false
 
 ImitationInstance.state.store.view.panorama = false
+
 
 ImitationInstance.state.function.update = () => {
   ImitationInstance.state.update.now = performance.now()
@@ -61,6 +74,7 @@ ImitationInstance.state.function.onSwitch = (content) => {
   ImitationInstance.state.store.render.push(r)
   ImitationInstance.state.function.update()
 }
+
 
 ImitationInstance.state.memo = new Object()
 
@@ -101,5 +115,6 @@ ImitationInstance.state.memo.renderFindIndex = (_hash, dep = []) => React.useMem
 ImitationInstance.state.memo.renderFindIndexInLast = (_hash, dep = []) => React.useMemo(() => {
   return ImitationInstance.state.store.render.findIndex(i => i._hash === _hash) === ImitationInstance.state.store.render.length - 1
 }, [...dep, _hash, ImitationInstance.state.store.render, ImitationInstance.state.store.render.length])
+
 
 export default ImitationInstance

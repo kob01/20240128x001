@@ -10,7 +10,7 @@ import { hash } from './utils.common'
 
 const _hash = 'Line'
 
-const type = '2d'
+const type = 'Line'
 
 const label = 'Line'
 

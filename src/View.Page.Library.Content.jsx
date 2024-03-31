@@ -9,9 +9,12 @@ import { ImitationPageLibrary } from './Imitation'
 
 import { PaperSX } from './utils.mui.sx'
 
+import { debounce } from './utils.common'
+
 function App() {
   const ref = React.useRef()
-  const timeoutRef = React.useRef()
+
+  const updateDebounceRef = React.useRef(debounce(() => { ImitationPageLibrary.state.store.recting = false; ImitationPageLibrary.state.function.update() }, 500))
 
   React.useEffect(() => {
     const resizeObserver = new ResizeObserver(en => {
@@ -19,13 +22,7 @@ function App() {
       ImitationPageLibrary.state.store.rect = en[0].target.getBoundingClientRect()
       ImitationPageLibrary.state.function.update()
 
-      const timeout = () => {
-        ImitationPageLibrary.state.store.recting = false
-        ImitationPageLibrary.state.function.update()
-      }
-
-      clearTimeout(timeoutRef.current)
-      timeoutRef.current = setTimeout(timeout, 500)
+      updateDebounceRef.current()
     })
 
     resizeObserver.observe(ref.current)

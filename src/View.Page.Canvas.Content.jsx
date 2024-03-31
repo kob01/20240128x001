@@ -8,23 +8,20 @@ import { ImitationPageCanvas } from './Imitation'
 
 import { PaperSX } from './utils.mui.sx'
 
+import { debounce } from './utils.common'
+
 function App() {
   const ref = React.useRef()
-  const timeoutRef = React.useRef()
+
+  const updateDebounceRef = React.useRef(debounce(() => { ImitationPageCanvas.state.store.recting = false; ImitationPageCanvas.state.function.update() }, 500))
 
   React.useEffect(() => {
     const resizeObserver = new ResizeObserver(en => {
       ImitationPageCanvas.state.store.recting = true
       ImitationPageCanvas.state.store.rect = en[0].target.getBoundingClientRect()
       ImitationPageCanvas.state.function.update()
-
-      const timeout = () => {
-        ImitationPageCanvas.state.store.recting = false
-        ImitationPageCanvas.state.function.update()
-      }
-
-      clearTimeout(timeoutRef.current)
-      timeoutRef.current = setTimeout(timeout, 500)
+      
+      updateDebounceRef.current()
     })
 
     resizeObserver.observe(ref.current)

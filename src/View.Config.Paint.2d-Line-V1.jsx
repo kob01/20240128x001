@@ -8,11 +8,11 @@ import { TextFieldSX } from './utils.mui.sx'
 
 import { hash } from './utils.common'
 
-const _hash = '2d-Line'
+const _hash = '2d-Line-V1'
 
-const type = '2d'
+const type = 'Line'
 
-const name = 'Line'
+const name = 'Line-V1'
 
 function Color(props) {
   const { value, onChange } = props
@@ -62,22 +62,31 @@ const settingComponent = [Color, Alpha, Width]
 
 const settingDefault = { color: '#000000', alpha: 1, width: 1 }
 
-const paintRender = (context, action) => {
+const paintRender = (canvas, context, action, position) => {
+  const scale = (position.scaleX + position.scaleY) / 2
+
   context.save()
 
   context.globalAlpha = action.setting.alpha
   context.strokeStyle = action.setting.color
-  context.lineWidth = action.setting.width
+  context.lineWidth = action.setting.width * scale
 
   action.path.forEach((i, index) => {
-    if (index === 0) context.beginPath(i.x + action.offset.x, i.y + action.offset.y)
-    if (index === 0) context.lineTo(i.x + action.offset.x, i.y + action.offset.y)
-    if (index !== 0) context.lineTo(i.x + action.offset.x, i.y + action.offset.y)
+    if (index === 0) context.beginPath((i.x + position.translateX) * scale + position.offsetX, (i.y + position.translateY) * scale + position.offsetY)
+    if (index === 0) context.lineTo((i.x + position.translateX) * scale + position.offsetX, (i.y + position.translateY) * scale + position.offsetY)
+    if (index !== 0) context.lineTo((i.x + position.translateX) * scale + position.offsetX, (i.y + position.translateY) * scale + position.offsetY)
   })
 
   context.stroke()
 
   context.restore()
+}
+
+const paintOffset = (canvas, context, action, position) => {
+  action.path.forEach((i) => {
+    i.x = i.x + position.offsetX
+    i.y = i.y + position.offsetY
+  })
 }
 
 const paintAction = () => {
@@ -86,16 +95,13 @@ const paintAction = () => {
   return (canvas, context, setting, action, status, x, y) => {
 
     if (status === 0) {
-      ref.action = { _hash: hash(), hashPaint: _hash, path: [{ x: Math.floor(x), y: Math.floor(y) }], setting: JSON.parse(JSON.stringify(setting)), offset: { x: 0, y: 0 }, visibility: true }
-    }
-
-    if (status === 0) {
+      ref.action = { _hash: hash(), hashPaint: _hash, path: [{ x: Math.round(x), y: Math.round(y) }], setting: JSON.parse(JSON.stringify(setting)), visibility: true }
       action.push(ref.action)
     }
 
     if (status === 1) {
-      if (Math.floor(x) !== ref.action.path[ref.action.path.length - 1].x || Math.floor(y) !== ref.action.path[ref.action.path.length - 1].y) {
-        ref.action.path.push({ x: Math.floor(x), y: Math.floor(y) })
+      if (Math.round(x) !== ref.action.path[ref.action.path.length - 1].x || Math.round(y) !== ref.action.path[ref.action.path.length - 1].y) {
+        ref.action.path.push({ x: Math.round(x), y: Math.round(y) })
         while (
           ref.action.path[ref.action.path.length - 1] !== undefined &&
           ref.action.path[ref.action.path.length - 2] !== undefined &&
@@ -103,6 +109,10 @@ const paintAction = () => {
           (
             (ref.action.path[ref.action.path.length - 1].x === ref.action.path[ref.action.path.length - 2].x && ref.action.path[ref.action.path.length - 2].x === ref.action.path[ref.action.path.length - 3].x) ||
             (ref.action.path[ref.action.path.length - 1].y === ref.action.path[ref.action.path.length - 2].y && ref.action.path[ref.action.path.length - 2].y === ref.action.path[ref.action.path.length - 3].y)
+          ) &&
+          (
+            (ref.action.path[ref.action.path.length - 1].x - ref.action.path[ref.action.path.length - 2].x === ref.action.path[ref.action.path.length - 2].x - ref.action.path[ref.action.path.length - 3].x) &&
+            (ref.action.path[ref.action.path.length - 1].y - ref.action.path[ref.action.path.length - 2].y === ref.action.path[ref.action.path.length - 2].y - ref.action.path[ref.action.path.length - 3].y)
           )
         ) {
           ref.action.path = ref.action.path.filter((i) => i !== ref.action.path[ref.action.path.length - 2])
@@ -117,6 +127,6 @@ const paintAction = () => {
   }
 }
 
-const r = { _hash: _hash, type: type, name: name, paintRender: paintRender, paintAction: paintAction, settingComponent: settingComponent, settingDefault: settingDefault }
+const r = { _hash: _hash, type: type, name: name, paintRender: paintRender, paintAction: paintAction, paintOffset: paintOffset, settingComponent: settingComponent, settingDefault: settingDefault }
 
 export default r

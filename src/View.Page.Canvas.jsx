@@ -2,7 +2,8 @@ import React from 'react'
 
 import Content from './View.Page.Canvas.Content'
 import Tool from './View.Page.Canvas.Tool'
-import PageNavigation from './View.Page.Canvas.Navigation'
+import NavigationBasic from './View.Page.Canvas.Navigation.Basic'
+import NavigationLayer from './View.Page.Canvas.Navigation.Layer'
 
 import { AnimationRAF, opacityAnimation } from './View.Component.AnimationRAF'
 
@@ -21,10 +22,13 @@ function App() {
 
           <div style={{ width: '100%', height: 0, flexGrow: 1, display: 'flex' }}>
             <div style={{ width: 'fit-content', height: '100%' }}>
-              <PageNavigation />
+              <NavigationBasic />
             </div>
             <div style={{ width: 0, height: '100%', flexGrow: 1 }}>
               <Content />
+            </div>
+            <div style={{ width: 'fit-content', height: '100%' }}>
+              <NavigationLayer />
             </div>
           </div>
 
