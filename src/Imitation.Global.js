@@ -4,7 +4,7 @@ const ImitationInstance = new Imitation()
 
 ImitationInstance.state = { update: {}, store: {}, function: {}, memo: {} }
 
-ImitationInstance.state.store = { navigation: {} }
+ImitationInstance.state.store = { page: {} }
 
 ImitationInstance.state.update.now = performance.now()
 
@@ -14,13 +14,11 @@ ImitationInstance.state.store.loading = 0
 
 ImitationInstance.state.store.message = ''
 
-ImitationInstance.state.store.navigation.open = false
+ImitationInstance.state.store.page = 'Library'
 
-ImitationInstance.state.store.navigation.expand = [true, true]
+ImitationInstance.state.store.rect = undefined
 
-ImitationInstance.state.store.navigation.mode = 0
-
-ImitationInstance.state.store.router = new URLSearchParams(new URL(window.location.href).search).get('router') || 'Library'
+ImitationInstance.state.store.recting = false
 
 ImitationInstance.state.function.update = () => {
   ImitationInstance.state.update.now = performance.now()

@@ -10,13 +10,7 @@ const ImitationInstance = new Imitation()
 
 ImitationInstance.state = { update: {}, store: {}, function: {}, memo: {} }
 
-ImitationInstance.state.store = { navigation: {}, view: {} }
-
-ImitationInstance.state.store.navigation = { basic: {}, content: {} }
-
-ImitationInstance.state.store.navigation.basic = { expand: {} }
-
-ImitationInstance.state.store.navigation.content = { expand: {} }
+ImitationInstance.state.store = {  view: {} }
 
 
 ImitationInstance.state.update.now = performance.now()
@@ -31,16 +25,6 @@ ImitationInstance.state.store.recting = false
 ImitationInstance.state.store.source = []
 
 ImitationInstance.state.store.render = []
-
-ImitationInstance.state.store.navigation.basic.open = false
-
-ImitationInstance.state.store.navigation.basic.expand.view = false
-
-ImitationInstance.state.store.navigation.content.open = false
-
-ImitationInstance.state.store.navigation.content.expand.inforamtion = false
-
-ImitationInstance.state.store.navigation.content.expand.action = false
 
 ImitationInstance.state.store.view.panorama = false
 
@@ -77,24 +61,6 @@ ImitationInstance.state.function.onSwitch = (content) => {
 
 
 ImitationInstance.state.memo = new Object()
-
-ImitationInstance.state.memo.size = (dep = []) => React.useMemo(() => {
-  const overview = {}
-
-  if (ImitationInstance.state.store.rect.width * 1.5 >= ImitationInstance.state.store.rect.height) overview.height = ImitationInstance.state.store.rect.height
-  if (ImitationInstance.state.store.rect.width * 1.5 <= ImitationInstance.state.store.rect.height) overview.width = ImitationInstance.state.store.rect.width
-
-  if (overview.width === undefined) overview.width = overview.height / 3 * 2
-  if (overview.height === undefined) overview.height = overview.width * 1.5
-
-  if (ImitationInstance.state.store.view.panorama === true) {
-    return { type: 0, width: ImitationInstance.state.store.rect.width, height: ImitationInstance.state.store.rect.height, overview }
-  }
-
-  if (ImitationInstance.state.store.view.panorama === false) {
-    return { type: 1, width: overview.width, height: overview.height, overview }
-  }
-}, [...dep, ImitationInstance.state.store.rect, ImitationInstance.state.store.view.panorama])
 
 ImitationInstance.state.memo.sourceFind = (_hash, dep = []) => React.useMemo(() => {
   return ImitationInstance.state.store.source.find(i => i._hash === _hash)

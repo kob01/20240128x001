@@ -1,16 +1,36 @@
 import React from 'react'
 
-import Content from './View.Page.Canvas.Content'
-import Tool from './View.Page.Canvas.Tool'
-import NavigationBasic from './View.Page.Canvas.Navigation.Basic'
-import NavigationLayer from './View.Page.Canvas.Navigation.Layer'
+import ContentWrapper from './View.Page.Canvas.ContentWrapper'
 
 import { AnimationRAF, opacityAnimation } from './View.Component.AnimationRAF'
 
 import { ImitationPageCanvas, withBindComponentPure } from './Imitation'
 
+import { debounce } from './utils.common'
+
 function App() {
+  const ref = React.useRef()
+
+  const updateDebounceRef = React.useRef(debounce(() => { ImitationPageCanvas.state.store.recting = false; ImitationPageCanvas.state.function.update() }, 500))
+
+  React.useEffect(() => {
+    if (ImitationPageCanvas.state.store.load === false) return
+
+    const resizeObserver = new ResizeObserver(en => {
+      ImitationPageCanvas.state.store.recting = true
+      ImitationPageCanvas.state.store.rect = en[0].target.getBoundingClientRect()
+      ImitationPageCanvas.state.function.update()
+
+      updateDebounceRef.current()
+    })
+
+    resizeObserver.observe(ref.current)
+
+    return () => resizeObserver.disconnect()
+  }, [ImitationPageCanvas.state.store.load])
+
   React.useEffect(() => ImitationPageCanvas.state.function.onLoad(), [])
+
   React.useEffect(() => () => ImitationPageCanvas.state.function.onUnload(), [])
 
   if (ImitationPageCanvas.state.store.load === false) return null
@@ -18,26 +38,10 @@ function App() {
   return <AnimationRAF animation={opacityAnimation}>
     {
       ({ style }) => {
-        return <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', transition: '1s all', ...style }}>
-
-          <div style={{ width: '100%', height: 0, flexGrow: 1, display: 'flex' }}>
-            <div style={{ width: 'fit-content', height: '100%' }}>
-              <NavigationBasic />
-            </div>
-            <div style={{ width: 0, height: '100%', flexGrow: 1 }}>
-              <Content />
-            </div>
-            <div style={{ width: 'fit-content', height: '100%' }}>
-              <NavigationLayer />
-            </div>
-          </div>
-
-          <div style={{ width: '100%', height: 4 }}></div>
-
-          <div style={{ width: '100%', height: 'fit-content' }}>
-            <Tool />
-          </div>
-
+        return <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', transition: '1s all', ...style }} ref={el => ref.current = el}>
+          {
+            ImitationPageCanvas.state.store.rect !== undefined ? <ContentWrapper /> : null
+          }
         </div>
       }
     }

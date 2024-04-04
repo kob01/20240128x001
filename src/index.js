@@ -5,6 +5,8 @@ import App from './View.App'
 
 import { ImitationGlobal } from './Imitation'
 
+import './index.dev'
+
 import icon from '../static/icon.png'
 
 const link = document.createElement('link')
@@ -23,7 +25,7 @@ const styleAppendI = () => {
     `body { padding: 0; margin: 0; font-size: 14px; }`,
     `body * { font-weight: bold !important; font-family: monospace !important; box-sizing: border-box; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }`,
     `img { pointer-events: none; }`,
-    `body { overscroll-behavior: none; }`
+    `body { overscroll-behavior: none; }`,
   ].join(' ')
 
   style.id = id
@@ -57,15 +59,9 @@ styleAppendII()
 
 ImitationGlobal.register(styleAppendII, state => [...Object.values(state.store.theme.palette).map(i => i.main)])
 
-document.body.addEventListener('wheel', e => { if (e.wheelDelta === 240 || e.wheelDelta === -240) e.preventDefault() }, { passive: false })
-document.body.addEventListener('touchmove', e => e.preventDefault(), { passive: false })
-document.body.addEventListener('contextmenu', e => e.preventDefault(), { passive: false })
+document.addEventListener('wheel', e => { if (e.wheelDelta === 240 || e.wheelDelta === -240) e.preventDefault() }, { passive: false })
+// document.addEventListener('touchstart', e => e.preventDefault(), { passive: false})
+// document.addEventListener('touchmove', e => e.preventDefault(), { passive: false })
+document.addEventListener('contextmenu', e => e.preventDefault(), { passive: false })
 
 ReactDOM.render(<App />, document.getElementById('root'))
-
-// if (window.ontouchstart !== undefined) {
-//   const vconsole = document.createElement('script')
-//   vconsole.src = 'https://unpkg.com/vconsole@latest/dist/vconsole.min.js'
-//   vconsole.onload = () => new window.VConsole()
-//   document.head.appendChild(vconsole)
-// }

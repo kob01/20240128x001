@@ -14,8 +14,13 @@ const TooltipSX = (reverse) => {
   return {
     PopperProps: {
       sx: {
-        '& .MuiTooltip-tooltip':
-          { background: themeColor('background', reverse), color: themeColor('primary', reverse) }
+        '& .MuiTooltip-tooltip': {
+          background: 'none',
+          maxWidth: 'initial',
+          padding: 0,
+          margin: '8px !important',
+          fontSize: '14px',
+        }
       }
     }
   }
@@ -165,7 +170,7 @@ const SwitchSX = (reverse) => {
 
       '&.MuiSwitch-root .Mui-checked+.MuiSwitch-track': {
         backgroundColor: themeColor('primary', reverse),
-        opacity: 0.5,
+        opacity: 0.6,
       },
 
       '&.MuiSwitch-root .MuiSwitch-thumb': {

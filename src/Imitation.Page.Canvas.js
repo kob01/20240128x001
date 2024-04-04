@@ -2,8 +2,6 @@ import React from 'react'
 
 import Imitation from 'imitation-imm'
 
-import ImitationGlobal from './Imitation.Global'
-
 import Paint from './View.Config.Paint'
 
 import { hash, debounce, throttleLastRIC } from './utils.common'
@@ -14,13 +12,7 @@ const ImitationInstance = new Imitation()
 
 ImitationInstance.state = { update: {}, store: {}, function: {}, memo: {} }
 
-ImitationInstance.state.store = { canvas: {}, paint: {}, navigation: {}, view: {}, control: {} }
-
-ImitationInstance.state.store.navigation = { basic: {}, content: {} }
-
-ImitationInstance.state.store.navigation.basic = { expand: {} }
-
-ImitationInstance.state.store.navigation.layer = { expand: {} }
+ImitationInstance.state.store = { canvas: {}, paint: {}, view: {}, control: {} }
 
 
 ImitationInstance.state.update.now = performance.now()
@@ -55,26 +47,6 @@ ImitationInstance.state.store.paint.information = undefined
 ImitationInstance.state.store.paint.control = undefined
 
 ImitationInstance.state.store.paint.setting = undefined
-
-ImitationInstance.state.store.paint.filter = ['2d']
-
-ImitationInstance.state.store.navigation.basic.open = false
-
-ImitationInstance.state.store.navigation.basic.expand.view = false
-
-ImitationInstance.state.store.navigation.basic.expand.control = false
-
-ImitationInstance.state.store.navigation.basic.expand.paint = false
-
-ImitationInstance.state.store.navigation.basic.expand.layer = false
-
-ImitationInstance.state.store.navigation.basic.expand.action = false
-
-ImitationInstance.state.store.navigation.layer.open = false
-
-ImitationInstance.state.store.navigation.layer.expand.setting = false
-
-ImitationInstance.state.store.navigation.layer.expand.action = false
 
 ImitationInstance.state.store.view.scale = 1
 
@@ -210,18 +182,6 @@ ImitationInstance.state.function.onSave = (type) => {
   }
 }
 
-ImitationInstance.state.function.onNavigationExpandChange = (type, key, value) => {
-  ImitationInstance.state.store.navigation[type].expand[key] = value
-
-  if (type === 'basic' && key === 'layer' && value === true) {
-    if (ImitationGlobal.state.store.navigation.mode === 0) ImitationInstance.state.store.navigation.layer.open = true
-    ImitationInstance.state.store.navigation.layer.expand.setting = value
-    ImitationInstance.state.store.navigation.layer.expand.action = value
-  }
-
-  ImitationInstance.state.function.update()
-}
-
 ImitationInstance.state.function.onViewScaleChange = (value) => {
   ImitationInstance.state.store.view.scale = value
 
@@ -334,19 +294,6 @@ ImitationInstance.state.function.onCanvasLayerVisibility = (_hash, value) => {
   ImitationInstance.state.function.update()
 }
 
-ImitationInstance.state.function.onCanvasLayerSwitch = (content) => {
-  if (ImitationInstance.state.store.control.hash === content.hash) return
-
-  ImitationInstance.state.store.control._hash = hash()
-  ImitationInstance.state.store.control.hash = content.hash
-
-  if (ImitationGlobal.state.store.navigation.mode === 0) ImitationInstance.state.store.navigation.layer.open = true
-  ImitationInstance.state.store.navigation.layer.expand.setting = value
-  ImitationInstance.state.store.navigation.layer.expand.action = value
-
-  ImitationInstance.state.function.update()
-}
-
 ImitationInstance.state.function.onCanvasLayerActionVisibilityTracks = (_hash, index) => {
   const canvasFind = ImitationInstance.state.store.canvas.information.find(i => i._hash === _hash)
 
@@ -377,14 +324,6 @@ ImitationInstance.state.function.onPaintSwitch = (_hash) => {
   const find = ImitationInstance.state.store.paint.information.find(i => i._hash === _hash)
   ImitationInstance.state.store.paint.control = find._hash
   ImitationInstance.state.store.paint.setting = JSON.parse(JSON.stringify(find.settingDefault))
-  ImitationInstance.state.function.update()
-}
-
-ImitationInstance.state.function.onPaintFilterTypeSwitch = (value) => {
-  const find = ImitationInstance.state.store.paint.information.find(i => i.type === type)
-  ImitationInstance.state.store.paint.control = find._hash
-  ImitationInstance.state.store.paint.setting = JSON.parse(JSON.stringify(find.settingDefault))
-  ImitationInstance.state.store.paint.filter[1] = value
   ImitationInstance.state.function.update()
 }
 
