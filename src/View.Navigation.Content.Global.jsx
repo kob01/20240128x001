@@ -5,6 +5,7 @@ import Slider from '@mui/material/Slider'
 import Grid from '@mui/material/Grid'
 
 import MapIcon from '@mui/icons-material/Map'
+import SendIcon from '@mui/icons-material/Send'
 
 import { NavigationItem, NavigationAccordion } from './View.Navigation.Component'
 
@@ -19,16 +20,16 @@ function Page() {
       <NavigationAccordion text={'Page'} type={['global', 'page']}>
         <Grid container spacing={1}>
           <Grid item xs={12}>
-            <Button fullWidth style={{ position: 'relative' }} variant={'Library' === ImitationGlobal.state.store.page ? 'contained' : 'outlined'} onClick={() => { ImitationGlobal.state.store.page = 'Library'; ImitationGlobal.state.function.update() }}><MapIcon style={{ position: 'absolute', left: 8, top: 0, bottom: 0, margin: 'auto' }} />Library</Button>
+            <Button fullWidth style={{ justifyContent: 'flex-start' }} onClick={() => { ImitationGlobal.state.store.page = 'Library'; ImitationGlobal.state.function.update() }}><MapIcon style={{ marginRight: 8, opacity: ImitationGlobal.state.store.page === 'Library' ? 1 : 0.2, transition: '1s all' }} />Library</Button>
           </Grid>
           <Grid item xs={12}>
-            <Button fullWidth style={{ position: 'relative' }} variant={'Canvas' === ImitationGlobal.state.store.page ? 'contained' : 'outlined'} onClick={() => { ImitationGlobal.state.store.page = 'Canvas'; ImitationGlobal.state.function.update() }}><MapIcon style={{ position: 'absolute', left: 8, top: 0, bottom: 0, margin: 'auto' }} />Canvas</Button>
+            <Button fullWidth style={{ justifyContent: 'flex-start' }} onClick={() => { ImitationGlobal.state.store.page = 'Canvas'; ImitationGlobal.state.function.update() }}><MapIcon style={{ marginRight: 8, opacity: ImitationGlobal.state.store.page === 'Canvas' ? 1 : 0.2, transition: '1s all' }} />Canvas</Button>
           </Grid>
         </Grid>
       </NavigationAccordion>
-    </Grid>
+    </Grid >
 
-  </Grid>
+  </Grid >
 }
 
 function Theme() {

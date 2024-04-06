@@ -17,8 +17,6 @@ const TooltipSX = (reverse) => {
         '& .MuiTooltip-tooltip': {
           background: 'none',
           maxWidth: 'initial',
-          padding: 0,
-          margin: '8px !important',
           fontSize: '14px',
         }
       }
@@ -116,10 +114,13 @@ const DrawerSX = (reverse) => {
 const DialogSX = (reverse) => {
   return {
     sx: {
-      '& .MuiDialog-root': {
+      '& .MuiDialog-paper': {
         background: themeColor('background', reverse),
         boxShadow: `0px 11px 15px -7px ${rgba(themeColor('primary', reverse), 0.2)}, 0px 24px 38px 3px ${rgba(themeColor('primary', reverse), 0.14)}, 0px 9px 46px 8px ${rgba(themeColor('primary', reverse), 0.12)}`,
         color: themeColor('primary', reverse),
+        width: '100%', 
+        maxWidth: '720px',
+        transition: '1s all'
       },
       '& .MuiDialogContent-dividers': {
         borderColor: themeColor('primary', reverse),
@@ -188,7 +189,8 @@ const AccordionSX = (reverse) => {
         color: themeColor('primary', reverse),
         boxShadow: `0px 2px 1px -1px ${rgba(themeColor('primary', reverse), 0.2)}, 0px 1px 1px 0px ${rgba(themeColor('primary', reverse), 0.14)}, 0px 1px 3px 0px ${rgba(themeColor('primary', reverse), 0.12)}`,
         borderRadius: '4px',
-        margin: '0px'
+        margin: '0px',
+        transition: '1s all',
       }
     }
   }
@@ -200,6 +202,7 @@ const PaperSX = (reverse) => {
       '&.MuiPaper-root': {
         background: themeColor('background', reverse),
         boxShadow: `0px 2px 1px -1px ${rgba(themeColor('primary', reverse), 0.2)}, 0px 1px 1px 0px ${rgba(themeColor('primary', reverse), 0.14)}, 0px 1px 3px 0px ${rgba(themeColor('primary', reverse), 0.12)}`,
+        transition: '1s all',
       }
     }
   }

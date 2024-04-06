@@ -48,15 +48,15 @@ ImitationInstance.state.store.paint.control = undefined
 
 ImitationInstance.state.store.paint.setting = undefined
 
-ImitationInstance.state.store.view.scale = 1
+ImitationInstance.state.store.view.scaleX = 1
+
+ImitationInstance.state.store.view.scaleY = 1
 
 ImitationInstance.state.store.view.translateX = 0
 
 ImitationInstance.state.store.view.translateY = 0
 
 ImitationInstance.state.store.control.paint = true
-
-ImitationInstance.state.store.control.move = false
 
 
 ImitationInstance.state.function.update = () => {
@@ -100,7 +100,7 @@ ImitationInstance.state.function.onLoad = () => {
       offscreenCanvasRef: undefined,
       offscreenContextRef: undefined,
       previousActionContextShouldUpdate: false,
-      previousContextShouldUpdate: false,
+      lastActionContextShouldUpdate: false,
       contextShouldUpdate: false,
     })
   })
@@ -134,7 +134,7 @@ ImitationInstance.state.function.onClear = () => {
       offscreenCanvasRef: undefined,
       offscreenContextRef: undefined,
       previousActionContextShouldUpdate: false,
-      previousContextShouldUpdate: false,
+      lastActionContextShouldUpdate: false,
       contextShouldUpdate: true,
     })
   })
@@ -157,7 +157,7 @@ ImitationInstance.state.function.onSave = (type) => {
       delete i.offscreenCanvasRef
       delete i.offscreenContextRef
       delete i.previousActionContextShouldUpdate
-      delete i.previousContextShouldUpdate
+      delete i.lastActionContextShouldUpdate
       delete i.contextShouldUpdate
     })
 
@@ -174,7 +174,7 @@ ImitationInstance.state.function.onSave = (type) => {
       delete i.offscreenCanvasRef
       delete i.offscreenContextRef
       delete i.previousActionContextShouldUpdate
-      delete i.previousContextShouldUpdate
+      delete i.lastActionContextShouldUpdate
       delete i.contextShouldUpdate
     })
 
@@ -182,8 +182,8 @@ ImitationInstance.state.function.onSave = (type) => {
   }
 }
 
-ImitationInstance.state.function.onViewScaleChange = (value) => {
-  ImitationInstance.state.store.view.scale = value
+ImitationInstance.state.function.onViewScaleXChange = (value) => {
+  ImitationInstance.state.store.view.scaleX = value
 
   ImitationInstance.state.store.canvas.information.forEach(i => i.contextShouldUpdate = true)
 
@@ -191,7 +191,18 @@ ImitationInstance.state.function.onViewScaleChange = (value) => {
   ImitationInstance.state.function.update()
 }
 
-ImitationInstance.state.function.onViewScaleChangeThrottleLastRIC = throttleLastRIC(ImitationInstance.state.function.onViewScaleChange)
+ImitationInstance.state.function.onViewScaleXChangeThrottleLastRIC = throttleLastRIC(ImitationInstance.state.function.onViewScaleXChange)
+
+ImitationInstance.state.function.onViewScaleYChange = (value) => {
+  ImitationInstance.state.store.view.scaleY = value
+
+  ImitationInstance.state.store.canvas.information.forEach(i => i.contextShouldUpdate = true)
+
+  ImitationInstance.state.function.updateCanvasOffscreenRender()
+  ImitationInstance.state.function.update()
+}
+
+ImitationInstance.state.function.onViewScaleYChangeThrottleLastRIC = throttleLastRIC(ImitationInstance.state.function.onViewScaleYChange)
 
 ImitationInstance.state.function.onViewTranslateXChange = (value) => {
   ImitationInstance.state.store.view.translateX = value
@@ -215,20 +226,6 @@ ImitationInstance.state.function.onViewTranslateYChange = (value) => {
 
 ImitationInstance.state.function.onViewTranslateYChangeThrottleLastRIC = throttleLastRIC(ImitationInstance.state.function.onViewTranslateYChange)
 
-ImitationInstance.state.function.onControlChange = (key, value) => {
-  ImitationInstance.state.store.control[key] = value
-
-  if (key === 'paint') {
-    ImitationInstance.state.store.control.move = !value
-  }
-
-  if (key === 'move') {
-    ImitationInstance.state.store.control.paint = !value
-  }
-
-  ImitationInstance.state.function.update()
-}
-
 ImitationInstance.state.function.onCanvasLayerCreate = () => {
   const i = {
     _hash: hash(),
@@ -244,8 +241,13 @@ ImitationInstance.state.function.onCanvasLayerCreate = () => {
     offscreenContextRef: undefined,
 
     previousActionContextShouldUpdate: false,
-    previousContextShouldUpdate: false,
+    lastActionContextShouldUpdate: false,
     contextShouldUpdate: false,
+
+    scaleX: 1,
+    scaleY: 1,
+    translateX: 0,
+    translateY: 0,
   }
 
   ImitationInstance.state.store.canvas.information.push(i)

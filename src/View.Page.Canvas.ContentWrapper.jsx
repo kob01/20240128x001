@@ -14,10 +14,8 @@ import { range, debounce, throttleLastRIC } from './utils.common'
 function App() {
   const canvasFind = ImitationPageCanvas.state.memo.canvasFind(ImitationPageCanvas.state.store.canvas.control)
   const paintActionRunFind = ImitationPageCanvas.state.memo.paintActionRunFind(ImitationPageCanvas.state.store.paint.control)
-  const paintOffsetFindMap = ImitationPageCanvas.state.memo.paintOffsetFindMap('_hash')
 
   const inControlPaint = ImitationPageCanvas.state.store.control.paint
-  const inControlMove = ImitationPageCanvas.state.store.control.move
 
   const dragControlType = React.useRef()
   const dragControlProp = React.useRef()
@@ -37,67 +35,37 @@ function App() {
     const changedX = params.changedX
     const changedY = params.changedY
 
-    if (status === 'afterStart' && (inControlPaint === true && inSpace === false && inMeta === false) && canvasFind.visibility === true) {
+    if (status === 'afterStart' && inSpace === false && inMeta === false && inControlPaint === true && canvasFind !== undefined && canvasFind.visibility === true) {
       dragControlType.current = 0
     }
-    if (status === 'afterStart' && (inControlPaint === false && inSpace === true && inMeta === false) && canvasFind.visibility === true) {
-      dragControlType.current = 0
-    }
-    if (status === 'afterStart' && (inControlMove === true && inSpace === false && inMeta === false)) {
+    if (status === 'afterStart' && inSpace === true && inMeta === false) {
       dragControlType.current = 1
     }
-    if (status === 'afterStart' && (inControlMove === false && inSpace === true && inMeta === false)) {
-      dragControlType.current = 1
-    }
-    if (status === 'afterStart' && (inMeta === true)) {
+    if (status === 'afterStart' && inMeta === true && inSpace === false && canvasFind !== undefined && canvasFind.visibility === true) {
       dragControlType.current = 2
     }
 
-    if (status === 'afterStart' && dragControlType.current === 0 && canvasFind !== undefined) {
-      const offsetX = (x - ImitationPageCanvas.state.store.rect.width / 2 - ImitationPageCanvas.state.store.rect.left) / ImitationPageCanvas.state.store.view.scale * ImitationPageCanvas.state.store.dpr
-      const offsetY = (y - ImitationPageCanvas.state.store.rect.height / 2 - ImitationPageCanvas.state.store.rect.top) / ImitationPageCanvas.state.store.view.scale * ImitationPageCanvas.state.store.dpr
-      const translateX = ImitationPageCanvas.state.store.view.translateX
-      const translateY = ImitationPageCanvas.state.store.view.translateY
+    if (dragControlType.current === 0 && (status === 'afterStart' || status === 'afterMove' || status === 'afterEnd')) {
+      const offsetX = (x - ImitationPageCanvas.state.store.rect.width / 2 - ImitationPageCanvas.state.store.rect.left) / ImitationPageCanvas.state.store.view.scaleX / canvasFind.scaleX * ImitationPageCanvas.state.store.dpr
+      const offsetY = (y - ImitationPageCanvas.state.store.rect.height / 2 - ImitationPageCanvas.state.store.rect.top) / ImitationPageCanvas.state.store.view.scaleY / canvasFind.scaleY * ImitationPageCanvas.state.store.dpr
+      const translateX = ImitationPageCanvas.state.store.view.translateX + canvasFind.translateX
+      const translateY = ImitationPageCanvas.state.store.view.translateY + canvasFind.translateY
       const relativeX = offsetX - translateX
       const relativeY = offsetY - translateY
 
-      paintActionRunFind(ImitationPageCanvas.state.store.canvas.canvasRef, ImitationPageCanvas.state.store.canvas.contextRef, ImitationPageCanvas.state.store.paint.setting, canvasFind.action, 0, relativeX, relativeY)
+      paintActionRunFind(ImitationPageCanvas.state.store.canvas.canvasRef, ImitationPageCanvas.state.store.canvas.contextRef, ImitationPageCanvas.state.store.paint.setting, canvasFind, canvasFind.action, status, relativeX, relativeY)
 
-      canvasFind.previousActionContextShouldUpdate = true
-      canvasFind.previousContextShouldUpdate = true
+      if (status === 'afterStart') canvasFind.previousActionContextShouldUpdate = true
 
-      ImitationPageCanvas.state.function.updateCanvasOffscreenRenderThrottleLastRIC()
-      ImitationPageCanvas.state.function.updateCanvasResizeDebounce500()
-    }
-
-    if (status === 'afterMove' && dragControlType.current === 0 && canvasFind !== undefined) {
-      const offsetX = (x - ImitationPageCanvas.state.store.rect.width / 2 - ImitationPageCanvas.state.store.rect.left) / ImitationPageCanvas.state.store.view.scale * ImitationPageCanvas.state.store.dpr
-      const offsetY = (y - ImitationPageCanvas.state.store.rect.height / 2 - ImitationPageCanvas.state.store.rect.top) / ImitationPageCanvas.state.store.view.scale * ImitationPageCanvas.state.store.dpr
-      const translateX = ImitationPageCanvas.state.store.view.translateX
-      const translateY = ImitationPageCanvas.state.store.view.translateY
-      const relativeX = offsetX - translateX
-      const relativeY = offsetY - translateY
-
-      paintActionRunFind(ImitationPageCanvas.state.store.canvas.canvasRef, ImitationPageCanvas.state.store.canvas.contextRef, ImitationPageCanvas.state.store.paint.setting, canvasFind.action, 1, relativeX, relativeY)
-
-      canvasFind.previousContextShouldUpdate = true
+      canvasFind.lastActionContextShouldUpdate = true
 
       ImitationPageCanvas.state.function.updateCanvasOffscreenRenderThrottleLastRIC()
       ImitationPageCanvas.state.function.updateCanvasResizeDebounce500()
     }
 
-    if (status === 'afterEnd' && dragControlType.current === 0 && canvasFind !== undefined) {
-      paintActionRunFind(ImitationPageCanvas.state.store.canvas.canvasRef, ImitationPageCanvas.state.store.canvas.contextRef, ImitationPageCanvas.state.store.paint.setting, canvasFind.action, 2)
-
-      canvasFind.previousContextShouldUpdate = true
-
-      ImitationPageCanvas.state.function.updateCanvasOffscreenRenderThrottleLastRIC()
-      ImitationPageCanvas.state.function.updateCanvasResizeDebounce500()
-    }
-
-    if (status === 'afterMove' && dragControlType.current === 1) {
-      const offsetX = changedX / ImitationPageCanvas.state.store.view.scale * ImitationPageCanvas.state.store.dpr
-      const offsetY = changedY / ImitationPageCanvas.state.store.view.scale * ImitationPageCanvas.state.store.dpr
+    if (dragControlType.current === 1 && status === 'afterMove') {
+      const offsetX = changedX / ImitationPageCanvas.state.store.view.scaleX * ImitationPageCanvas.state.store.dpr
+      const offsetY = changedY / ImitationPageCanvas.state.store.view.scaleY * ImitationPageCanvas.state.store.dpr
 
       ImitationPageCanvas.state.store.view.translateX = ImitationPageCanvas.state.store.view.translateX + offsetX
       ImitationPageCanvas.state.store.view.translateY = ImitationPageCanvas.state.store.view.translateY + offsetY
@@ -108,13 +76,12 @@ function App() {
       ImitationPageCanvas.state.function.updateCanvasResizeDebounce500()
     }
 
-    if (status === 'afterMove' && dragControlType.current === 2) {
-      const offsetX = changedX / ImitationPageCanvas.state.store.view.scale * ImitationPageCanvas.state.store.dpr
-      const offsetY = changedY / ImitationPageCanvas.state.store.view.scale * ImitationPageCanvas.state.store.dpr
+    if (dragControlType.current === 2 && status === 'afterMove') {
+      const offsetX = changedX / ImitationPageCanvas.state.store.view.scaleX * ImitationPageCanvas.state.store.dpr
+      const offsetY = changedY / ImitationPageCanvas.state.store.view.scaleY * ImitationPageCanvas.state.store.dpr
 
-      canvasFind.action.forEach(i => {
-        paintOffsetFindMap[i.hashPaint](canvasFind.offscreenCanvasRef, canvasFind.offscreenContextRef, i, { offsetX: offsetX, offsetY: offsetY })
-      })
+      canvasFind.translateX = canvasFind.translateX + offsetX
+      canvasFind.translateY = canvasFind.translateY + offsetY
 
       canvasFind.contextShouldUpdate = true
 
@@ -135,82 +102,47 @@ function App() {
 
     const status = params.status
 
-    const inTouch2 = Boolean(params.xs && params.xs.length === 2 && params.ys && params.ys.length === 2)
-    const inTouch3 = Boolean(params.xs && params.xs.length === 3 && params.ys && params.ys.length === 3)
+    const x = params.x
+    const y = params.y
+    const changedX = params.changedX
+    const changedY = params.changedY
 
-    if (status === 'afterStart' && (inControlPaint === true && inSpace === false && inMeta === false && inTouch2 === false) && canvasFind.visibility === true) {
+    const inTouch2 = Boolean(params.x && params.x.length === 2 && params.y && params.y.length === 2)
+    const inTouch3 = Boolean(params.x && params.x.length === 3 && params.y && params.y.length === 3)
+
+    if (status === 'afterStart' && inControlPaint === true && canvasFind !== undefined && canvasFind.visibility === true) {
       dragControlType.current = 0
     }
-    if (status === 'afterStart' && (inControlPaint === false && inSpace === true && inMeta === false && inTouch2 === false) && canvasFind.visibility === true) {
-      dragControlType.current = 0
-    }
-    if (status === 'afterStart' && (inControlMove === true && inSpace === false && inMeta === false && inTouch2 === false)) {
+    if (status === 'afterStart' && inTouch2 === true) {
       dragControlType.current = 1
     }
-    if (status === 'afterStart' && (inControlMove === false && inSpace === true && inMeta === false && inTouch2 === false)) {
-      dragControlType.current = 1
-    }
-    if (status === 'afterStart' && (inMeta === true)) {
+    if (status === 'afterStart' && inTouch3 === true && canvasFind !== undefined && canvasFind.visibility === true) {
       dragControlType.current = 2
     }
-    if (status === 'afterStart' && (inTouch2 === true)) {
-      dragControlType.current = 3
-    }
-    if (status === 'afterStart' && (inTouch3 === true) && canvasFind.visibility === true) {
-      dragControlType.current = 4
-    }
 
-    if (status === 'afterStart' && dragControlType.current === 0 && canvasFind !== undefined) {
-      const x = params.x
-      const y = params.y
-      const offsetX = (x - ImitationPageCanvas.state.store.rect.width / 2 - ImitationPageCanvas.state.store.rect.left) / ImitationPageCanvas.state.store.view.scale * ImitationPageCanvas.state.store.dpr
-      const offsetY = (y - ImitationPageCanvas.state.store.rect.height / 2 - ImitationPageCanvas.state.store.rect.top) / ImitationPageCanvas.state.store.view.scale * ImitationPageCanvas.state.store.dpr
-      const translateX = ImitationPageCanvas.state.store.view.translateX
-      const translateY = ImitationPageCanvas.state.store.view.translateY
+    if (dragControlType.current === 0 && (status === 'afterStart' || status === 'afterMove' || status === 'afterEnd')) {
+      const offsetX = (x[0] - ImitationPageCanvas.state.store.rect.width / 2 - ImitationPageCanvas.state.store.rect.left) / ImitationPageCanvas.state.store.view.scaleX / canvasFind.scaleX * ImitationPageCanvas.state.store.dpr
+      const offsetY = (y[0] - ImitationPageCanvas.state.store.rect.height / 2 - ImitationPageCanvas.state.store.rect.top) / ImitationPageCanvas.state.store.view.scaleY / canvasFind.scaleY * ImitationPageCanvas.state.store.dpr
+      const translateX = ImitationPageCanvas.state.store.view.translateX + canvasFind.translateX
+      const translateY = ImitationPageCanvas.state.store.view.translateY + canvasFind.translateY
       const relativeX = offsetX - translateX
       const relativeY = offsetY - translateY
 
-      paintActionRunFind(ImitationPageCanvas.state.store.canvas.canvasRef, ImitationPageCanvas.state.store.canvas.contextRef, ImitationPageCanvas.state.store.paint.setting, canvasFind.action, 0, relativeX, relativeY)
+      paintActionRunFind(ImitationPageCanvas.state.store.canvas.canvasRef, ImitationPageCanvas.state.store.canvas.contextRef, ImitationPageCanvas.state.store.paint.setting, canvasFind, canvasFind.action, status, relativeX, relativeY)
 
-      canvasFind.previousActionContextShouldUpdate = true
-      canvasFind.previousContextShouldUpdate = true
+      if (status === 'afterStart') canvasFind.previousActionContextShouldUpdate = true
 
-      ImitationPageCanvas.state.function.updateCanvasOffscreenRenderThrottleLastRIC()
-      ImitationPageCanvas.state.function.updateCanvasResizeDebounce500()
-    }
-
-    if (status === 'afterMove' && dragControlType.current === 0 && canvasFind !== undefined) {
-      const x = params.x
-      const y = params.y
-      const offsetX = (x - ImitationPageCanvas.state.store.rect.width / 2 - ImitationPageCanvas.state.store.rect.left) / ImitationPageCanvas.state.store.view.scale * ImitationPageCanvas.state.store.dpr
-      const offsetY = (y - ImitationPageCanvas.state.store.rect.height / 2 - ImitationPageCanvas.state.store.rect.top) / ImitationPageCanvas.state.store.view.scale * ImitationPageCanvas.state.store.dpr
-      const translateX = ImitationPageCanvas.state.store.view.translateX
-      const translateY = ImitationPageCanvas.state.store.view.translateY
-      const relativeX = offsetX - translateX
-      const relativeY = offsetY - translateY
-
-      paintActionRunFind(ImitationPageCanvas.state.store.canvas.canvasRef, ImitationPageCanvas.state.store.canvas.contextRef, ImitationPageCanvas.state.store.paint.setting, canvasFind.action, 1, relativeX, relativeY)
-
-      canvasFind.previousContextShouldUpdate = true
+      canvasFind.lastActionContextShouldUpdate = true
 
       ImitationPageCanvas.state.function.updateCanvasOffscreenRenderThrottleLastRIC()
       ImitationPageCanvas.state.function.updateCanvasResizeDebounce500()
     }
 
-    if (status === 'afterEnd' && dragControlType.current === 0 && canvasFind !== undefined) {
-      paintActionRunFind(ImitationPageCanvas.state.store.canvas.canvasRef, ImitationPageCanvas.state.store.canvas.contextRef, ImitationPageCanvas.state.store.paint.setting, canvasFind.action, 2)
+    if (dragControlType.current === 1 && status === 'afterMove' && inTouch2 === true) {
+      const offsetX = (changedX[0] + changedX[1]) / 2 / ImitationPageCanvas.state.store.view.scaleX * ImitationPageCanvas.state.store.dpr
+      const offsetY = (changedY[0] + changedY[1]) / 2 / ImitationPageCanvas.state.store.view.scaleY * ImitationPageCanvas.state.store.dpr
 
-      canvasFind.previousContextShouldUpdate = true
-
-      ImitationPageCanvas.state.function.updateCanvasOffscreenRenderThrottleLastRIC()
-      ImitationPageCanvas.state.function.updateCanvasResizeDebounce500()
-    }
-
-    if (status === 'afterMove' && dragControlType.current === 1) {
-      const changedX = params.changedX
-      const changedY = params.changedY
-      const offsetX = changedX / ImitationPageCanvas.state.store.view.scale * ImitationPageCanvas.state.store.dpr
-      const offsetY = changedY / ImitationPageCanvas.state.store.view.scale * ImitationPageCanvas.state.store.dpr
+      console.log(offsetX, offsetY)
 
       ImitationPageCanvas.state.store.view.translateX = ImitationPageCanvas.state.store.view.translateX + offsetX
       ImitationPageCanvas.state.store.view.translateY = ImitationPageCanvas.state.store.view.translateY + offsetY
@@ -221,43 +153,14 @@ function App() {
       ImitationPageCanvas.state.function.updateCanvasResizeDebounce500()
     }
 
-    if (status === 'afterMove' && dragControlType.current === 2) {
-      const changedX = params.changedX
-      const changedY = params.changedY
-      const offsetX = changedX / ImitationPageCanvas.state.store.view.scale * ImitationPageCanvas.state.store.dpr
-      const offsetY = changedY / ImitationPageCanvas.state.store.view.scale * ImitationPageCanvas.state.store.dpr
+    if (dragControlType.current === 2 && status === 'afterMove' && inTouch3 === true) {
+      const offsetX = (changedX[0] + changedX[1] + changedX[2]) / 3 / ImitationPageCanvas.state.store.view.scaleX * ImitationPageCanvas.state.store.dpr
+      const offsetY = (changedY[0] + changedY[1] + changedY[2]) / 3 / ImitationPageCanvas.state.store.view.scaleY * ImitationPageCanvas.state.store.dpr
 
-      canvasFind.action.forEach(i => {
-        paintOffsetFindMap[i.hashPaint](canvasFind.offscreenCanvasRef, canvasFind.offscreenContextRef, i, { offsetX: offsetX, offsetY: offsetY })
-      })
+      canvasFind.translateX = canvasFind.translateX + offsetX
+      canvasFind.translateY = canvasFind.translateY + offsetY
 
       canvasFind.contextShouldUpdate = true
-
-      ImitationPageCanvas.state.function.updateCanvasOffscreenRenderThrottleLastRIC()
-      ImitationPageCanvas.state.function.updateCanvasResizeDebounce500()
-    }
-
-    if (status === 'afterMove' && dragControlType.current === 3 && inTouch2 === true) {
-      const xs = params.xs
-      const ys = params.ys
-      const changedXs = params.changedXs
-      const changedYs = params.changedYs
-
-      const originDistance = Math.pow(Math.pow(xs[0] - changedXs[0], 2) + Math.pow(ys[1] - changedYs[1], 2), 0.5)
-      const targetDistance = Math.pow(Math.pow(xs[0], 2) + Math.pow(ys[1], 2), 0.5)
-
-      const distance = (targetDistance - originDistance)
-
-      if (distance === 0) return
-
-      var scale = range(Number(Number(ImitationPageCanvas.state.store.view.scale + ImitationPageCanvas.state.store.view.scale * 0.01 * distance).toFixed(2)), 0.02, 24)
-
-      if (distance < 0 && scale === ImitationPageCanvas.state.store.view.scale) var scale = range(ImitationPageCanvas.state.store.view.scale + 0.01, 0.02, 24)
-      if (distance > 0 && scale === ImitationPageCanvas.state.store.view.scale) var scale = range(ImitationPageCanvas.state.store.view.scale - 0.01, 0.02, 24)
-
-      ImitationPageCanvas.state.store.view.scale = scale
-
-      ImitationPageCanvas.state.store.canvas.information.forEach(i => i.contextShouldUpdate = true)
 
       ImitationPageCanvas.state.function.updateCanvasOffscreenRenderThrottleLastRIC()
       ImitationPageCanvas.state.function.updateCanvasResizeDebounce500()
@@ -269,7 +172,7 @@ function App() {
     }
   }
 
-  const { onTouchStart } = useDragControlTouch({ enable: false, onChange: onChangeDragControlTouch })
+  const { onTouchStart } = useDragControlTouch({ enable: true, onChange: onChangeDragControlTouch })
 
   const onWheel = (e) => {
     if (ImitationPageCanvas.state.store.recting === true) return
@@ -277,12 +180,17 @@ function App() {
     if (e.deltaY === 0) return
 
     if (e.nativeEvent.wheelDelta === 240 || e.nativeEvent.wheelDelta === -240) {
-      var scale = range(Number(Number(ImitationPageCanvas.state.store.view.scale - ImitationPageCanvas.state.store.view.scale * 0.01 * e.deltaY).toFixed(2)), 0.02, 24)
+      const wheelDelta = e.deltaY
 
-      if (e.deltaY < 0 && scale === ImitationPageCanvas.state.store.view.scale) var scale = range(ImitationPageCanvas.state.store.view.scale + 0.01, 0.02, 24)
-      if (e.deltaY > 0 && scale === ImitationPageCanvas.state.store.view.scale) var scale = range(ImitationPageCanvas.state.store.view.scale - 0.01, 0.02, 24)
+      var scaleX = range(Number(Number(ImitationPageCanvas.state.store.view.scaleX - ImitationPageCanvas.state.store.view.scaleX * 0.01 * wheelDelta).toFixed(2)), 0.02, 24)
+      if (wheelDelta < 0 && scaleX === ImitationPageCanvas.state.store.view.scaleX) var scaleX = range(ImitationPageCanvas.state.store.view.scaleX + 0.01, 0.02, 24)
+      if (wheelDelta > 0 && scaleX === ImitationPageCanvas.state.store.view.scaleX) var scaleX = range(ImitationPageCanvas.state.store.view.scaleX - 0.01, 0.02, 24)
+      ImitationPageCanvas.state.store.view.scaleX = scaleX
 
-      ImitationPageCanvas.state.store.view.scale = scale
+      var scaleY = range(Number(Number(ImitationPageCanvas.state.store.view.scaleY - ImitationPageCanvas.state.store.view.scaleY * 0.01 * wheelDelta).toFixed(2)), 0.02, 24)
+      if (wheelDelta < 0 && scaleY === ImitationPageCanvas.state.store.view.scaleY) var scaleY = range(ImitationPageCanvas.state.store.view.scaleY + 0.01, 0.02, 24)
+      if (wheelDelta > 0 && scaleY === ImitationPageCanvas.state.store.view.scaleY) var scaleY = range(ImitationPageCanvas.state.store.view.scaleY - 0.01, 0.02, 24)
+      ImitationPageCanvas.state.store.view.scaleY = scaleY
 
       ImitationPageCanvas.state.store.canvas.information.forEach(i => i.contextShouldUpdate = true)
 
@@ -291,8 +199,8 @@ function App() {
     }
 
     if (e.nativeEvent.wheelDelta !== 240 && e.nativeEvent.wheelDelta !== -240) {
-      const offsetX = e.deltaX / ImitationPageCanvas.state.store.view.scale * ImitationPageCanvas.state.store.dpr * 2 * -1
-      const offsetY = e.deltaY / ImitationPageCanvas.state.store.view.scale * ImitationPageCanvas.state.store.dpr * 2 * -1
+      const offsetX = e.deltaX / ImitationPageCanvas.state.store.view.scaleX * ImitationPageCanvas.state.store.dpr * 2 * -1
+      const offsetY = e.deltaY / ImitationPageCanvas.state.store.view.scaleY * ImitationPageCanvas.state.store.dpr * 2 * -1
 
       ImitationPageCanvas.state.store.view.translateX = ImitationPageCanvas.state.store.view.translateX + offsetX
       ImitationPageCanvas.state.store.view.translateY = ImitationPageCanvas.state.store.view.translateY + offsetY

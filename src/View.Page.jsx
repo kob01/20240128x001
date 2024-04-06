@@ -6,7 +6,22 @@ import PageCanvas from './View.Page.Canvas'
 import { ImitationGlobal, withBindComponentPure } from './Imitation'
 
 function App() {
-  return <>
+  const ref = React.useRef()
+
+  React.useEffect(() => {
+    const event = e => e.preventDefault()
+
+    ref.current.addEventListener('touchstart', event)
+    ref.current.addEventListener('touchmove', event)
+
+    return () => {
+      ref.current.removeEventListener('touchstart', event)
+      ref.current.removeEventListener('touchmove', event)
+    }
+  }, [])
+
+
+  return <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }} ref={el => ref.current = el}>
 
     {
       ImitationGlobal.state.store.page === 'Library' ? <PageLibrary /> : null
@@ -16,7 +31,7 @@ function App() {
       ImitationGlobal.state.store.page === 'Canvas' ? <PageCanvas /> : null
     }
 
-  </>
+  </div>
 }
 
 const dependence = [{ instance: ImitationGlobal, dependence: state => [state.store.page] }]

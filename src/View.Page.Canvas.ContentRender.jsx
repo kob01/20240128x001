@@ -19,25 +19,22 @@ function App() {
 
   const refFunction = el => ImitationPageCanvas.state.store.canvas.canvasRef = el
 
-  const actionRender = (information, canvas, context, action) => {
+  const actionRender = (layer, canvas, context, action) => {
+    context.save()
+
+    context.translate(canvas.width / 2, canvas.height / 2)
+
+    context.scale(ImitationPageCanvas.state.store.view.scaleX, ImitationPageCanvas.state.store.view.scaleY)
+    context.translate(ImitationPageCanvas.state.store.view.translateX , ImitationPageCanvas.state.store.view.translateY)
+
+    context.scale(layer.scale, layer.scale)
+    context.translate(layer.translateX , layer.translateY)
+
     action
       .filter(i => i.visibility === true && paintRenderFindMap[i.hashPaint])
-      .forEach(i => {
-        paintRenderFindMap[i.hashPaint]
-          (
-            canvas,
-            context,
-            i,
-            {
-              scaleX: ImitationPageCanvas.state.store.view.scale,
-              scaleY: ImitationPageCanvas.state.store.view.scale,
-              translateX: ImitationPageCanvas.state.store.view.translateX,
-              translateY: ImitationPageCanvas.state.store.view.translateY,
-              offsetX: canvas.width / 2,
-              offsetY: canvas.height / 2,
-            }
-          )
-      })
+      .forEach(i => paintRenderFindMap[i.hashPaint](canvas, context, layer, i))
+
+    context.restore()
   }
 
   const canvasResize = () => {
@@ -83,19 +80,19 @@ function App() {
         actionRender(i, i.offscreenPreviousActionCanvasRef, i.offscreenPreviousActionContextRef, i.action.slice(0, i.action.length - 1))
       }
 
-      if (i.visibility === true && i.previousContextShouldUpdate === true) {
-        i.offscreenContextRef.clearRect(0, 0, ImitationPageCanvas.state.store.canvas.canvasRef.width, ImitationPageCanvas.state.store.canvas.canvasRef.height)
+      if (i.visibility === true && i.lastActionContextShouldUpdate === true) {
+        i.offscreenContextRef.clearRect(0, 0, i.offscreenCanvasRef.width, i.offscreenCanvasRef.height)
         i.offscreenContextRef.drawImage(i.offscreenPreviousActionCanvasRef, ...caculatePositionCenter(i.offscreenCanvasRef, i.offscreenPreviousActionCanvasRef, { x: 0, y: 0 }))
-        actionRender(i, i.offscreenPreviousActionCanvasRef, i.offscreenContextRef, i.action.slice(i.action.length - 1, i.action.length))
+        actionRender(i, i.offscreenCanvasRef, i.offscreenContextRef, i.action.slice(i.action.length - 1, i.action.length))
       }
 
       if (i.visibility === true && i.contextShouldUpdate === true) {
-        i.offscreenContextRef.clearRect(0, 0, ImitationPageCanvas.state.store.canvas.canvasRef.width, ImitationPageCanvas.state.store.canvas.canvasRef.height)
+        i.offscreenContextRef.clearRect(0, 0, i.offscreenCanvasRef.width, i.offscreenCanvasRef.height)
         actionRender(i, i.offscreenCanvasRef, i.offscreenContextRef, i.action)
       }
 
       i.previousActionContextShouldUpdate = false
-      i.previousContextShouldUpdate = false
+      i.lastActionContextShouldUpdate = false
       i.contextShouldUpdate = false
     })
 

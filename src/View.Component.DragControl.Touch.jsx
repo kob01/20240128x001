@@ -82,14 +82,14 @@ const useState = (props) => {
       continuedY[index] = positionTarget.current.y[index] - positionOrigin.current.y[index]
     })
 
-    onChange({ e, status: 'beforeEnd', changedX, changedY, continuedX, continuedY })
+    onChange({ e, x, y, status: 'beforeEnd', changedX, changedY, continuedX, continuedY })
 
     positionOrigin.current = undefined
     positionTarget.current = undefined
 
     setActive(false)
 
-    onChange({ e, status: 'afterEnd', changedX, changedY, continuedX, continuedY })
+    onChange({ e, x, y, status: 'afterEnd', changedX, changedY, continuedX, continuedY })
   }, [props.enable, props.onChange])
 
   React.useEffect(() => {

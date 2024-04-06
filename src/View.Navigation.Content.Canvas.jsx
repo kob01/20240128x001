@@ -29,6 +29,46 @@ import { ImitationGlobal, ImitationNavigation, ImitationPageCanvas, withBindComp
 
 import { DialogSX, TextFieldSX, TabsSX, DividerSX, SwitchSX, SelectSX, DrawerSX, AccordionSX, PaperSX, TooltipSX } from './utils.mui.sx'
 
+function View() {
+  return <Grid container spacing={2}>
+
+    <Grid item xs={12}>
+      <NavigationAccordion text={'View'} type={['canvas', 'view']}>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            Scale X {ImitationPageCanvas.state.store.view.scaleX}
+          </Grid>
+          <Grid item xs={12}>
+            <Slider value={ImitationPageCanvas.state.store.view.scaleX} onChange={(e, v) => { ImitationPageCanvas.state.function.onViewScaleXChangeThrottleLastRIC(v) }} min={0.02} max={24} step={0.01} />
+          </Grid>
+
+          <Grid item xs={12}>
+            Scale Y {ImitationPageCanvas.state.store.view.scaleY}
+          </Grid>
+          <Grid item xs={12}>
+            <Slider value={ImitationPageCanvas.state.store.view.scaleY} onChange={(e, v) => { ImitationPageCanvas.state.function.onViewScaleYChangeThrottleLastRIC(v) }} min={0.02} max={24} step={0.01} />
+          </Grid>
+
+          <Grid item xs={12}>
+            Translate X {ImitationPageCanvas.state.store.view.translateX}
+          </Grid>
+          <Grid item xs={12}>
+            <Slider value={ImitationPageCanvas.state.store.view.translateX} onChange={(e, v) => { ImitationPageCanvas.state.function.onViewTranslateXChangeThrottleLastRIC(v) }} min={Math.min(ImitationPageCanvas.state.store.view.translateX, -1000)} max={Math.max(ImitationPageCanvas.state.store.view.translateX, 1000)} step={1} />
+          </Grid>
+
+          <Grid item xs={12}>
+            Translate Y {ImitationPageCanvas.state.store.view.translateY}
+          </Grid>
+          <Grid item xs={12}>
+            <Slider value={ImitationPageCanvas.state.store.view.translateY} onChange={(e, v) => { ImitationPageCanvas.state.function.onViewTranslateYChangeThrottleLastRIC(v) }} min={Math.min(ImitationPageCanvas.state.store.view.translateY, -1000)} max={Math.max(ImitationPageCanvas.state.store.view.translateY, 1000)} step={1} />
+          </Grid>
+        </Grid>
+      </NavigationAccordion>
+    </Grid>
+
+  </Grid>
+}
+
 function Basic() {
   return <Grid container spacing={2}>
 
@@ -65,14 +105,7 @@ function Basic() {
           <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>Paint</div>
             <div>
-              <Switch {...SwitchSX()} checked={ImitationPageCanvas.state.store.control.paint} onChange={(e) => { ImitationPageCanvas.state.function.onControlChange('paint', e.target.checked) }} />
-            </div>
-          </Grid>
-
-          <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div>Move</div>
-            <div>
-              <Switch {...SwitchSX()} checked={ImitationPageCanvas.state.store.control.move} onChange={(e) => { ImitationPageCanvas.state.function.onControlChange('move', e.target.checked) }} />
+              <Switch {...SwitchSX()} checked={ImitationPageCanvas.state.store.control.paint} onChange={(e) => { ImitationPageCanvas.state.store.control.paint = e.target.checked; ImitationPageCanvas.state.function.update() }} />
             </div>
           </Grid>
         </Grid>
@@ -83,13 +116,13 @@ function Basic() {
       <NavigationAccordion text={'Action'} type={['canvas', 'action']}>
         <Grid container spacing={1}>
           <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Button fullWidth style={{ position: 'relative' }} variant='outlined' onClick={() => { ImitationPageCanvas.state.function.onSave(0) }}><SaveIcon style={{ position: 'absolute', left: 8, top: 0, bottom: 0, margin: 'auto' }} />Save Source</Button>
+            <Button fullWidth style={{ position: 'relative', justifyContent: 'flex-start' }} onClick={() => { ImitationPageCanvas.state.function.onSave(0) }}><SaveIcon style={{ marginRight: 8 }} />Save Source</Button>
           </Grid>
           <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Button fullWidth style={{ position: 'relative' }} variant='outlined' onClick={() => { ImitationPageCanvas.state.function.onSave(1) }}><SaveIcon style={{ position: 'absolute', left: 8, top: 0, bottom: 0, margin: 'auto' }} />Save Canvas</Button>
+            <Button fullWidth style={{ position: 'relative', justifyContent: 'flex-start' }} onClick={() => { ImitationPageCanvas.state.function.onSave(1) }}><SaveIcon style={{ marginRight: 8 }} />Save Canvas</Button>
           </Grid>
           <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Button fullWidth style={{ position: 'relative' }} variant='outlined' onClick={() => { ImitationPageCanvas.state.function.onClear() }}><SaveIcon style={{ position: 'absolute', left: 8, top: 0, bottom: 0, margin: 'auto' }} />Clear Canvas</Button>
+            <Button fullWidth style={{ position: 'relative', justifyContent: 'flex-start' }} onClick={() => { ImitationPageCanvas.state.function.onClear() }}><SaveIcon style={{ marginRight: 8 }} />Clear Canvas</Button>
           </Grid>
         </Grid>
       </NavigationAccordion>
@@ -124,11 +157,7 @@ function Paint() {
 
     <Grid item xs={12}>
       <NavigationAccordion text={'Setting'} type={['canvas', 'paintsetting']}>
-        <Grid container spacing={2}>
-          {
-            paintFind.settingComponent.map((Componnet, index) => <Componnet key={ImitationPageCanvas.state.store.paint.control + index} value={ImitationPageCanvas.state.store.paint.setting} onChange={() => ImitationPageCanvas.state.function.update()} />)
-          }
-        </Grid>
+        <paintFind.settingComponent value={ImitationPageCanvas.state.store.paint.setting} onChange={() => ImitationPageCanvas.state.function.update()} />
       </NavigationAccordion>
     </Grid>
 
@@ -220,6 +249,7 @@ function Layer() {
 
 function App() {
   return <>
+    <NavigationItem children={<View />} text={'View'} type={['canvas', 'view']} />
     <NavigationItem children={<Basic />} text={'Basic'} type={['canvas', 'basic']} />
     <NavigationItem children={<Paint />} text={'Paint'} type={['canvas', 'paint']} />
     <NavigationItem children={<Layer />} text={'Layer'} type={['canvas', 'layer']} />

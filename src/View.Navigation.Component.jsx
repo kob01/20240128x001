@@ -16,7 +16,7 @@ import Select from '@mui/material/Select'
 import Tooltip from '@mui/material/Tooltip'
 
 import ChangeHistoryIcon from '@mui/icons-material/ChangeHistory'
-import MapIcon from '@mui/icons-material/Map'
+import CloseIcon from '@mui/icons-material/Close'
 
 import { HoverListener } from './View.Component.HoverListener'
 import { ClickAwayListener } from './View.Component.ClickAwayListener'
@@ -51,9 +51,20 @@ function NavigationItem(props) {
             open={ImitationNavigation.state.store.tooltip[props.type[0]][props.type[1]]}
             onClose={onClose}
             title={
-              <Paper {...PaperSX()} style={{ width: 360, height: 'fit-content', maxHeight: ImitationGlobal.state.store.rect.height * 0.5, padding: 16, overflowY: 'auto', background: 'none' }} ref={el => pushClickAwayRef('paper', el)}>
-                {props.children}
-              </Paper>
+              <>
+                <Paper {...PaperSX()} style={{ width: 480, maxWidth: ImitationGlobal.state.store.rect.width - 36, height: 'fit-content', maxHeight: ImitationGlobal.state.store.rect.height - 180, padding: 16, overflowY: 'auto', background: 'none' }} ref={el => pushClickAwayRef('paper', el)}>
+                  {props.children}
+                </Paper>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 16 }}>
+                  <HoverListener>
+                    {
+                      ({ hover, onMouseEnter, onMouseLeave }) => {
+                        return <Button color='primary' variant='contained' style={{ opacity: hover ? 1 : 0.2, transition: '1s all' }} onClick={onClose} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} children={<CloseIcon />} />
+                      }
+                    }
+                  </HoverListener>
+                </div>
+              </>
             }
             children={
               <Button onClick={onChange} ref={el => pushClickAwayRef('button', el)}>{props.text}</Button>

@@ -1,3 +1,5 @@
+import React from 'react'
+
 import Imitation from 'imitation-imm'
 
 const ImitationInstance = new Imitation()
@@ -23,6 +25,8 @@ ImitationInstance.state.store.tooltip.library.view = false
 ImitationInstance.state.store.tooltip.library.information = false
 
 ImitationInstance.state.store.tooltip.library.pagination = false
+
+ImitationInstance.state.store.tooltip.canvas.view = false
 
 ImitationInstance.state.store.tooltip.canvas.basic = false
 
@@ -68,5 +72,10 @@ ImitationInstance.state.function.tooltip = () => {
   Object.values(ImitationInstance.state.store.tooltip).forEach(i => Object.keys(i).forEach(k => i[k] = false))
   ImitationInstance.dispatch()
 }
+
+
+ImitationInstance.state.memo.tooltip = (dep = []) => React.useMemo(() => {
+  return Object.values(ImitationInstance.state.store.tooltip).map(i => Object.values(i)).flat(2)
+}, [...dep, Object.values(ImitationInstance.state.store.tooltip).map(i => Object.values(i)).flat(2)])
 
 export default ImitationInstance

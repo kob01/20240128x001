@@ -20,6 +20,12 @@ import { DialogSX, TextFieldSX, TabsSX, DividerSX, SwitchSX, SelectSX, DrawerSX,
 import { rgba } from './utils.common'
 
 function App() {
+  React.useEffect(() => {
+    ImitationNavigation.state.store.open = false
+    ImitationNavigation.state.function.tooltip()
+    ImitationNavigation.state.function.update()
+  }, [ImitationGlobal.state.store.page])
+
   return <>
 
     {

@@ -40,7 +40,6 @@ const useState = (props) => {
     const touchend = (e) => {
       if (e.changedTouches[0].pageX !== positionStart.current.x || e.changedTouches[0].pageY !== positionStart.current.y) return
       if (clickAwayRef.current.some(i => i.target && i.target.contains(e.target)) === true) return
-      console.log(clickAwayRef.current.some(i => console.log(i.target)))
       setOpen(false)
       if (props.onClick) props.onClick()
     }
