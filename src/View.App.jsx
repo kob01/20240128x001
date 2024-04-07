@@ -35,13 +35,17 @@ function App() {
     <div style={{ position: 'absolute', width: '100%', height: '100%', overflow: 'hidden' }} ref={el => ref.current = el}>
       <Loading />
       <Message />
-      <Page />
-      <Navigation />
+      {
+        ImitationGlobal.state.store.rect !== undefined ? <Page /> : null
+      }
+      {
+        ImitationGlobal.state.store.rect !== undefined ? <Navigation /> : null
+      }
     </div>
 
   </ThemeProvider>
 }
 
-const dependence = [{ instance: ImitationGlobal, dependence: state => [...Object.values(state.store.theme.palette).map(i => i.main)] }]
+const dependence = [{ instance: ImitationGlobal, dependence: state => [ImitationGlobal.state.store.rect, ImitationGlobal.state.store.recting, ...Object.values(state.store.theme.palette).map(i => i.main)] }]
 
 export default withBindComponentPure(App, dependence)

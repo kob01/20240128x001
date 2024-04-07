@@ -8,31 +8,17 @@ ImitationInstance.state = { update: {}, store: {}, function: {}, memo: {} }
 
 ImitationInstance.state.store = { expand: {} }
 
-ImitationInstance.state.store.tooltip = { global: {}, canvas: {}, library: {} }
+ImitationInstance.state.store.tooltip = {  }
 
 ImitationInstance.state.store.expand = { global: {}, canvas: {}, library: {} }
 
 ImitationInstance.state.update.now = performance.now()
 
-ImitationInstance.state.store.open = false
+ImitationInstance.state.store.mode = 0
 
-ImitationInstance.state.store.tooltip.global.theme = false
+ImitationInstance.state.store.tooltip.open = false
 
-ImitationInstance.state.store.tooltip.global.page = false
-
-ImitationInstance.state.store.tooltip.library.view = false
-
-ImitationInstance.state.store.tooltip.library.information = false
-
-ImitationInstance.state.store.tooltip.library.pagination = false
-
-ImitationInstance.state.store.tooltip.canvas.view = false
-
-ImitationInstance.state.store.tooltip.canvas.basic = false
-
-ImitationInstance.state.store.tooltip.canvas.paint = false
-
-ImitationInstance.state.store.tooltip.canvas.layer = false
+ImitationInstance.state.store.tooltip.type = undefined
 
 ImitationInstance.state.store.expand.global.theme = true
 
@@ -68,14 +54,5 @@ ImitationInstance.state.function.update = () => {
   ImitationInstance.dispatch()
 }
 
-ImitationInstance.state.function.tooltip = () => {
-  Object.values(ImitationInstance.state.store.tooltip).forEach(i => Object.keys(i).forEach(k => i[k] = false))
-  ImitationInstance.dispatch()
-}
-
-
-ImitationInstance.state.memo.tooltip = (dep = []) => React.useMemo(() => {
-  return Object.values(ImitationInstance.state.store.tooltip).map(i => Object.values(i)).flat(2)
-}, [...dep, Object.values(ImitationInstance.state.store.tooltip).map(i => Object.values(i)).flat(2)])
 
 export default ImitationInstance

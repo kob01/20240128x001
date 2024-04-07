@@ -51,23 +51,19 @@ function NavigationItem(props) {
             open={ImitationNavigation.state.store.tooltip[props.type[0]][props.type[1]]}
             onClose={onClose}
             title={
-              <>
-                <Paper {...PaperSX()} style={{ width: 480, maxWidth: ImitationGlobal.state.store.rect.width - 36, height: 'fit-content', maxHeight: ImitationGlobal.state.store.rect.height - 180, padding: 16, overflowY: 'auto', background: 'none' }} ref={el => pushClickAwayRef('paper', el)}>
-                  {props.children}
-                </Paper>
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 16 }}>
-                  <HoverListener>
-                    {
-                      ({ hover, onMouseEnter, onMouseLeave }) => {
-                        return <Button color='primary' variant='contained' style={{ opacity: hover ? 1 : 0.2, transition: '1s all' }} onClick={onClose} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} children={<CloseIcon />} />
-                      }
-                    }
-                  </HoverListener>
-                </div>
-              </>
+              <Paper {...PaperSX()} style={{ width: 480, maxWidth: ImitationGlobal.state.store.rect.width - 36, height: 'fit-content', maxHeight: ImitationGlobal.state.store.rect.height - 180, padding: 16, overflowY: 'auto', background: 'none' }} ref={el => pushClickAwayRef('paper', el)}>
+                {props.children}
+              </Paper>
             }
             children={
-              <Button onClick={onChange} ref={el => pushClickAwayRef('button', el)}>{props.text}</Button>
+              <Button onClick={onChange} ref={el => pushClickAwayRef('button', el)}>
+                {
+                  ImitationNavigation.state.store.tooltip[props.type[0]][props.type[1]] === true ? <CloseIcon /> : null
+                }
+                {
+                  ImitationNavigation.state.store.tooltip[props.type[0]][props.type[1]] === false ? props.text : null
+                }
+              </Button>
             }
           />
         </Grid>

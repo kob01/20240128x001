@@ -78,13 +78,17 @@ function Theme() {
 
 function App() {
   return <>
-    <NavigationItem children={<Theme />} text={'Theme'} type={['global', 'theme']} />
-    <NavigationItem children={<Page />} text={'Page'} type={['global', 'page']} />
+    {
+      ImitationNavigation.state.store.tooltip.type === 'Global.Theme' ? <Theme /> : null
+    }
+    {
+      ImitationNavigation.state.store.tooltip.type === 'Global.Page' ? <Page /> : null
+    }
   </>
 }
 
 const dependence = [
-  { instance: ImitationNavigation, dependence: state => [...Object.values(state.store.expand.global), ...Object.values(state.store.tooltip.global)] },
+  { instance: ImitationNavigation, dependence: state => [state.store.tooltip.type, ...Object.values(state.store.expand.global)] },
   { instance: ImitationGlobal, dependence: state => [state.store.rect, state.store.recting, state.store.page, ...Object.values(state.store.theme.palette).map(i => i.main)] }
 ]
 

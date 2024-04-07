@@ -249,16 +249,24 @@ function Layer() {
 
 function App() {
   return <>
-    <NavigationItem children={<View />} text={'View'} type={['canvas', 'view']} />
-    <NavigationItem children={<Basic />} text={'Basic'} type={['canvas', 'basic']} />
-    <NavigationItem children={<Paint />} text={'Paint'} type={['canvas', 'paint']} />
-    <NavigationItem children={<Layer />} text={'Layer'} type={['canvas', 'layer']} />
+    {
+      ImitationNavigation.state.store.tooltip.type === 'Canvas.View' ? <View /> : null
+    }
+    {
+      ImitationNavigation.state.store.tooltip.type === 'Canvas.Basic' ? <Basic /> : null
+    }
+    {
+      ImitationNavigation.state.store.tooltip.type === 'Canvas.Paint' ? <Paint /> : null
+    }
+    {
+      ImitationNavigation.state.store.tooltip.type === 'Canvas.Layer' ? <Layer /> : null
+    }
   </>
 }
 
 const dependence = [
   { instance: ImitationGlobal, dependence: state => [state.store.rect, state.store.recting] },
-  { instance: ImitationNavigation, dependence: state => [...Object.values(state.store.expand.canvas), ...Object.values(state.store.tooltip.canvas)] },
+  { instance: ImitationNavigation, dependence: state => [state.store.tooltip.type, ...Object.values(state.store.expand.canvas)] },
   { instance: ImitationPageCanvas, dependence: state => [state.update.now] }
 ]
 

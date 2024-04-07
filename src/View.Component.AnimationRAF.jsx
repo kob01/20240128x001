@@ -3,9 +3,15 @@ import React from 'react'
 const useState = (props) => {
   const { animation } = props
 
+  const ref = React.useRef()
+
   const [style, setStyle] = React.useState(animation[0])
 
-  React.useEffect(() => requestAnimationFrame(() => setStyle(animation[1])), [])
+  React.useEffect(() => {
+    ref.current = requestAnimationFrame(() => setStyle(animation[1]))
+
+    return () => cancelAnimationFrame(ref.current)
+  }, [])
 
   return { style }
 }

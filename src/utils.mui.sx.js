@@ -18,6 +18,27 @@ const TooltipSX = (reverse) => {
           background: 'none',
           maxWidth: 'initial',
           fontSize: '14px',
+          padding: '8px 16px !important',
+          marginBottom: '16px !important'
+        }
+      }
+    }
+  }
+}
+
+const TooltipSXNavigation = (reverse) => {
+  return {
+    PopperProps: {
+      sx: {
+        '&.MuiTooltip-popper': {
+          bottom: '16px !important'
+        },
+        '& .MuiTooltip-tooltip': {
+          background: 'none',
+          maxWidth: 'initial',
+          fontSize: '14px',
+          padding: '8px 16px !important',
+          marginBottom: '24px !important'
         }
       }
     }
@@ -118,7 +139,7 @@ const DialogSX = (reverse) => {
         background: themeColor('background', reverse),
         boxShadow: `0px 11px 15px -7px ${rgba(themeColor('primary', reverse), 0.2)}, 0px 24px 38px 3px ${rgba(themeColor('primary', reverse), 0.14)}, 0px 9px 46px 8px ${rgba(themeColor('primary', reverse), 0.12)}`,
         color: themeColor('primary', reverse),
-        width: '100%', 
+        width: '100%',
         maxWidth: '720px',
         transition: '1s all'
       },
@@ -208,4 +229,4 @@ const PaperSX = (reverse) => {
   }
 }
 
-export { TooltipSX, TextFieldSX, AutocompleteSX, SelectSX, DrawerSX, DialogSX, TabsSX, DividerSX, SwitchSX, AccordionSX, PaperSX }
+export { TooltipSX, TextFieldSX, AutocompleteSX, SelectSX, DrawerSX, DialogSX, TabsSX, DividerSX, SwitchSX, AccordionSX, PaperSX, TooltipSXNavigation }

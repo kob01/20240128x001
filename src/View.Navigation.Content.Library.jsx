@@ -117,15 +117,21 @@ function Pagination() {
 
 function App() {
   return <>
-    <NavigationItem children={<View />} text={'View'} type={['library', 'view']} />
-    <NavigationItem children={<Information />} text={'Information'} type={['library', 'information']} />
-    <NavigationItem children={<Pagination />} text={'Pagination'} type={['library', 'pagination']} />
+    {
+      ImitationNavigation.state.store.tooltip.type === 'Library.View' ? <View /> : null
+    }
+    {
+      ImitationNavigation.state.store.tooltip.type === 'Library.Information' ? <Information /> : null
+    }
+    {
+      ImitationNavigation.state.store.tooltip.type === 'Library.Pagination' ? <Pagination /> : null
+    }
   </>
 }
 
 const dependence = [
   { instance: ImitationGlobal, dependence: state => [state.store.rect, state.store.recting] },
-  { instance: ImitationNavigation, dependence: state => [...Object.values(state.store.expand.library), ...Object.values(state.store.tooltip.library)] },
+  { instance: ImitationNavigation, dependence: state => [state.store.tooltip.type, ...Object.values(state.store.expand.library)] },
   { instance: ImitationPageLibrary, dependence: state => [state.update.now] }
 ]
 
