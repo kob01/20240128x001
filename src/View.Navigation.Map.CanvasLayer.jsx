@@ -46,7 +46,7 @@ function App(props) {
 
         <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>Copy Layer</div>
-          <IconButton onClick={() => { ImitationPageCanvas.state.function.onCanvasLayerCreate(canvasLayerFind._hash) }}><CopyAllIcon color='primary' /></IconButton>
+          <IconButton onClick={() => { ImitationPageCanvas.state.function.onCanvasLayerCopy(canvasLayerFind._hash) }}><CopyAllIcon color='primary' /></IconButton>
         </Grid>
 
         <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

@@ -15,7 +15,7 @@ import { ImitationNavigation, ImitationPageCanvas, withBindComponentPure } from 
 import { DialogSX, TextFieldSX, TabsSX, DividerSX, SwitchSX, SelectSX, DrawerSX, AccordionSX, PaperSX, TooltipSX } from './utils.mui.sx'
 
 function App() {
-  return <Grid container spacing={2}>
+  return <Grid container spacing={1}>
 
     <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
       <div>Create Layer</div>

@@ -146,8 +146,14 @@ function NavigationRenderItem(props) {
 
   React.useEffect(() => {
     const event = e => e.preventDefault()
+
     renderWindowsFind.accordionSummaryRef.addEventListener('touchmove', event)
-    return () => renderWindowsFind.accordionSummaryRef.removeEventListener('touchmove', event)
+
+    return () => {
+      if (renderWindowsFind.accordionSummaryRef) {
+        renderWindowsFind.accordionSummaryRef.removeEventListener('touchmove', event)
+      }
+    }
   }, [])
 
   return <AnimationRAF animation={opacityAnimation}>
