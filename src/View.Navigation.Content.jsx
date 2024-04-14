@@ -39,7 +39,7 @@ function NavigationRenderItem(props) {
     if (status === 'afterMove') {
       renderWindowsFind.translateX = renderWindowsFind.translateX + changedX
       renderWindowsFind.translateY = renderWindowsFind.translateY + changedY
-      ImitationNavigation.state.function.renderWindowsFixTranslateThrottleLastRIC(renderWindowsFind._hash)
+      ImitationNavigation.state.function.renderWindowsFixTranslateThrottleLastRAF(renderWindowsFind._hash)
     }
 
     if (status === 'afterEnd') {
@@ -63,7 +63,7 @@ function NavigationRenderItem(props) {
     if (status === 'afterMove') {
       renderWindowsFind.translateX = renderWindowsFind.translateX + changedX
       renderWindowsFind.translateY = renderWindowsFind.translateY + changedY
-      ImitationNavigation.state.function.renderWindowsFixTranslateThrottleLastRIC(renderWindowsFind._hash)
+      ImitationNavigation.state.function.renderWindowsFixTranslateThrottleLastRAF(renderWindowsFind._hash)
     }
 
     if (status === 'afterEnd') {
@@ -83,7 +83,7 @@ function NavigationRenderItem(props) {
     if (ImitationGlobal.state.store.rect === undefined) return
 
     if (renderWindowsFind.load === true) {
-      ImitationNavigation.state.function.renderWindowsFixTranslateThrottleLastRIC(renderWindowsFind._hash)
+      ImitationNavigation.state.function.renderWindowsFixTranslateThrottleLastRAF(renderWindowsFind._hash)
     }
 
     if (renderWindowsFind.load === false) {
@@ -118,7 +118,7 @@ function NavigationRenderItem(props) {
         renderWindowsFind.load = true
       }
 
-      ImitationNavigation.state.function.renderWindowsFixTranslateThrottleLastRIC(renderWindowsFind._hash)
+      ImitationNavigation.state.function.renderWindowsFixTranslateThrottleLastRAF(renderWindowsFind._hash)
     }
   }, [ImitationGlobal.state.store.rect])
 
@@ -136,7 +136,7 @@ function NavigationRenderItem(props) {
 
   React.useEffect(() => {
     const resizeObserver = new ResizeObserver(() => {
-      ImitationNavigation.state.function.renderWindowsFixTranslateThrottleLastRIC(renderWindowsFind._hash)
+      ImitationNavigation.state.function.renderWindowsFixTranslateThrottleLastRAF(renderWindowsFind._hash)
     })
 
     resizeObserver.observe(renderWindowsFind.accordionRef)

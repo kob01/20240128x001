@@ -1,6 +1,6 @@
 import Imitation from 'imitation-imm'
 
-import { throttleLastRIC } from './utils.common'
+import { throttleLastRAF } from './utils.common'
 
 const ImitationInstance = new Imitation()
 
@@ -31,7 +31,7 @@ ImitationInstance.state.function.update = () => {
   ImitationInstance.dispatch()
 }
 
-ImitationInstance.state.function.updateThrottleLastRIC = throttleLastRIC(ImitationInstance.state.function.update)
+ImitationInstance.state.function.updateThrottleLastRAF = throttleLastRAF(ImitationInstance.state.function.update)
 
 
 export default ImitationInstance

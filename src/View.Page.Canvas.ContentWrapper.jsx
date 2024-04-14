@@ -59,7 +59,7 @@ function App() {
 
       canvasLayerFind.lastActionContextShouldUpdate = true
 
-      ImitationPageCanvas.state.function.updateCanvasOffscreenRenderThrottleLastRIC()
+      ImitationPageCanvas.state.function.updateCanvasOffscreenRenderThrottleLastRAF()
       ImitationPageCanvas.state.function.updateDebounce500()
     }
 
@@ -72,7 +72,7 @@ function App() {
 
       ImitationPageCanvas.state.store.canvas.layer.forEach(i => i.contextShouldUpdate = true)
 
-      ImitationPageCanvas.state.function.updateCanvasOffscreenRenderThrottleLastRIC()
+      ImitationPageCanvas.state.function.updateCanvasOffscreenRenderThrottleLastRAF()
       ImitationPageCanvas.state.function.updateDebounce500()
     }
 
@@ -85,7 +85,7 @@ function App() {
 
       canvasLayerFind.contextShouldUpdate = true
 
-      ImitationPageCanvas.state.function.updateCanvasOffscreenRenderThrottleLastRIC()
+      ImitationPageCanvas.state.function.updateCanvasOffscreenRenderThrottleLastRAF()
       ImitationPageCanvas.state.function.updateDebounce500()
     }
 
@@ -134,7 +134,7 @@ function App() {
 
       canvasLayerFind.lastActionContextShouldUpdate = true
 
-      ImitationPageCanvas.state.function.updateCanvasOffscreenRenderThrottleLastRIC()
+      ImitationPageCanvas.state.function.updateCanvasOffscreenRenderThrottleLastRAF()
       ImitationPageCanvas.state.function.updateDebounce500()
     }
 
@@ -149,7 +149,7 @@ function App() {
 
       ImitationPageCanvas.state.store.canvas.layer.forEach(i => i.contextShouldUpdate = true)
 
-      ImitationPageCanvas.state.function.updateCanvasOffscreenRenderThrottleLastRIC()
+      ImitationPageCanvas.state.function.updateCanvasOffscreenRenderThrottleLastRAF()
       ImitationPageCanvas.state.function.updateDebounce500()
     }
 
@@ -162,7 +162,7 @@ function App() {
 
       canvasLayerFind.contextShouldUpdate = true
 
-      ImitationPageCanvas.state.function.updateCanvasOffscreenRenderThrottleLastRIC()
+      ImitationPageCanvas.state.function.updateCanvasOffscreenRenderThrottleLastRAF()
       ImitationPageCanvas.state.function.updateDebounce500()
     }
 
@@ -194,7 +194,7 @@ function App() {
 
       ImitationPageCanvas.state.store.canvas.layer.forEach(i => i.contextShouldUpdate = true)
 
-      ImitationPageCanvas.state.function.updateCanvasOffscreenRenderThrottleLastRIC()
+      ImitationPageCanvas.state.function.updateCanvasOffscreenRenderThrottleLastRAF()
       ImitationPageCanvas.state.function.updateDebounce500()
     }
 
@@ -207,7 +207,7 @@ function App() {
 
       ImitationPageCanvas.state.store.canvas.layer.forEach(i => i.contextShouldUpdate = true)
 
-      ImitationPageCanvas.state.function.updateCanvasOffscreenRenderThrottleLastRIC()
+      ImitationPageCanvas.state.function.updateCanvasOffscreenRenderThrottleLastRAF()
       ImitationPageCanvas.state.function.updateDebounce500()
     }
   }

@@ -4,7 +4,7 @@ import Imitation from 'imitation-imm'
 
 import Paint from './View.Config.Paint'
 
-import { hash, debounce, throttleLastRIC } from './utils.common'
+import { hash, debounce, throttleLastRAF } from './utils.common'
 
 import mockSource from './mock.source'
 
@@ -70,28 +70,28 @@ ImitationInstance.state.function.update = () => {
 }
 
 ImitationInstance.state.function.updateDebounce500 = debounce(ImitationInstance.state.function.update, 500)
-ImitationInstance.state.function.updateThrottleLastRIC = throttleLastRIC(ImitationInstance.state.function.update)
+ImitationInstance.state.function.updateThrottleLastRAF = throttleLastRAF(ImitationInstance.state.function.update)
 
 ImitationInstance.state.function.updateCanvasResize = () => {
   ImitationInstance.state.update.canvasResize = performance.now()
   ImitationInstance.dispatch()
 }
 
-ImitationInstance.state.function.updateCanvasResizeThrottleLastRIC = throttleLastRIC(ImitationInstance.state.function.updateCanvasResize)
+ImitationInstance.state.function.updateCanvasResizeThrottleLastRAF = throttleLastRAF(ImitationInstance.state.function.updateCanvasResize)
 
 ImitationInstance.state.function.updateCanvasOffscreenRender = () => {
   ImitationInstance.state.update.canvasOffscreenRender = performance.now()
   ImitationInstance.dispatch()
 }
 
-ImitationInstance.state.function.updateCanvasOffscreenRenderThrottleLastRIC = throttleLastRIC(ImitationInstance.state.function.updateCanvasOffscreenRender)
+ImitationInstance.state.function.updateCanvasOffscreenRenderThrottleLastRAF = throttleLastRAF(ImitationInstance.state.function.updateCanvasOffscreenRender)
 
 ImitationInstance.state.function.updateCanvasOnlinescreenRender = () => {
   ImitationInstance.state.update.canvasOnlinescreenRender = performance.now()
   ImitationInstance.dispatch()
 }
 
-ImitationInstance.state.function.updateCanvasOnlinescreenRenderThrottleLastRIC = throttleLastRIC(ImitationInstance.state.function.updateCanvasOnlinescreenRender)
+ImitationInstance.state.function.updateCanvasOnlinescreenRenderThrottleLastRAF = throttleLastRAF(ImitationInstance.state.function.updateCanvasOnlinescreenRender)
 
 ImitationInstance.state.function.onLoad = () => {
   ImitationInstance.state.store.load = true
@@ -193,8 +193,8 @@ ImitationInstance.state.function.onViewScaleXChange = (value) => {
 
   ImitationInstance.state.store.canvas.layer.forEach(i => i.contextShouldUpdate = true)
 
-  ImitationInstance.state.function.updateCanvasOffscreenRenderThrottleLastRIC()
-  ImitationInstance.state.function.updateThrottleLastRIC()
+  ImitationInstance.state.function.updateCanvasOffscreenRenderThrottleLastRAF()
+  ImitationInstance.state.function.updateThrottleLastRAF()
 }
 
 ImitationInstance.state.function.onViewScaleYChange = (value) => {
@@ -202,8 +202,8 @@ ImitationInstance.state.function.onViewScaleYChange = (value) => {
 
   ImitationInstance.state.store.canvas.layer.forEach(i => i.contextShouldUpdate = true)
 
-  ImitationInstance.state.function.updateCanvasOffscreenRenderThrottleLastRIC()
-  ImitationInstance.state.function.updateThrottleLastRIC()
+  ImitationInstance.state.function.updateCanvasOffscreenRenderThrottleLastRAF()
+  ImitationInstance.state.function.updateThrottleLastRAF()
 }
 
 ImitationInstance.state.function.onViewTranslateXChange = (value) => {
@@ -211,8 +211,8 @@ ImitationInstance.state.function.onViewTranslateXChange = (value) => {
 
   ImitationInstance.state.store.canvas.layer.forEach(i => i.contextShouldUpdate = true)
 
-  ImitationInstance.state.function.updateCanvasOffscreenRenderThrottleLastRIC()
-  ImitationInstance.state.function.updateThrottleLastRIC()
+  ImitationInstance.state.function.updateCanvasOffscreenRenderThrottleLastRAF()
+  ImitationInstance.state.function.updateThrottleLastRAF()
 }
 
 ImitationInstance.state.function.onViewTranslateYChange = (value) => {
@@ -220,8 +220,8 @@ ImitationInstance.state.function.onViewTranslateYChange = (value) => {
 
   ImitationInstance.state.store.canvas.layer.forEach(i => i.contextShouldUpdate = true)
 
-  ImitationInstance.state.function.updateCanvasOffscreenRenderThrottleLastRIC()
-  ImitationInstance.state.function.updateThrottleLastRIC()
+  ImitationInstance.state.function.updateCanvasOffscreenRenderThrottleLastRAF()
+  ImitationInstance.state.function.updateThrottleLastRAF()
 }
 
 ImitationInstance.state.function.onCanvasLayerCreate = () => {

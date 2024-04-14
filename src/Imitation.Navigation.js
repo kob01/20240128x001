@@ -4,7 +4,7 @@ import Imitation from 'imitation-imm'
 
 import ImitationGlobal from './Imitation.Global'
 
-import { hash, throttleLastRIC } from './utils.common'
+import { hash, throttleLastRAF } from './utils.common'
 
 const ImitationInstance = new Imitation()
 
@@ -75,7 +75,7 @@ ImitationInstance.state.function.renderWindowsFixTranslate = (_hash) => {
   ImitationInstance.state.function.updateRenderWindow()
 }
 
-ImitationInstance.state.function.renderWindowsFixTranslateThrottleLastRIC = throttleLastRIC(ImitationInstance.state.function.renderWindowsFixTranslate)
+ImitationInstance.state.function.renderWindowsFixTranslateThrottleLastRAF = throttleLastRAF(ImitationInstance.state.function.renderWindowsFixTranslate)
 
 
 ImitationInstance.state.memo.renderWindowsFind = (_hash, dep = []) => React.useMemo(() => {

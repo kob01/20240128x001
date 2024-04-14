@@ -34,10 +34,11 @@ const debounce = (fn, time) => {
   return (...args) => { clearTimeout(ref); ref = setTimeout(() => fn(...args), time); }
 }
 
-const throttleLastRIC = (fn) => {
-  var ref
+const throttleLastRAF = (fn) => {
+  var ref = { current: undefined }
+  var refRAF
 
-  return (...args) => { ref = () => fn(...args); requestAnimationFrame(ref); }
+  return (...args) => { ref.current = () => fn(...args); if (refRAF === undefined) requestAnimationFrame(() => { ref.current(...args); refRAF = undefined }); }
 }
 
 const fixed = (number) => {
@@ -92,4 +93,4 @@ const caculatePositionCenter = (wrapper, target, offset) => {
   return [sx, sy, swidth, sheight, x, y, width, height]
 }
 
-export { hash, rgbaSpilt, rgbaReplaceAlpha, debounce, throttleLastRIC, fixed, range, caculatePositionCenter }
+export { hash, rgbaSpilt, rgbaReplaceAlpha, debounce, throttleLastRAF, fixed, range, caculatePositionCenter }
