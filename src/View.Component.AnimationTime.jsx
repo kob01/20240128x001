@@ -1,11 +1,9 @@
 import React from 'react'
 
 const useState = (props) => {
-  const { animation } = props
+  const [style, setStyle] = React.useState(props.animation[0])
 
-  const [style, setStyle] = React.useState(animation[0])
-
-  React.useEffect(() => setTimeout(() => setStyle(animation[1]), props.time), [])
+  React.useEffect(() => setTimeout(() => setStyle(props.animation[1]), props.time), [])
 
   return { style }
 }

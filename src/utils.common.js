@@ -2,15 +2,28 @@ const hash = (n = 16, l = 1) => {
   return new Array(l).fill(undefined).map(i => Array.from(Array(n), () => Math.floor(Math.random() * 36).toString(36)).join('')).join('-').toUpperCase()
 }
 
-const rgba = (rgb, a) => {
-  const rgbRegex = /^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/
+const rgbaSpilt = (rgba) => {
+  const rgbRegex = /^rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d\.]+)\)$/
+  const match = rgba.match(rgbRegex)
+
+  const r = match[1]
+  const g = match[2]
+  const b = match[3]
+  const a = match[4]
+
+  return { r, g, b, a }
+}
+
+const rgbaReplaceAlpha = (rgb, alpha) => {
+  const rgbRegex = /^rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d\.]+)\)$/
   const match = rgb.match(rgbRegex)
 
   const r = match[1]
   const g = match[2]
   const b = match[3]
+  const a = match[4]
 
-  const rgbaString = `rgba(${r}, ${g}, ${b}, ${a})`
+  const rgbaString = `rgba(${r}, ${g}, ${b}, ${alpha})`
 
   return rgbaString
 }
@@ -79,4 +92,4 @@ const caculatePositionCenter = (wrapper, target, offset) => {
   return [sx, sy, swidth, sheight, x, y, width, height]
 }
 
-export { hash, rgba, debounce, throttleLastRIC, fixed, range, caculatePositionCenter }
+export { hash, rgbaSpilt, rgbaReplaceAlpha, debounce, throttleLastRIC, fixed, range, caculatePositionCenter }

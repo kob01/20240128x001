@@ -1,7 +1,8 @@
 import React from 'react'
 
 import ColorLensIcon from '@mui/icons-material/ColorLens'
-import PagesIcon from '@mui/icons-material/Pages'
+import BookIcon from '@mui/icons-material/Book'
+
 import ViewCarouselIcon from '@mui/icons-material/ViewCarousel'
 import SettingsIcon from '@mui/icons-material/Settings'
 import LayersIcon from '@mui/icons-material/Layers'
@@ -20,7 +21,7 @@ import CanvasPaint from './View.Navigation.Map.CanvasPaint'
 import CanvasView from './View.Navigation.Map.CanvasView'
 
 const App = [
-  { Component: GlobalPage, _hash: 'GlobalPage', summary: 'Page', page: '*', Icon: PagesIcon },
+  { Component: GlobalPage, _hash: 'GlobalPage', summary: 'Page', page: '*', Icon: BookIcon },
   { Component: GlobalTheme, _hash: 'GlobalTheme', summary: 'Theme', page: '*', Icon: ColorLensIcon },
 
   { Component: CanvasAction, _hash: 'CanvasAction', summary: 'Setting', page: 'Canvas', Icon: SettingsIcon },

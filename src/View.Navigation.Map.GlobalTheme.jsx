@@ -1,42 +1,77 @@
 import React from 'react'
 
-import Slider from '@mui/material/Slider'
+import Button from '@mui/material/Button'
+import Paper from '@mui/material/Paper'
 import Grid from '@mui/material/Grid'
+import Tooltip from '@mui/material/Tooltip'
+import Slider from '@mui/material/Slider'
+
+import { CirclePicker, HuePicker, AlphaPicker } from 'react-color'
+
+import { ClickAwayListener } from './View.Component.ClickAwayListener'
+import { ColorPicker } from './View.Component.ColorPicker'
 
 import { ImitationGlobal, withBindComponentPure } from './Imitation'
 
+import { rgbaSpilt } from './utils.common'
+
+import { DialogSX, TextFieldSX, TabsSX, DividerSX, SwitchSX, SelectSX, DrawerSX, AccordionSX, PaperSX, TooltipSX } from './utils.mui.sx'
+
 function App() {
-  const themeBase = 255
-  const themeUnit = 15
-
-  const average = (array) => array.reduce((t, i) => t + i, 0) / array.length
-
-  const themeValue = React.useMemo(() => {
-    const background = average(ImitationGlobal.state.store.theme.palette.background.main.match(/\d+/g).map(i => Number(i)))
-    const primary = average(ImitationGlobal.state.store.theme.palette.primary.main.match(/\d+/g).map(i => Number(i)))
-
-    const backgroundLevel = background / themeBase * themeUnit
-    const primaryLevel = (themeBase - primary) / themeBase * themeUnit
-
-    const color = Math.floor(average([backgroundLevel, primaryLevel]))
-
-    return color
-  }, [...Object.values(ImitationGlobal.state.store.theme.palette).map(i => i.main)])
-
-  const onChangeTheme = (v) => {
-    const background = `rgb(${v * themeBase / themeUnit}, ${v * themeBase / themeUnit}, ${v * themeBase / themeUnit})`
-    const primary = `rgb(${themeBase - v * themeBase / themeUnit}, ${themeBase - v * themeBase / themeUnit}, ${themeBase - v * themeBase / themeUnit})`
-
-    ImitationGlobal.state.store.theme.palette.background.main = background
-    ImitationGlobal.state.store.theme.palette.primary.main = primary
-
-    ImitationGlobal.dispatch()
-  }
+  const backgroundRgbaSpilt = rgbaSpilt(ImitationGlobal.state.store.theme.palette.background.main)
+  const primaryRgbaSpilt = rgbaSpilt(ImitationGlobal.state.store.theme.palette.primary.main)
 
   return <Grid container spacing={2}>
-    <Grid item xs={12}>Theme Color</Grid>
-    <Grid item xs={12}>
-      <Slider value={themeValue} onChange={(e, v) => onChangeTheme(v)} min={0} max={themeUnit} step={1} />
+    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div>
+        Theme Color Background
+      </div>
+      <div>
+        <ClickAwayListener>
+          {
+            ({ open, setOpen, pushClickAwayRef }) => {
+              return <Tooltip
+                {...TooltipSX()}
+                open={open}
+                title={
+                  <Paper {...PaperSX()} style={{ padding: 16, width: 320 }} ref={el => pushClickAwayRef('Paper', el)}>
+                    <ColorPicker value={ImitationGlobal.state.store.theme.palette.background.main} onChange={v => { ImitationGlobal.state.store.theme.palette.background.main = v; ImitationGlobal.state.function.updateThrottleLastRIC() }} colors={['rgba(255, 0, 0, 1)', 'rgba(0, 255, 0, 1)', 'rgba(0, 0, 255, 1)']} />
+                  </Paper>
+                }
+                children={
+                  <Button variant='contained' style={{ background: ImitationGlobal.state.store.theme.palette.background.main, color: ImitationGlobal.state.store.theme.palette.primary.main }} onClick={() => setOpen(true)} ref={el => pushClickAwayRef('Button', el)}>Pick</Button>
+                }
+              />
+            }
+          }
+        </ClickAwayListener>
+      </div>
+    </Grid>
+
+    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div>
+        Theme Color Primary
+      </div>
+      <div>
+        <ClickAwayListener>
+          {
+            ({ open, setOpen, pushClickAwayRef }) => {
+              return <Tooltip
+                {...TooltipSX()}
+                open={open}
+                title={
+                  <Paper {...PaperSX()} style={{ padding: 16, width: 320 }} ref={el => pushClickAwayRef('Paper', el)}>
+                    <ColorPicker value={ImitationGlobal.state.store.theme.palette.primary.main} onChange={v => { ImitationGlobal.state.store.theme.palette.primary.main = v; ImitationGlobal.state.function.updateThrottleLastRIC() }} colors={['rgba(255, 0, 0, 1)', 'rgba(0, 255, 0, 1)', 'rgba(0, 0, 255, 1)']} />
+                  </Paper>
+                }
+                children={
+                  <Button variant='contained' style={{ background: ImitationGlobal.state.store.theme.palette.background.main, color: ImitationGlobal.state.store.theme.palette.primary.main }} onClick={() => setOpen(true)} ref={el => pushClickAwayRef('Button', el)}>Pick</Button>
+                }
+              />
+            }
+          }
+        </ClickAwayListener>
+      </div>
     </Grid>
   </Grid>
 }

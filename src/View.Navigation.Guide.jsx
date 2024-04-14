@@ -12,7 +12,7 @@ import { HoverListener } from './View.Component.HoverListener'
 
 import { ImitationGlobal, ImitationNavigation, withBindComponentPure } from './Imitation'
 
-import { rgba } from './utils.common'
+import { rgbaReplaceAlpha } from './utils.common'
 
 function App() {
   return <div style={{ position: 'absolute', zIndex: 1000, width: 'fit-content', maxWidth: ImitationGlobal.state.store.rect.width - 16, height: 'fit-content', left: 0, right: 0, bottom: 8, margin: 'auto', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -40,7 +40,7 @@ function App() {
         <AnimationRAF animation={opacityAnimation}>
           {
             ({ style }) => {
-              return <div style={{ width: 'fit-content', maxWidth: '100%', overflowY: 'auto', borderRadius: 8, background: rgba(ImitationGlobal.state.store.theme.palette.background.main, 0.5), transition: '1s all', ...style }}>
+              return <div style={{ width: 'fit-content', maxWidth: '100%', overflowY: 'auto', borderRadius: 8, background: rgbaReplaceAlpha(ImitationGlobal.state.store.theme.palette.background.main, 0.5), transition: '1s all', ...style }}>
                 <Grid container spacing={0} style={{ display: 'flex', flexWrap: 'nowrap', width: 'fit-content', padding: '4px 12px' }}>
                   {
                     NavigationMap

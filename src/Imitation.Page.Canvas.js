@@ -10,6 +10,7 @@ import mockSource from './mock.source'
 
 const ImitationInstance = new Imitation()
 
+
 ImitationInstance.state = { update: {}, store: {}, function: {}, memo: {} }
 
 ImitationInstance.state.store = { canvas: {}, paint: {}, view: {}, control: {}, active: {} }
@@ -68,7 +69,8 @@ ImitationInstance.state.function.update = () => {
   ImitationInstance.dispatch()
 }
 
-ImitationInstance.state.function.updateCanvasResizeDebounce500 = debounce(ImitationInstance.state.function.update, 500)
+ImitationInstance.state.function.updateDebounce500 = debounce(ImitationInstance.state.function.update, 500)
+ImitationInstance.state.function.updateThrottleLastRIC = throttleLastRIC(ImitationInstance.state.function.update)
 
 ImitationInstance.state.function.updateCanvasResize = () => {
   ImitationInstance.state.update.canvasResize = performance.now()
@@ -191,44 +193,36 @@ ImitationInstance.state.function.onViewScaleXChange = (value) => {
 
   ImitationInstance.state.store.canvas.layer.forEach(i => i.contextShouldUpdate = true)
 
-  ImitationInstance.state.function.updateCanvasOffscreenRender()
-  ImitationInstance.state.function.update()
+  ImitationInstance.state.function.updateCanvasOffscreenRenderThrottleLastRIC()
+  ImitationInstance.state.function.updateThrottleLastRIC()
 }
-
-ImitationInstance.state.function.onViewScaleXChangeThrottleLastRIC = throttleLastRIC(ImitationInstance.state.function.onViewScaleXChange)
 
 ImitationInstance.state.function.onViewScaleYChange = (value) => {
   ImitationInstance.state.store.view.scaleY = value
 
   ImitationInstance.state.store.canvas.layer.forEach(i => i.contextShouldUpdate = true)
 
-  ImitationInstance.state.function.updateCanvasOffscreenRender()
-  ImitationInstance.state.function.update()
+  ImitationInstance.state.function.updateCanvasOffscreenRenderThrottleLastRIC()
+  ImitationInstance.state.function.updateThrottleLastRIC()
 }
-
-ImitationInstance.state.function.onViewScaleYChangeThrottleLastRIC = throttleLastRIC(ImitationInstance.state.function.onViewScaleYChange)
 
 ImitationInstance.state.function.onViewTranslateXChange = (value) => {
   ImitationInstance.state.store.view.translateX = value
 
   ImitationInstance.state.store.canvas.layer.forEach(i => i.contextShouldUpdate = true)
 
-  ImitationInstance.state.function.updateCanvasOffscreenRender()
-  ImitationInstance.state.function.update()
+  ImitationInstance.state.function.updateCanvasOffscreenRenderThrottleLastRIC()
+  ImitationInstance.state.function.updateThrottleLastRIC()
 }
-
-ImitationInstance.state.function.onViewTranslateXChangeThrottleLastRIC = throttleLastRIC(ImitationInstance.state.function.onViewTranslateXChange)
 
 ImitationInstance.state.function.onViewTranslateYChange = (value) => {
   ImitationInstance.state.store.view.translateY = value
 
   ImitationInstance.state.store.canvas.layer.forEach(i => i.contextShouldUpdate = true)
 
-  ImitationInstance.state.function.updateCanvasOffscreenRender()
-  ImitationInstance.state.function.update()
+  ImitationInstance.state.function.updateCanvasOffscreenRenderThrottleLastRIC()
+  ImitationInstance.state.function.updateThrottleLastRIC()
 }
-
-ImitationInstance.state.function.onViewTranslateYChangeThrottleLastRIC = throttleLastRIC(ImitationInstance.state.function.onViewTranslateYChange)
 
 ImitationInstance.state.function.onCanvasLayerCreate = () => {
   const i = {

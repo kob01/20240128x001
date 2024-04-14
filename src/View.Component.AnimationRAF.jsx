@@ -1,14 +1,12 @@
 import React from 'react'
 
 const useState = (props) => {
-  const { animation } = props
-
   const ref = React.useRef()
 
-  const [style, setStyle] = React.useState(animation[0])
+  const [style, setStyle] = React.useState(props.animation[0])
 
   React.useEffect(() => {
-    ref.current = requestAnimationFrame(() => setStyle(animation[1]))
+    ref.current = requestAnimationFrame(() => setStyle(props.animation[1]))
 
     return () => cancelAnimationFrame(ref.current)
   }, [])

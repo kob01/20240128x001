@@ -60,7 +60,7 @@ function App() {
       canvasLayerFind.lastActionContextShouldUpdate = true
 
       ImitationPageCanvas.state.function.updateCanvasOffscreenRenderThrottleLastRIC()
-      ImitationPageCanvas.state.function.updateCanvasResizeDebounce500()
+      ImitationPageCanvas.state.function.updateDebounce500()
     }
 
     if (dragControlType.current === 1 && status === 'afterMove') {
@@ -73,7 +73,7 @@ function App() {
       ImitationPageCanvas.state.store.canvas.layer.forEach(i => i.contextShouldUpdate = true)
 
       ImitationPageCanvas.state.function.updateCanvasOffscreenRenderThrottleLastRIC()
-      ImitationPageCanvas.state.function.updateCanvasResizeDebounce500()
+      ImitationPageCanvas.state.function.updateDebounce500()
     }
 
     if (dragControlType.current === 2 && status === 'afterMove') {
@@ -86,7 +86,7 @@ function App() {
       canvasLayerFind.contextShouldUpdate = true
 
       ImitationPageCanvas.state.function.updateCanvasOffscreenRenderThrottleLastRIC()
-      ImitationPageCanvas.state.function.updateCanvasResizeDebounce500()
+      ImitationPageCanvas.state.function.updateDebounce500()
     }
 
     if (status === 'afterEnd') {
@@ -135,7 +135,7 @@ function App() {
       canvasLayerFind.lastActionContextShouldUpdate = true
 
       ImitationPageCanvas.state.function.updateCanvasOffscreenRenderThrottleLastRIC()
-      ImitationPageCanvas.state.function.updateCanvasResizeDebounce500()
+      ImitationPageCanvas.state.function.updateDebounce500()
     }
 
     if (dragControlType.current === 1 && status === 'afterMove' && inTouch2 === true) {
@@ -150,7 +150,7 @@ function App() {
       ImitationPageCanvas.state.store.canvas.layer.forEach(i => i.contextShouldUpdate = true)
 
       ImitationPageCanvas.state.function.updateCanvasOffscreenRenderThrottleLastRIC()
-      ImitationPageCanvas.state.function.updateCanvasResizeDebounce500()
+      ImitationPageCanvas.state.function.updateDebounce500()
     }
 
     if (dragControlType.current === 2 && status === 'afterMove' && inTouch3 === true) {
@@ -163,7 +163,7 @@ function App() {
       canvasLayerFind.contextShouldUpdate = true
 
       ImitationPageCanvas.state.function.updateCanvasOffscreenRenderThrottleLastRIC()
-      ImitationPageCanvas.state.function.updateCanvasResizeDebounce500()
+      ImitationPageCanvas.state.function.updateDebounce500()
     }
 
     if (status === 'afterEnd') {
@@ -195,7 +195,7 @@ function App() {
       ImitationPageCanvas.state.store.canvas.layer.forEach(i => i.contextShouldUpdate = true)
 
       ImitationPageCanvas.state.function.updateCanvasOffscreenRenderThrottleLastRIC()
-      ImitationPageCanvas.state.function.updateCanvasResizeDebounce500()
+      ImitationPageCanvas.state.function.updateDebounce500()
     }
 
     if (e.nativeEvent.wheelDelta !== 240 && e.nativeEvent.wheelDelta !== -240) {
@@ -208,7 +208,7 @@ function App() {
       ImitationPageCanvas.state.store.canvas.layer.forEach(i => i.contextShouldUpdate = true)
 
       ImitationPageCanvas.state.function.updateCanvasOffscreenRenderThrottleLastRIC()
-      ImitationPageCanvas.state.function.updateCanvasResizeDebounce500()
+      ImitationPageCanvas.state.function.updateDebounce500()
     }
   }
 

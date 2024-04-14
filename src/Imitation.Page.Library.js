@@ -8,6 +8,7 @@ import mockSource from './mock.source'
 
 const ImitationInstance = new Imitation()
 
+
 ImitationInstance.state = { update: {}, store: {}, function: {}, memo: {} }
 
 ImitationInstance.state.store = {  view: {} }

@@ -1,5 +1,5 @@
 import { ImitationGlobal } from './Imitation'
-import { rgba } from './utils.common'
+import { rgbaReplaceAlpha } from './utils.common'
 
 const themeColor = (type, reverse = false) => {
   if (type === 'background') {
@@ -57,7 +57,7 @@ const TextFieldSX = (reverse) => {
         color: themeColor('primary', reverse)
       },
       '& fieldset': {
-        borderColor: rgba(themeColor('primary', reverse), 0.7),
+        borderColor: rgbaReplaceAlpha(themeColor('primary', reverse), 0.7),
       },
       '& .MuiInputBase-root:hover fieldset': {
         borderColor: themeColor('primary', reverse),
@@ -103,7 +103,7 @@ const SelectSX = (reverse) => {
         color: themeColor('primary', reverse)
       },
       '& fieldset': {
-        borderColor: rgba(themeColor('primary', reverse), 0.7),
+        borderColor: rgbaReplaceAlpha(themeColor('primary', reverse), 0.7),
       },
       '& .MuiInputBase-root:hover fieldset': {
         borderColor: themeColor('primary', reverse),
@@ -125,7 +125,7 @@ const DrawerSX = (reverse) => {
     sx: {
       '& .MuiDrawer-paper': {
         background: themeColor('background', reverse),
-        boxShadow: `0px 8px 10px -5px ${rgba(themeColor('primary', reverse), 0.2)}, 0px 16px 24px 2px ${rgba(themeColor('primary', reverse), 0.14)}, 0px 6px 30px 5px ${rgba(themeColor('primary', reverse), 0.12)}`,
+        boxShadow: `0px 8px 10px -5px ${rgbaReplaceAlpha(themeColor('primary', reverse), 0.2)}, 0px 16px 24px 2px ${rgbaReplaceAlpha(themeColor('primary', reverse), 0.14)}, 0px 6px 30px 5px ${rgbaReplaceAlpha(themeColor('primary', reverse), 0.12)}`,
         color: themeColor('primary', reverse),
       },
     }
@@ -137,7 +137,7 @@ const DialogSX = (reverse) => {
     sx: {
       '& .MuiDialog-paper': {
         background: themeColor('background', reverse),
-        boxShadow: `0px 11px 15px -7px ${rgba(themeColor('primary', reverse), 0.2)}, 0px 24px 38px 3px ${rgba(themeColor('primary', reverse), 0.14)}, 0px 9px 46px 8px ${rgba(themeColor('primary', reverse), 0.12)}`,
+        boxShadow: `0px 11px 15px -7px ${rgbaReplaceAlpha(themeColor('primary', reverse), 0.2)}, 0px 24px 38px 3px ${rgbaReplaceAlpha(themeColor('primary', reverse), 0.14)}, 0px 9px 46px 8px ${rgbaReplaceAlpha(themeColor('primary', reverse), 0.12)}`,
         color: themeColor('primary', reverse),
         width: '100%',
         maxWidth: '720px',
@@ -166,7 +166,7 @@ const TabsSX = (reverse) => {
         minHeight: 0,
         fontSize: '14px',
         padding: '12px',
-        color: rgba(themeColor('primary', reverse), 0.5),
+        color: rgbaReplaceAlpha(themeColor('primary', reverse), 0.5),
       },
     }
   }
@@ -208,7 +208,7 @@ const AccordionSX = (reverse) => {
       '&.MuiAccordion-root': {
         background: themeColor('background', reverse),
         color: themeColor('primary', reverse),
-        boxShadow: `0px 2px 1px -1px ${rgba(themeColor('primary', reverse), 0.2)}, 0px 1px 1px 0px ${rgba(themeColor('primary', reverse), 0.14)}, 0px 1px 3px 0px ${rgba(themeColor('primary', reverse), 0.12)}`,
+        boxShadow: `0px 2px 1px -1px ${rgbaReplaceAlpha(themeColor('primary', reverse), 0.2)}, 0px 1px 1px 0px ${rgbaReplaceAlpha(themeColor('primary', reverse), 0.14)}, 0px 1px 3px 0px ${rgbaReplaceAlpha(themeColor('primary', reverse), 0.12)}`,
         borderRadius: '4px',
         margin: '0px',
         transition: '1s all',
@@ -222,7 +222,8 @@ const PaperSX = (reverse) => {
     sx: {
       '&.MuiPaper-root': {
         background: themeColor('background', reverse),
-        boxShadow: `0px 2px 1px -1px ${rgba(themeColor('primary', reverse), 0.2)}, 0px 1px 1px 0px ${rgba(themeColor('primary', reverse), 0.14)}, 0px 1px 3px 0px ${rgba(themeColor('primary', reverse), 0.12)}`,
+        color: themeColor('primary', reverse),
+        boxShadow: `0px 2px 1px -1px ${rgbaReplaceAlpha(themeColor('primary', reverse), 0.2)}, 0px 1px 1px 0px ${rgbaReplaceAlpha(themeColor('primary', reverse), 0.14)}, 0px 1px 3px 0px ${rgbaReplaceAlpha(themeColor('primary', reverse), 0.12)}`,
         transition: '1s all',
       }
     }

@@ -8,7 +8,9 @@ import { hash, throttleLastRIC } from './utils.common'
 
 const ImitationInstance = new Imitation()
 
+
 ImitationInstance.state = { update: {}, store: {}, function: {}, memo: {} }
+
 
 ImitationInstance.state.update.now = performance.now()
 
