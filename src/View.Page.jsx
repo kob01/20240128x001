@@ -10,16 +10,9 @@ function App() {
 
   React.useEffect(() => {
     const event = e => e.preventDefault()
-
-    ref.current.addEventListener('touchstart', event)
     ref.current.addEventListener('touchmove', event)
-
-    return () => {
-      ref.current.removeEventListener('touchstart', event)
-      ref.current.removeEventListener('touchmove', event)
-    }
+    return () => ref.current.removeEventListener('touchmove', event)
   }, [])
-
 
   return <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }} ref={el => ref.current = el}>
 
@@ -34,6 +27,8 @@ function App() {
   </div>
 }
 
-const dependence = [{ instance: ImitationGlobal, dependence: state => [state.store.page] }]
+const dependence = [
+  { instance: ImitationGlobal, dependence: state => [ImitationGlobal.state.store.page] }
+]
 
 export default withBindComponentPure(App, dependence)

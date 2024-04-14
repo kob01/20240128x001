@@ -48,6 +48,8 @@ function App() {
   </AnimationRAF>
 }
 
-const dependence = [{ instance: ImitationPageCanvas, dependence: state => [state.update.now] }]
+const dependence = [
+  { instance: ImitationPageCanvas, dependence: state => [ImitationPageCanvas.state.update.now] }
+]
 
 export default withBindComponentPure(App, dependence)

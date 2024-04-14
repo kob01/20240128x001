@@ -12,6 +12,7 @@ link.rel = 'icon'
 link.href = icon
 document.head.append(link)
 
+
 const styleAppendI = () => {
   const id = '*'
 
@@ -55,10 +56,12 @@ const styleAppendII = () => {
 
 styleAppendII()
 
-ImitationGlobal.register(styleAppendII, state => [...Object.values(state.store.theme.palette).map(i => i.main)])
+ImitationGlobal.register(styleAppendII, state => [...Object.values(ImitationGlobal.state.store.theme.palette).map(i => i.main)])
+
 
 document.addEventListener('wheel', e => { if (e.wheelDelta === 240 || e.wheelDelta === -240) e.preventDefault() }, { passive: false })
 document.addEventListener('contextmenu', e => e.preventDefault(), { passive: false })
+
 
 if (new URLSearchParams(new URL(window.location.href).search).get('vconsole')) {
   const vconsole = document.createElement('script')
@@ -68,7 +71,8 @@ if (new URLSearchParams(new URL(window.location.href).search).get('vconsole')) {
 }
 
 if (new URLSearchParams(new URL(window.location.href).search).get('router')) {
-ImitationGlobal.state.store.page = new URLSearchParams(new URL(window.location.href).search).get('router')
+  ImitationGlobal.state.store.page = new URLSearchParams(new URL(window.location.href).search).get('router')
 }
+
 
 ReactDOM.render(<App />, document.getElementById('root'))

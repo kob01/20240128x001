@@ -7,7 +7,7 @@ import { ImitationPageCanvas, withBindComponentPure } from './Imitation'
 import { caculatePositionCenter } from './utils.common'
 
 function App() {
-  const paintRenderFindMap = ImitationPageCanvas.state.memo.paintRenderFindMap('_hash')
+  const paintOptionRenderFindMap = ImitationPageCanvas.state.memo.paintOptionRenderFindMap('_hash')
 
   const loadRef = React.useRef(false)
 
@@ -25,20 +25,20 @@ function App() {
     context.translate(canvas.width / 2, canvas.height / 2)
 
     context.scale(ImitationPageCanvas.state.store.view.scaleX, ImitationPageCanvas.state.store.view.scaleY)
-    context.translate(ImitationPageCanvas.state.store.view.translateX , ImitationPageCanvas.state.store.view.translateY)
+    context.translate(ImitationPageCanvas.state.store.view.translateX, ImitationPageCanvas.state.store.view.translateY)
 
     context.scale(layer.scale, layer.scale)
-    context.translate(layer.translateX , layer.translateY)
+    context.translate(layer.translateX, layer.translateY)
 
     action
-      .filter(i => i.visibility === true && paintRenderFindMap[i.hashPaint])
-      .forEach(i => paintRenderFindMap[i.hashPaint](canvas, context, layer, i))
+      .filter(i => i.visibility === true && paintOptionRenderFindMap[i.paintHash])
+      .forEach(i => paintOptionRenderFindMap[i.paintHash](canvas, context, layer, i))
 
     context.restore()
   }
 
   const canvasResize = () => {
-    ImitationPageCanvas.state.store.canvas.information.forEach(i => {
+    ImitationPageCanvas.state.store.canvas.layer.forEach(i => {
       if (i.offscreenCanvasRef === undefined) {
         i.offscreenCanvasRef = new OffscreenCanvas(realW, realH)
         i.offscreenContextRef = i.offscreenCanvasRef.getContext('2d')
@@ -74,7 +74,7 @@ function App() {
   }
 
   const canvasOffscreenRender = () => {
-    ImitationPageCanvas.state.store.canvas.information.forEach(i => {
+    ImitationPageCanvas.state.store.canvas.layer.forEach(i => {
       if (i.visibility === true && i.previousActionContextShouldUpdate === true) {
         i.offscreenPreviousActionContextRef.clearRect(0, 0, i.offscreenPreviousActionCanvasRef.width, i.offscreenPreviousActionCanvasRef.height)
         actionRender(i, i.offscreenPreviousActionCanvasRef, i.offscreenPreviousActionContextRef, i.action.slice(0, i.action.length - 1))
@@ -102,7 +102,7 @@ function App() {
   const canvasOnlinescreenRender = () => {
     ImitationPageCanvas.state.store.canvas.contextRef.clearRect(0, 0, ImitationPageCanvas.state.store.canvas.canvasRef.width, ImitationPageCanvas.state.store.canvas.canvasRef.height)
 
-    ImitationPageCanvas.state.store.canvas.information.forEach(i => {
+    ImitationPageCanvas.state.store.canvas.layer.forEach(i => {
       if (i.visibility === true) {
         const position = caculatePositionCenter(ImitationPageCanvas.state.store.canvas.canvasRef, i.offscreenCanvasRef, { x: 0, y: 0 })
         if (position !== undefined) ImitationPageCanvas.state.store.canvas.contextRef.drawImage(i.offscreenCanvasRef, ...position)
@@ -119,9 +119,9 @@ function App() {
 
     setStyleW(ImitationPageCanvas.state.store.rect.width)
     setStyleH(ImitationPageCanvas.state.store.rect.height)
-    setRealW(ImitationPageCanvas.state.store.rect.width * ImitationPageCanvas.state.store.dpr)
-    setRealH(ImitationPageCanvas.state.store.rect.height * ImitationPageCanvas.state.store.dpr)
-  }, [ImitationPageCanvas.state.store.recting, ImitationPageCanvas.state.store.rect, ImitationPageCanvas.state.store.dpr])
+    setRealW(ImitationPageCanvas.state.store.rect.width * ImitationPageCanvas.state.store.view.dpr)
+    setRealH(ImitationPageCanvas.state.store.rect.height * ImitationPageCanvas.state.store.view.dpr)
+  }, [ImitationPageCanvas.state.store.recting, ImitationPageCanvas.state.store.rect, ImitationPageCanvas.state.store.view.dpr])
 
   React.useEffect(() => {
     if (realW !== undefined && realW !== 0 && realH !== undefined && realH !== 0) canvasResize()
@@ -147,6 +147,8 @@ function App() {
   </>
 }
 
-const dependence = [{ instance: ImitationPageCanvas, dependence: state => [state.update.canvasOffscreenRender] }]
+const dependence = [
+  { instance: ImitationPageCanvas, dependence: state => [ImitationPageCanvas.state.update.canvasOffscreenRender] }
+]
 
 export default withBindComponentPure(App, dependence)

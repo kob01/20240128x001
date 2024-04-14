@@ -66,20 +66,13 @@ const paintRender = (canvas, context, layer, action) => {
   context.restore()
 }
 
-const paintOffset = (canvas, context, layer, action, position) => {
-  action.path.forEach((i) => {
-    i.x = i.x + position.offsetX
-    i.y = i.y + position.offsetY
-  })
-}
-
 const paintAction = () => {
   const ref = { action: undefined }
 
   return (canvas, context, setting, layer, action, status, x, y) => {
 
     if (status === 'afterStart') {
-      ref.action = { _hash: hash(), hashPaint: _hash, path: [{ x: Math.round(x), y: Math.round(y) }], setting: JSON.parse(JSON.stringify(setting)), visibility: true }
+      ref.action = { _hash: hash(), paintHash: _hash, path: [{ x: Math.round(x), y: Math.round(y) }], setting: JSON.parse(JSON.stringify(setting)), visibility: true }
       action.push(ref.action)
     }
 
@@ -115,6 +108,6 @@ const paintAction = () => {
   }
 }
 
-const r = { _hash: _hash, type: type, name: name, paintRender: paintRender, paintAction: paintAction, paintOffset: paintOffset, settingComponent: settingComponent, settingDefault: settingDefault }
+const r = { _hash: _hash, type: type, name: name, paintRender: paintRender, paintAction: paintAction, settingComponent: settingComponent, settingDefault: settingDefault }
 
 export default r

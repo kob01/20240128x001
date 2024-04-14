@@ -24,7 +24,7 @@ ImitationInstance.state.store.recting = false
 
 ImitationInstance.state.store.source = []
 
-ImitationInstance.state.store.render = []
+ImitationInstance.state.store.renderImage = []
 
 ImitationInstance.state.store.view.panorama = false
 
@@ -38,7 +38,7 @@ ImitationInstance.state.function.onLoad = () => {
   ImitationInstance.state.store.load = true
   ImitationInstance.state.store.rect = undefined
   ImitationInstance.state.store.source = mockSource
-  ImitationInstance.state.store.render = [{ _hash: hash(), hashSource: ImitationInstance.state.store.source[0]._hash, direction: 2 }]
+  ImitationInstance.state.store.renderImage = [{ _hash: hash(), sourceHash: ImitationInstance.state.store.source[0]._hash, direction: 2 }]
   ImitationInstance.state.function.update()
 }
 
@@ -49,13 +49,13 @@ ImitationInstance.state.function.onUnload = () => {
 }
 
 ImitationInstance.state.function.onSwitch = (content) => {
-  if (ImitationInstance.state.store.render[ImitationInstance.state.store.render.length - 1].hashSource === content.hashSource) return
+  if (ImitationInstance.state.store.renderImage[ImitationInstance.state.store.renderImage.length - 1].sourceHash === content.sourceHash) return
 
-  const last = ImitationInstance.state.store.render[ImitationInstance.state.store.render.length - 1]
+  const last = ImitationInstance.state.store.renderImage[ImitationInstance.state.store.renderImage.length - 1]
   last.direction = content.direction
-  const r = { _hash: hash(), hashSource: content.hashSource, direction: content.direction }
+  const r = { _hash: hash(), sourceHash: content.sourceHash, direction: content.direction }
 
-  ImitationInstance.state.store.render.push(r)
+  ImitationInstance.state.store.renderImage.push(r)
   ImitationInstance.state.function.update()
 }
 
@@ -70,17 +70,17 @@ ImitationInstance.state.memo.sourceFindIndex = (_hash, dep = []) => React.useMem
   return ImitationInstance.state.store.source.findIndex(i => i._hash === _hash)
 }, [...dep, _hash, ImitationInstance.state.store.source])
 
-ImitationInstance.state.memo.renderFind = (_hash, dep = []) => React.useMemo(() => {
-  return ImitationInstance.state.store.render.find(i => i._hash === _hash)
-}, [...dep, _hash, ImitationInstance.state.store.render, ImitationInstance.state.store.render.length])
+ImitationInstance.state.memo.renderImageFind = (_hash, dep = []) => React.useMemo(() => {
+  return ImitationInstance.state.store.renderImage.find(i => i._hash === _hash)
+}, [...dep, _hash, ImitationInstance.state.store.renderImage, ImitationInstance.state.store.renderImage.length])
 
-ImitationInstance.state.memo.renderFindIndex = (_hash, dep = []) => React.useMemo(() => {
-  return ImitationInstance.state.store.render.findIndex(i => i._hash === _hash)
-}, [...dep, _hash, ImitationInstance.state.store.render, ImitationInstance.state.store.render.length])
+ImitationInstance.state.memo.renderImageFindIndex = (_hash, dep = []) => React.useMemo(() => {
+  return ImitationInstance.state.store.renderImage.findIndex(i => i._hash === _hash)
+}, [...dep, _hash, ImitationInstance.state.store.renderImage, ImitationInstance.state.store.renderImage.length])
 
-ImitationInstance.state.memo.renderFindIndexInLast = (_hash, dep = []) => React.useMemo(() => {
-  return ImitationInstance.state.store.render.findIndex(i => i._hash === _hash) === ImitationInstance.state.store.render.length - 1
-}, [...dep, _hash, ImitationInstance.state.store.render, ImitationInstance.state.store.render.length])
+ImitationInstance.state.memo.renderImageFindIndexInLast = (_hash, dep = []) => React.useMemo(() => {
+  return ImitationInstance.state.store.renderImage.findIndex(i => i._hash === _hash) === ImitationInstance.state.store.renderImage.length - 1
+}, [...dep, _hash, ImitationInstance.state.store.renderImage, ImitationInstance.state.store.renderImage.length])
 
 
 export default ImitationInstance

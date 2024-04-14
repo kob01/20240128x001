@@ -10,11 +10,11 @@ import { ImitationPageLibrary } from './Imitation'
 function Content(props) {
   const source = ImitationPageLibrary.state.store.source
   const sourceLength = ImitationPageLibrary.state.store.source.length
-  const renderLength = ImitationPageLibrary.state.store.render.length
+  const renderLength = ImitationPageLibrary.state.store.renderImage.length
 
-  const sourceFind = ImitationPageLibrary.state.memo.sourceFind(props.hashSource)
-  const sourceFindIndex = ImitationPageLibrary.state.memo.sourceFindIndex(props.hashSource)
-  const renderFindIndexInLast = ImitationPageLibrary.state.memo.renderFindIndexInLast(props._hash)
+  const sourceFind = ImitationPageLibrary.state.memo.sourceFind(props.sourceHash)
+  const sourceFindIndex = ImitationPageLibrary.state.memo.sourceFindIndex(props.sourceHash)
+  const renderImageFindIndexInLast = ImitationPageLibrary.state.memo.renderImageFindIndexInLast(props._hash)
 
   const size = React.useMemo(() => {
     if (ImitationPageLibrary.state.store.view.panorama === false) {
@@ -31,13 +31,13 @@ function Content(props) {
   const caculateStyleAnimation = () => {
     var r = []
 
-    if (renderFindIndexInLast === true) {
+    if (renderImageFindIndexInLast === true) {
       if (props.direction === 0) r = [{ opacity: 0, transform: `translateX(${translateXMin}px)`, transitionProperty: 'none' }, { opacity: 1, transform: 'translateX(0px)' }]
       if (props.direction === 1) r = [{ opacity: 0, transform: `translateX(${translateXMax}px)`, transitionProperty: 'none' }, { opacity: 1, transform: 'translateX(0px)' }]
       if (props.direction === 2) r = [{ opacity: 0 }, { opacity: 1 }]
     }
 
-    if (renderFindIndexInLast === false) {
+    if (renderImageFindIndexInLast === false) {
       if (props.direction === 0) r = [{ opacity: 1, transform: 'translateX(0px)' }, { opacity: 0, transform: `translateX(${translateXMax}px)` }]
       if (props.direction === 1) r = [{ opacity: 1, transform: 'translateX(0px)' }, { opacity: 0, transform: `translateX(${translateXMin}px)` }]
     }
@@ -54,7 +54,7 @@ function Content(props) {
   const [styleWrapper, setStyleWrapper] = React.useState({ width: size.width, height: size.height })
 
   const removeRender = () => {
-    ImitationPageLibrary.state.store.render = ImitationPageLibrary.state.store.render.filter(i => i._hash !== props._hash)
+    ImitationPageLibrary.state.store.renderImage = ImitationPageLibrary.state.store.renderImage.filter(i => i._hash !== props._hash)
     ImitationPageLibrary.state.function.update()
   }
 
@@ -93,7 +93,7 @@ function Content(props) {
         if (content.index < 0) content.index = sourceLength - 1
         if (content.index > sourceLength - 1) content.index = 0
 
-        content.hashSource = source[content.index]._hash
+        content.sourceHash = source[content.index]._hash
 
         ImitationPageLibrary.state.function.onSwitch(content)
       }
@@ -144,7 +144,7 @@ function Content(props) {
         if (content.index < 0) content.index = sourceLength - 1
         if (content.index > sourceLength - 1) content.index = 0
 
-        content.hashSource = source[content.index]._hash
+        content.sourceHash = source[content.index]._hash
 
         ImitationPageLibrary.state.function.onSwitch(content)
       }
@@ -161,13 +161,13 @@ function Content(props) {
   const { onTouchStart } = useDragControlTouch({ enable: true, onChange: onChangeDragControlTouch })
 
   React.useEffect(() => {
-    if (renderFindIndexInLast === true && timeoutRef.current === undefined && renderLength > 1) timeoutRef.current = setTimeout(() => setStyleAnimation(caculateStyleAnimation()[1]), 1000)
-    if (renderFindIndexInLast === true && timeoutRef.current === undefined && renderLength === 1) timeoutRef.current = setTimeout(() => setStyleAnimation(caculateStyleAnimation()[1]), 0)
-    if (renderFindIndexInLast === false) setStyleAnimation(caculateStyleAnimation()[1])
-    if (renderFindIndexInLast === false && timeoutRef.current !== undefined) clearTimeout(timeoutRef.current)
-    if (renderFindIndexInLast === false && timeoutRef.current !== undefined) setTimeout(() => removeRender(), 1000)
-    if (renderFindIndexInLast === false && timeoutRef.current === undefined) removeRender()
-  }, [renderFindIndexInLast, renderLength])
+    if (renderImageFindIndexInLast === true && timeoutRef.current === undefined && renderLength > 1) timeoutRef.current = setTimeout(() => setStyleAnimation(caculateStyleAnimation()[1]), 1000)
+    if (renderImageFindIndexInLast === true && timeoutRef.current === undefined && renderLength === 1) timeoutRef.current = setTimeout(() => setStyleAnimation(caculateStyleAnimation()[1]), 0)
+    if (renderImageFindIndexInLast === false) setStyleAnimation(caculateStyleAnimation()[1])
+    if (renderImageFindIndexInLast === false && timeoutRef.current !== undefined) clearTimeout(timeoutRef.current)
+    if (renderImageFindIndexInLast === false && timeoutRef.current !== undefined) setTimeout(() => removeRender(), 1000)
+    if (renderImageFindIndexInLast === false && timeoutRef.current === undefined) removeRender()
+  }, [renderImageFindIndexInLast, renderLength])
 
   React.useEffect(() => {
     const resizeImage = () => {
@@ -220,7 +220,7 @@ function Content(props) {
 function App() {
   return <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
     {
-      ImitationPageLibrary.state.store.render.map(i => <Content key={i._hash} {...i} />)
+      ImitationPageLibrary.state.store.renderImage.map(i => <Content key={i._hash} {...i} />)
     }
   </div>
 }

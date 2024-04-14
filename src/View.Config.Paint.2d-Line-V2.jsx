@@ -14,10 +14,10 @@ const type = 'Line'
 
 const name = 'Line-V2'
 
-function Color(props) {
+function settingComponent(props) {
   const { value, onChange } = props
 
-  return <>
+  return <Grid container spacing={2}>
     <Grid item xs={12}>
       Color
     </Grid>
@@ -27,26 +27,14 @@ function Color(props) {
         <TextField {...TextFieldSX()} value={value.color} onChange={e => { value.color = e.target.value; onChange(); }} fullWidth autoComplete='off' type='color' style={{ width: 64, position: 'absolute', top: 0, bottom: 0, right: 0, margin: 'auto' }} />
       </div>
     </Grid>
-  </>
-}
 
-function Alpha(props) {
-  const { value, onChange } = props
-
-  return <>
     <Grid item xs={12}>
       Alpha {value.alpha}
     </Grid>
     <Grid item xs={12}>
       <Slider value={value.alpha} onChange={(e, v) => { value.alpha = v; onChange(); }} min={0} max={1} step={0.1} />
     </Grid>
-  </>
-}
 
-function Width(props) {
-  const { value, onChange } = props
-
-  return <>
     <Grid item xs={12}>
       Width {value.width}
     </Grid>
@@ -55,26 +43,22 @@ function Width(props) {
         <Slider value={value.width} onChange={(e, v) => { value.width = v; onChange(); }} min={1} max={10} step={1} />
       </div>
     </Grid>
-  </>
+  </Grid>
 }
-
-const settingComponent = [Color, Alpha, Width]
 
 const settingDefault = { color: '#000000', alpha: 1, width: 1 }
 
-const paintRender = (context, action, position) => {
-  const scale = (position.scaleX + position.scaleY) / 2
-
+const paintRender = (canvas, context, layer, action) => {
   context.save()
 
   context.globalAlpha = action.setting.alpha
   context.strokeStyle = action.setting.color
-  context.lineWidth = action.setting.width * scale
+  context.lineWidth = action.setting.width
 
   action.path.forEach((i, index) => {
-    if (index === 0) context.beginPath(i.x * scale + position.offsetX, i.y * scale + position.offsetY)
-    if (index === 0) context.lineTo(i.x * scale + position.offsetX, i.y * scale + position.offsetY)
-    if (index !== 0) context.lineTo(i.x * scale + position.offsetX, i.y * scale + position.offsetY)
+    if (index === 0) context.beginPath(i.x, i.y)
+    if (index === 0) context.lineTo(i.x, i.y)
+    if (index !== 0) context.lineTo(i.x, i.y)
   })
 
   context.stroke()
@@ -83,19 +67,16 @@ const paintRender = (context, action, position) => {
 }
 
 const paintAction = () => {
-  const ref = { _hash: undefined, action: undefined }
+  const ref = { action: undefined }
 
-  return (canvas, context, setting, action, status, x, y) => {
+  return (canvas, context, setting, layer, action, status, x, y) => {
 
-    if (status === 0) {
-      ref.action = { _hash: hash(), hashPaint: _hash, path: [{ x: Math.round(x), y: Math.round(y) }], setting: JSON.parse(JSON.stringify(setting)), visibility: true }
-    }
-
-    if (status === 0) {
+    if (status === 'afterStart') {
+      ref.action = { _hash: hash(), paintHash: _hash, path: [{ x: Math.round(x), y: Math.round(y) }], setting: JSON.parse(JSON.stringify(setting)), visibility: true }
       action.push(ref.action)
     }
 
-    if (status === 1) {
+    if (status === 'afterMove') {
       if (Math.round(x) !== ref.action.path[ref.action.path.length - 1].x || Math.round(y) !== ref.action.path[ref.action.path.length - 1].y) {
         ref.action.path.push({ x: Math.round(x), y: Math.round(y) })
         while (
@@ -116,12 +97,12 @@ const paintAction = () => {
       }
     }
 
-    if (status === 2) {
+    if (status === 'afterEnd') {
+      if (ref.action.path.length === 1) {
+        layer.action = layer.action.filter(i => i._hash !== ref.action._hash)
+      }
+
       ref.action = undefined
-    }
-
-    if (status === 3) {
-
     }
 
   }

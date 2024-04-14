@@ -76,8 +76,8 @@ function Pagination() {
   const sourceArray = ImitationPageLibrary.state.store.source
   const sourceLength = ImitationPageLibrary.state.store.source.length
 
-  const sourceFindFirst = ImitationPageLibrary.state.memo.sourceFind(ImitationPageLibrary.state.store.render[0].hashSource)
-  const sourceFindIndexFirst = ImitationPageLibrary.state.memo.sourceFindIndex(ImitationPageLibrary.state.store.render[0].hashSource)
+  const sourceFindFirst = ImitationPageLibrary.state.memo.sourceFind(ImitationPageLibrary.state.store.renderImage[0].sourceHash)
+  const sourceFindIndexFirst = ImitationPageLibrary.state.memo.sourceFindIndex(ImitationPageLibrary.state.store.renderImage[0].sourceHash)
 
   const sourceArrayMap = sourceArray.map((i, index) => ({ ...i, index: index }))
   const sourceArraySort = [...sourceArrayMap.slice(sourceFindIndexFirst + 1, sourceLength), ...sourceArrayMap.slice(0, sourceFindIndexFirst)]
@@ -95,15 +95,15 @@ function Pagination() {
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', overflow: 'hidden' }}>
               {
                 previous.map((i, index) => {
-                  return <Button key={index} variant='text' style={{ ...styleButton }} onClick={() => ImitationPageLibrary.state.function.onSwitch({ hashSource: i._hash, direction: 0 })}>{String(Number(i.index) + 1).padStart(2, '0')}</Button>
+                  return <Button key={index} variant='text' style={{ ...styleButton }} onClick={() => ImitationPageLibrary.state.function.onSwitch({ sourceHash: i._hash, direction: 0 })}>{String(Number(i.index) + 1).padStart(2, '0')}</Button>
                 })
               }
 
-              <Button variant='contained' style={{ ...styleButton }} color='primary' onClick={() => ImitationPageLibrary.state.function.onSwitch({ hashSource: sourceFindFirst._hash, direction: 2 })}>{String(Number(sourceFindIndexFirst) + 1).padStart(2, '0')}</Button>
+              <Button variant='contained' style={{ ...styleButton }} color='primary' onClick={() => ImitationPageLibrary.state.function.onSwitch({ sourceHash: sourceFindFirst._hash, direction: 2 })}>{String(Number(sourceFindIndexFirst) + 1).padStart(2, '0')}</Button>
 
               {
                 next.map((i, index) => {
-                  return <Button key={index} variant='text' style={{ ...styleButton }} onClick={() => ImitationPageLibrary.state.function.onSwitch({ hashSource: i._hash, direction: 1 })}>{String(Number(i.index) + 1).padStart(2, '0')}</Button>
+                  return <Button key={index} variant='text' style={{ ...styleButton }} onClick={() => ImitationPageLibrary.state.function.onSwitch({ sourceHash: i._hash, direction: 1 })}>{String(Number(i.index) + 1).padStart(2, '0')}</Button>
                 })
               }
             </div>
@@ -118,20 +118,18 @@ function Pagination() {
 function App() {
   return <>
     {
-      ImitationNavigation.state.store.tooltip.type === 'Library.View' ? <View /> : null
+      ImitationNavigation.state.store.type === 'Library.View' ? <View /> : null
     }
     {
-      ImitationNavigation.state.store.tooltip.type === 'Library.Information' ? <Information /> : null
+      ImitationNavigation.state.store.type === 'Library.Information' ? <Information /> : null
     }
     {
-      ImitationNavigation.state.store.tooltip.type === 'Library.Pagination' ? <Pagination /> : null
+      ImitationNavigation.state.store.type === 'Library.Pagination' ? <Pagination /> : null
     }
   </>
 }
 
 const dependence = [
-  { instance: ImitationGlobal, dependence: state => [state.store.rect, state.store.recting] },
-  { instance: ImitationNavigation, dependence: state => [state.store.tooltip.type, ...Object.values(state.store.expand.library)] },
   { instance: ImitationPageLibrary, dependence: state => [state.update.now] }
 ]
 

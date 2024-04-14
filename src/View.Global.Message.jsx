@@ -24,6 +24,6 @@ function App() {
   return <Snackbar open={open} message={ImitationGlobal.state.store.message} anchorOrigin={{ vertical: 'top', horizontal: 'center' }} />
 }
 
-const dependence = [{ instance: ImitationGlobal, dependence: state => [state.store.message] }]
+const dependence = [{ instance: ImitationGlobal, dependence: state => [ImitationGlobal.state.store.message] }]
 
 export default withBindComponentPure(App, dependence)
