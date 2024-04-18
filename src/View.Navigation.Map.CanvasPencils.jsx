@@ -14,23 +14,22 @@ import { ImitationGlobal, ImitationNavigation, ImitationPageCanvas, withBindComp
 import { DialogSX, TextFieldSX, TabsSX, DividerSX, SwitchSX, SelectSX, DrawerSX, AccordionSX, PaperSX, TooltipSX } from './utils.mui.sx'
 
 function App() {
-
   return <Grid container spacing={2}>
 
     <Grid item xs={12}>
       <Grid container spacing={0}>
         {
-          ImitationPageCanvas.state.store.paint.option.map(i => {
+          ImitationPageCanvas.state.store.pencil.map(i => {
             return <Grid key={i._hash} item xs={12}>
-              <Button fullWidth style={{ justifyContent: 'space-between', alignItems: 'center' }} component='div' onClick={(e) => { ImitationPageCanvas.state.store.paint.current = i._hash; ImitationPageCanvas.state.function.update() }}>
+              <Button fullWidth style={{ justifyContent: 'space-between', alignItems: 'center' }} component='div' onClick={(e) => { ImitationPageCanvas.state.store.active.pencil = i._hash; ImitationPageCanvas.state.function.update() }}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <IconButton size='small' style={{ opacity: ImitationPageCanvas.state.store.paint.current === i._hash ? 1 : 0.2, transition: '1s all' }}>
+                  <IconButton size='small' style={{ opacity: ImitationPageCanvas.state.store.active.pencil === i._hash ? 1 : 0.2, transition: '1s all' }}>
                     <ColorLensIcon color='primary' fontSize='small' />
                   </IconButton>
                   <div style={{ margin: '0 4px' }}>{i.name}</div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <IconButton size='small' onClick={(e) => { e.stopPropagation(); ImitationNavigation.state.function.renderWindowsAppend('CanvasPaint', { paintOptionHash: i._hash }) }}>
+                  <IconButton size='small' onClick={(e) => { e.stopPropagation(); ImitationNavigation.state.function.renderWindowsAppend('CanvasPencil', { pencilHash: i._hash }) }}>
                     <EditIcon color='primary' fontSize='small' />
                   </IconButton>
                 </div>

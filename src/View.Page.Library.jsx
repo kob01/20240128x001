@@ -11,7 +11,7 @@ import { debounce } from './utils.common'
 function App() {
   const ref = React.useRef()
 
-  const updateDebounceRef = React.useRef(debounce(() => { ImitationPageLibrary.state.store.recting = false; ImitationPageLibrary.state.function.update() }, 500))
+  const updateDebounce = React.useCallback(debounce(() => { ImitationPageLibrary.state.store.recting = false; ImitationPageLibrary.state.function.update() }, 500), [])
 
   React.useEffect(() => {
     if (ImitationPageLibrary.state.store.load === false) return
@@ -21,7 +21,7 @@ function App() {
       ImitationPageLibrary.state.store.rect = en[0].target.getBoundingClientRect()
       ImitationPageLibrary.state.function.update()
 
-      updateDebounceRef.current()
+      updateDebounce()
     })
 
     resizeObserver.observe(ref.current)

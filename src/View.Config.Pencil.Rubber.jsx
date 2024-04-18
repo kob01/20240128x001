@@ -110,9 +110,9 @@ const round = (x, y, area) => {
   return r
 }
 
-const draw = (canvasRef, paintSetting, xys) => {
+const draw = (canvasRef, pencilSetting, xys) => {
   xys
-    .map(i => round(i[0], i[1], paintSetting.area))
+    .map(i => round(i[0], i[1], pencilSetting.area))
     .flat()
     .map(i => i.join('-'))
     .reduce((t, i) => Array.from(new Set([...t, i])), [])
@@ -120,15 +120,15 @@ const draw = (canvasRef, paintSetting, xys) => {
     .forEach(i => canvasRef.context.clearRect(i[0], i[1], 1, 1))
 }
 
-const paint = () => {
+const pencil = () => {
   const ref = { position: [] }
 
-  return (canvasRef, paintSetting, status, x, y) => {
+  return (canvasRef, pencilSetting, status, x, y) => {
     if (status === 0) {
       canvasRef.context.save()
-      canvasRef.context.globalAlpha = paintSetting.alpha
-      canvasRef.context.fillStyle = paintSetting.color
-      draw(canvasRef, paintSetting, [[x, y]])
+      canvasRef.context.globalAlpha = pencilSetting.alpha
+      canvasRef.context.fillStyle = pencilSetting.color
+      draw(canvasRef, pencilSetting, [[x, y]])
       ref.position = [x, y]
     }
 
@@ -138,13 +138,13 @@ const paint = () => {
 
     if (status === 1) {
       if (x !== ref.position[0] || y !== ref.position[1]) {
-        draw(canvasRef, paintSetting, [...caculte(ref.position[0], ref.position[1], x, y), [x, y]])
+        draw(canvasRef, pencilSetting, [...caculte(ref.position[0], ref.position[1], x, y), [x, y]])
         ref.position = [x, y]
       }
     }
   }
 }
 
-const r = { _hash: 'Rubber', label: 'Rubber', paint: paint, settingComponent: settingComponent, settingDefault: settingDefault }
+const r = { _hash: 'Rubber', label: 'Rubber', pencil: pencil, settingComponent: settingComponent, settingDefault: settingDefault }
 
 export default r

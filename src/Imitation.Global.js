@@ -1,13 +1,8 @@
 import Imitation from 'imitation-imm'
 
-import { throttleLastRAF } from './utils.common'
-
 const ImitationInstance = new Imitation()
 
 ImitationInstance.state = { update: {}, store: {}, function: {}, memo: {} }
-
-
-ImitationInstance.state.store = { page: {} }
 
 
 ImitationInstance.state.update.now = performance.now()
@@ -30,8 +25,6 @@ ImitationInstance.state.function.update = () => {
   ImitationInstance.state.update.now = performance.now()
   ImitationInstance.dispatch()
 }
-
-ImitationInstance.state.function.updateThrottleLastRAF = throttleLastRAF(ImitationInstance.state.function.update)
 
 
 export default ImitationInstance

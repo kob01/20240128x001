@@ -6,8 +6,6 @@ import Grid from '@mui/material/Grid'
 import Tooltip from '@mui/material/Tooltip'
 import Slider from '@mui/material/Slider'
 
-import { CirclePicker, HuePicker, AlphaPicker } from 'react-color'
-
 import { ClickAwayListener } from './View.Component.ClickAwayListener'
 import { ColorPicker } from './View.Component.ColorPicker'
 
@@ -17,9 +15,10 @@ import { rgbaSpilt } from './utils.common'
 
 import { DialogSX, TextFieldSX, TabsSX, DividerSX, SwitchSX, SelectSX, DrawerSX, AccordionSX, PaperSX, TooltipSX } from './utils.mui.sx'
 
+import { throttleLastRAF, throttleLastRIC } from './utils.common'
+
 function App() {
-  const backgroundRgbaSpilt = rgbaSpilt(ImitationGlobal.state.store.theme.palette.background.main)
-  const primaryRgbaSpilt = rgbaSpilt(ImitationGlobal.state.store.theme.palette.primary.main)
+  const updateThrottleLastRAF = React.useCallback(throttleLastRAF(ImitationGlobal.state.function.update), [])
 
   return <Grid container spacing={2}>
     <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -35,11 +34,13 @@ function App() {
                 open={open}
                 title={
                   <Paper {...PaperSX()} style={{ padding: 16, width: 320 }} ref={el => pushClickAwayRef('Paper', el)}>
-                    <ColorPicker value={ImitationGlobal.state.store.theme.palette.background.main} onChange={v => { ImitationGlobal.state.store.theme.palette.background.main = v; ImitationGlobal.state.function.updateThrottleLastRAF() }} colors={['rgba(255, 0, 0, 1)', 'rgba(0, 255, 0, 1)', 'rgba(0, 0, 255, 1)']} />
+                    <ColorPicker value={ImitationGlobal.state.store.theme.palette.background.main} onChange={v => { ImitationGlobal.state.store.theme.palette.background.main = v; updateThrottleLastRAF() }} colors={['rgba(255, 0, 0, 1)', 'rgba(0, 255, 0, 1)', 'rgba(0, 0, 255, 1)']} />
                   </Paper>
                 }
                 children={
-                  <Button variant='contained' style={{ background: ImitationGlobal.state.store.theme.palette.background.main, color: ImitationGlobal.state.store.theme.palette.primary.main }} onClick={() => setOpen(true)} ref={el => pushClickAwayRef('Button', el)}>Pick</Button>
+                  <Button variant='contained' onClick={() => setOpen(true)} ref={el => pushClickAwayRef('Button', el)}>
+                    Pick
+                  </Button>
                 }
               />
             }
@@ -61,11 +62,13 @@ function App() {
                 open={open}
                 title={
                   <Paper {...PaperSX()} style={{ padding: 16, width: 320 }} ref={el => pushClickAwayRef('Paper', el)}>
-                    <ColorPicker value={ImitationGlobal.state.store.theme.palette.primary.main} onChange={v => { ImitationGlobal.state.store.theme.palette.primary.main = v; ImitationGlobal.state.function.updateThrottleLastRAF() }} colors={['rgba(255, 0, 0, 1)', 'rgba(0, 255, 0, 1)', 'rgba(0, 0, 255, 1)']} />
+                    <ColorPicker value={ImitationGlobal.state.store.theme.palette.primary.main} onChange={v => { ImitationGlobal.state.store.theme.palette.primary.main = v; updateThrottleLastRAF() }} colors={['rgba(255, 0, 0, 1)', 'rgba(0, 255, 0, 1)', 'rgba(0, 0, 255, 1)']} />
                   </Paper>
                 }
                 children={
-                  <Button variant='contained' style={{ background: ImitationGlobal.state.store.theme.palette.background.main, color: ImitationGlobal.state.store.theme.palette.primary.main }} onClick={() => setOpen(true)} ref={el => pushClickAwayRef('Button', el)}>Pick</Button>
+                  <Button variant='contained' onClick={() => setOpen(true)} ref={el => pushClickAwayRef('Button', el)}>
+                    Pick
+                  </Button>
                 }
               />
             }

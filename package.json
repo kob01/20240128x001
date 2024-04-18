@@ -9,7 +9,6 @@
     "@mui/material": "^5.2.0",
     "imitation-imm": "^2.6.7",
     "react": "^17.0.2",
-    "react-color": "^2.19.3",
     "react-dom": "^17.0.2",
     "react-router": "^5.1.2",
     "react-router-dom": "^5.1.2"

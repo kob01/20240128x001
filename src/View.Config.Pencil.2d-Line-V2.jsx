@@ -8,11 +8,11 @@ import { TextFieldSX } from './utils.mui.sx'
 
 import { hash } from './utils.common'
 
-const _hash = '2d-Line-V1'
+const _hash = '2d-Line-V2'
 
 const type = 'Line'
 
-const name = 'Line-V1'
+const name = 'Line-V2'
 
 function settingComponent(props) {
   const { value, onChange } = props
@@ -48,7 +48,7 @@ function settingComponent(props) {
 
 const settingDefault = { color: '#000000', alpha: 1, width: 1 }
 
-const paintRender = (canvas, context, layer, action) => {
+const pencilRender = (canvas, context, layer, action) => {
   context.save()
 
   context.globalAlpha = action.setting.alpha
@@ -66,13 +66,13 @@ const paintRender = (canvas, context, layer, action) => {
   context.restore()
 }
 
-const paintAction = () => {
+const pencilAction = () => {
   const ref = { action: undefined }
 
   return (canvas, context, setting, layer, action, status, x, y) => {
 
     if (status === 'afterStart') {
-      ref.action = { _hash: hash(), paintHash: _hash, path: [{ x: Math.round(x), y: Math.round(y) }], setting: JSON.parse(JSON.stringify(setting)), visibility: true }
+      ref.action = { _hash: hash(), pencilHash: _hash, path: [{ x: Math.round(x), y: Math.round(y) }], setting: structuredClone(setting), visibility: true }
       action.push(ref.action)
     }
 
@@ -108,6 +108,6 @@ const paintAction = () => {
   }
 }
 
-const r = { _hash: _hash, type: type, name: name, paintRender: paintRender, paintAction: paintAction, settingComponent: settingComponent, settingDefault: settingDefault }
+const r = { _hash: _hash, type: type, name: name, pencilRender: pencilRender, pencilAction: pencilAction, settingComponent: settingComponent, settingDefault: settingDefault }
 
 export default r

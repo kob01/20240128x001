@@ -25,11 +25,11 @@ function App() {
     <Grid item xs={12}>
       <Grid container spacing={0}>
         {
-          ImitationPageCanvas.state.store.canvas.layer.map(i => {
+          ImitationPageCanvas.state.store.source.canvas.layer.map(i => {
             return <Grid key={i._hash} item xs={12}>
-              <Button fullWidth style={{ justifyContent: 'space-between', alignItems: 'center' }} component='div' onClick={(e) => { ImitationPageCanvas.state.store.canvas.current = i._hash; ImitationPageCanvas.state.function.update() }}>
+              <Button fullWidth style={{ justifyContent: 'space-between', alignItems: 'center' }} component='div' onClick={(e) => { ImitationPageCanvas.state.store.active.layer = i._hash; ImitationPageCanvas.state.function.update() }}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <IconButton size='small' style={{ opacity: ImitationPageCanvas.state.store.canvas.current === i._hash ? 1 : 0.2, transition: '1s all' }}>
+                  <IconButton size='small' style={{ opacity: ImitationPageCanvas.state.store.active.layer === i._hash ? 1 : 0.2, transition: '1s all' }}>
                     <LayersIcon color='primary' fontSize='small' />
                   </IconButton>
                   <div style={{ margin: '0 4px' }}>{i._hash}</div>

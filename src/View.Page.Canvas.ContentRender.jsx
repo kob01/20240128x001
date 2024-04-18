@@ -7,7 +7,7 @@ import { ImitationPageCanvas, withBindComponentPure } from './Imitation'
 import { caculatePositionCenter } from './utils.common'
 
 function App() {
-  const paintOptionRenderFindMap = ImitationPageCanvas.state.memo.paintOptionRenderFindMap('_hash')
+  const pencilRenderFindMap = ImitationPageCanvas.state.memo.pencilRenderFindMap('_hash')
 
   const loadRef = React.useRef(false)
 
@@ -17,7 +17,7 @@ function App() {
   const [realH, setRealH] = React.useState()
   const [transition, setTransition] = React.useState('1s all')
 
-  const refFunction = el => ImitationPageCanvas.state.store.canvas.canvasRef = el
+  const refFunction = el => ImitationPageCanvas.state.store.ref.canvas = el
 
   const actionRender = (layer, canvas, context, action) => {
     context.save()
@@ -31,42 +31,38 @@ function App() {
     context.translate(layer.translateX, layer.translateY)
 
     action
-      .filter(i => i.visibility === true && paintOptionRenderFindMap[i.paintHash])
-      .forEach(i => paintOptionRenderFindMap[i.paintHash](canvas, context, layer, i))
+      .filter(i => i.visibility === true && pencilRenderFindMap[i.pencilHash])
+      .forEach(i => pencilRenderFindMap[i.pencilHash](canvas, context, layer, i))
 
     context.restore()
   }
 
-  const canvasResize = () => {
-    ImitationPageCanvas.state.store.canvas.layer.forEach(i => {
-      if (i.offscreenCanvasRef === undefined) {
-        i.offscreenCanvasRef = new OffscreenCanvas(realW, realH)
-        i.offscreenContextRef = i.offscreenCanvasRef.getContext('2d')
-
-        i.contextShouldUpdate = true
+  const canvasOffscreenInit = () => {
+    ImitationPageCanvas.state.store.ref.layer.forEach(i => {
+      if (i.offscreenCanvas === undefined) {
+        i.offscreenCanvas = new OffscreenCanvas(realW, realH)
+        i.offscreenContext = i.offscreenCanvas.getContext('2d')
+        i.offscreenUpdate = true
       }
 
-      if (i.offscreenCanvasRef.width !== realW || i.offscreenCanvasRef.height !== realH) {
-        i.offscreenCanvasRef.width = realW
-        i.offscreenCanvasRef.height = realH
-        i.offscreenContextRef = i.offscreenCanvasRef.getContext('2d')
-
-        i.contextShouldUpdate = true
+      if (i.offscreenCanvas.width !== realW || i.offscreenCanvas.height !== realH) {
+        i.offscreenCanvas.width = realW
+        i.offscreenCanvas.height = realH
+        i.offscreenContext = i.offscreenCanvas.getContext('2d')
+        i.offscreenUpdate = true
       }
 
-      if (i.offscreenPreviousActionCanvasRef === undefined) {
-        i.offscreenPreviousActionCanvasRef = new OffscreenCanvas(realW, realH)
-        i.offscreenPreviousActionContextRef = i.offscreenPreviousActionCanvasRef.getContext('2d')
-
-        i.contextShouldUpdate = true
+      if (i.offscreenExceptLastActionCanvas === undefined) {
+        i.offscreenExceptLastActionCanvas = new OffscreenCanvas(realW, realH)
+        i.offscreenExceptLastActionContext = i.offscreenExceptLastActionCanvas.getContext('2d')
+        i.offscreenUpdate = true
       }
 
-      if (i.offscreenPreviousActionCanvasRef.width !== realW || i.offscreenPreviousActionCanvasRef.height !== realH) {
-        i.offscreenPreviousActionCanvasRef.width = realW
-        i.offscreenPreviousActionCanvasRef.height = realH
-        i.offscreenPreviousActionContextRef = i.offscreenPreviousActionCanvasRef.getContext('2d')
-
-        i.contextShouldUpdate = true
+      if (i.offscreenExceptLastActionCanvas.width !== realW || i.offscreenExceptLastActionCanvas.height !== realH) {
+        i.offscreenExceptLastActionCanvas.width = realW
+        i.offscreenExceptLastActionCanvas.height = realH
+        i.offscreenExceptLastActionContext = i.offscreenExceptLastActionCanvas.getContext('2d')
+        i.offscreenUpdate = true
       }
     })
 
@@ -74,44 +70,48 @@ function App() {
   }
 
   const canvasOffscreenRender = () => {
-    ImitationPageCanvas.state.store.canvas.layer.forEach(i => {
-      if (i.visibility === true && i.previousActionContextShouldUpdate === true) {
-        i.offscreenPreviousActionContextRef.clearRect(0, 0, i.offscreenPreviousActionCanvasRef.width, i.offscreenPreviousActionCanvasRef.height)
-        actionRender(i, i.offscreenPreviousActionCanvasRef, i.offscreenPreviousActionContextRef, i.action.slice(0, i.action.length - 1))
+    ImitationPageCanvas.state.store.source.canvas.layer.forEach(i => {
+      const canvasLayerRefFind = ImitationPageCanvas.state.store.ref.layer.find(i_ => i_.layerHash === i._hash)
+
+      if (i.visibility === true && canvasLayerRefFind.offscreenExceptLastActionUpdate === true) {
+        canvasLayerRefFind.offscreenExceptLastActionContext.clearRect(0, 0, canvasLayerRefFind.offscreenExceptLastActionCanvas.width, canvasLayerRefFind.offscreenExceptLastActionCanvas.height)
+        actionRender(i, canvasLayerRefFind.offscreenExceptLastActionCanvas, canvasLayerRefFind.offscreenExceptLastActionContext, i.action.slice(0, i.action.length - 1))
       }
 
-      if (i.visibility === true && i.lastActionContextShouldUpdate === true) {
-        i.offscreenContextRef.clearRect(0, 0, i.offscreenCanvasRef.width, i.offscreenCanvasRef.height)
-        i.offscreenContextRef.drawImage(i.offscreenPreviousActionCanvasRef, ...caculatePositionCenter(i.offscreenCanvasRef, i.offscreenPreviousActionCanvasRef, { x: 0, y: 0 }))
-        actionRender(i, i.offscreenCanvasRef, i.offscreenContextRef, i.action.slice(i.action.length - 1, i.action.length))
+      if (i.visibility === true && canvasLayerRefFind.offscreenComposeLastActionUpdate === true) {
+        canvasLayerRefFind.offscreenContext.clearRect(0, 0, canvasLayerRefFind.offscreenCanvas.width, canvasLayerRefFind.offscreenCanvas.height)
+        canvasLayerRefFind.offscreenContext.drawImage(canvasLayerRefFind.offscreenExceptLastActionCanvas, ...caculatePositionCenter(canvasLayerRefFind.offscreenCanvas, canvasLayerRefFind.offscreenExceptLastActionCanvas, { x: 0, y: 0 }))
+        actionRender(i, canvasLayerRefFind.offscreenCanvas, canvasLayerRefFind.offscreenContext, i.action.slice(i.action.length - 1, i.action.length))
       }
 
-      if (i.visibility === true && i.contextShouldUpdate === true) {
-        i.offscreenContextRef.clearRect(0, 0, i.offscreenCanvasRef.width, i.offscreenCanvasRef.height)
-        actionRender(i, i.offscreenCanvasRef, i.offscreenContextRef, i.action)
+      if (i.visibility === true && canvasLayerRefFind.offscreenUpdate === true) {
+        canvasLayerRefFind.offscreenContext.clearRect(0, 0, canvasLayerRefFind.offscreenCanvas.width, canvasLayerRefFind.offscreenCanvas.height)
+        actionRender(i, canvasLayerRefFind.offscreenCanvas, canvasLayerRefFind.offscreenContext, i.action)
       }
 
-      i.previousActionContextShouldUpdate = false
-      i.lastActionContextShouldUpdate = false
-      i.contextShouldUpdate = false
+      canvasLayerRefFind.offscreenExceptLastActionUpdate = false
+      canvasLayerRefFind.offscreenComposeLastActionUpdate = false
+      canvasLayerRefFind.offscreenUpdate = false
     })
 
     canvasOnlinescreenRender()
   }
 
   const canvasOnlinescreenRender = () => {
-    ImitationPageCanvas.state.store.canvas.contextRef.clearRect(0, 0, ImitationPageCanvas.state.store.canvas.canvasRef.width, ImitationPageCanvas.state.store.canvas.canvasRef.height)
+    ImitationPageCanvas.state.store.ref.context.clearRect(0, 0, ImitationPageCanvas.state.store.ref.canvas.width, ImitationPageCanvas.state.store.ref.canvas.height)
 
-    ImitationPageCanvas.state.store.canvas.layer.forEach(i => {
+    ImitationPageCanvas.state.store.source.canvas.layer.forEach(i => {
+      const canvasLayerRefFind = ImitationPageCanvas.state.store.ref.layer.find(i_ => i_.layerHash === i._hash)
+
       if (i.visibility === true) {
-        const position = caculatePositionCenter(ImitationPageCanvas.state.store.canvas.canvasRef, i.offscreenCanvasRef, { x: 0, y: 0 })
-        if (position !== undefined) ImitationPageCanvas.state.store.canvas.contextRef.drawImage(i.offscreenCanvasRef, ...position)
+        const position = caculatePositionCenter(ImitationPageCanvas.state.store.ref.canvas, canvasLayerRefFind.offscreenCanvas, { x: 0, y: 0 })
+        if (position !== undefined) ImitationPageCanvas.state.store.ref.context.drawImage(canvasLayerRefFind.offscreenCanvas, ...position)
       }
     })
   }
 
   React.useEffect(() => {
-    ImitationPageCanvas.state.store.canvas.contextRef = ImitationPageCanvas.state.store.canvas.canvasRef.getContext('2d')
+    ImitationPageCanvas.state.store.ref.context = ImitationPageCanvas.state.store.ref.canvas.getContext('2d')
   }, [])
 
   React.useEffect(() => {
@@ -124,12 +124,12 @@ function App() {
   }, [ImitationPageCanvas.state.store.recting, ImitationPageCanvas.state.store.rect, ImitationPageCanvas.state.store.view.dpr])
 
   React.useEffect(() => {
-    if (realW !== undefined && realW !== 0 && realH !== undefined && realH !== 0) canvasResize()
+    if (realW !== undefined && realW !== 0 && realH !== undefined && realH !== 0) canvasOffscreenInit()
   }, [styleW, styleH, realW, realH])
 
   React.useEffect(() => {
-    if (loadRef.current === true) canvasResize()
-  }, [ImitationPageCanvas.state.update.canvasResize])
+    if (loadRef.current === true) canvasOffscreenInit()
+  }, [ImitationPageCanvas.state.update.canvasOffscreenInit])
 
   React.useEffect(() => {
     if (loadRef.current === true) canvasOffscreenRender()
@@ -148,7 +148,7 @@ function App() {
 }
 
 const dependence = [
-  { instance: ImitationPageCanvas, dependence: state => [ImitationPageCanvas.state.update.canvasOffscreenRender] }
+  { instance: ImitationPageCanvas, dependence: state => [ImitationPageCanvas.state.update.canvasOffscreenInit, ImitationPageCanvas.state.update.canvasOffscreenRender, ImitationPageCanvas.state.update.canvasOnlinescreenRender] }
 ]
 
 export default withBindComponentPure(App, dependence)

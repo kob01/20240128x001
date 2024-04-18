@@ -10,6 +10,19 @@ const themeColor = (type, reverse = false) => {
   }
 }
 
+const ButtonSX = (reverse) => {
+  return {
+    PopperProps: {
+      sx: {
+        '&.MuiButton-root': {
+          background: themeColor('primary', reverse),
+          color: themeColor('background', reverse),
+        }
+      }
+    }
+  }
+}
+
 const TooltipSX = (reverse) => {
   return {
     PopperProps: {
@@ -230,4 +243,4 @@ const PaperSX = (reverse) => {
   }
 }
 
-export { TooltipSX, TextFieldSX, AutocompleteSX, SelectSX, DrawerSX, DialogSX, TabsSX, DividerSX, SwitchSX, AccordionSX, PaperSX, TooltipSXNavigation }
+export { ButtonSX, TooltipSX, TextFieldSX, AutocompleteSX, SelectSX, DrawerSX, DialogSX, TabsSX, DividerSX, SwitchSX, AccordionSX, PaperSX, TooltipSXNavigation }

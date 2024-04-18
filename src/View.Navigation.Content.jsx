@@ -19,10 +19,14 @@ import { ImitationGlobal, ImitationNavigation, withBindComponentPure } from './I
 
 import { DialogSX, TextFieldSX, TabsSX, DividerSX, SwitchSX, SelectSX, DrawerSX, AccordionSX, PaperSX, TooltipSX, TooltipSXNavigation } from './utils.mui.sx'
 
+import { throttleLastRAF } from './utils.common'
+
 function NavigationRenderItem(props) {
   const renderWindowsFind = ImitationNavigation.state.memo.renderWindowsFind(props._hash)
 
   const content = NavigationMap.find(i => i._hash === renderWindowsFind.renderWindowsHash)
+
+  const renderWindowsFixTranslateThrottleLastRAF = React.useCallback(throttleLastRAF(ImitationNavigation.state.function.renderWindowsFixTranslate), [])
 
   const [expand, setExpand] = React.useState(true)
 
@@ -39,7 +43,7 @@ function NavigationRenderItem(props) {
     if (status === 'afterMove') {
       renderWindowsFind.translateX = renderWindowsFind.translateX + changedX
       renderWindowsFind.translateY = renderWindowsFind.translateY + changedY
-      ImitationNavigation.state.function.renderWindowsFixTranslateThrottleLastRAF(renderWindowsFind._hash)
+      renderWindowsFixTranslateThrottleLastRAF(renderWindowsFind._hash)
     }
 
     if (status === 'afterEnd') {
@@ -63,7 +67,7 @@ function NavigationRenderItem(props) {
     if (status === 'afterMove') {
       renderWindowsFind.translateX = renderWindowsFind.translateX + changedX
       renderWindowsFind.translateY = renderWindowsFind.translateY + changedY
-      ImitationNavigation.state.function.renderWindowsFixTranslateThrottleLastRAF(renderWindowsFind._hash)
+      renderWindowsFixTranslateThrottleLastRAF(renderWindowsFind._hash)
     }
 
     if (status === 'afterEnd') {
@@ -83,7 +87,7 @@ function NavigationRenderItem(props) {
     if (ImitationGlobal.state.store.rect === undefined) return
 
     if (renderWindowsFind.load === true) {
-      ImitationNavigation.state.function.renderWindowsFixTranslateThrottleLastRAF(renderWindowsFind._hash)
+      renderWindowsFixTranslateThrottleLastRAF(renderWindowsFind._hash)
     }
 
     if (renderWindowsFind.load === false) {
@@ -118,7 +122,7 @@ function NavigationRenderItem(props) {
         renderWindowsFind.load = true
       }
 
-      ImitationNavigation.state.function.renderWindowsFixTranslateThrottleLastRAF(renderWindowsFind._hash)
+      renderWindowsFixTranslateThrottleLastRAF(renderWindowsFind._hash)
     }
   }, [ImitationGlobal.state.store.rect])
 
@@ -136,7 +140,7 @@ function NavigationRenderItem(props) {
 
   React.useEffect(() => {
     const resizeObserver = new ResizeObserver(() => {
-      ImitationNavigation.state.function.renderWindowsFixTranslateThrottleLastRAF(renderWindowsFind._hash)
+      renderWindowsFixTranslateThrottleLastRAF(renderWindowsFind._hash)
     })
 
     resizeObserver.observe(renderWindowsFind.accordionRef)

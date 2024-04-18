@@ -14,7 +14,7 @@ import { debounce } from './utils.common'
 function App() {
   const ref = React.useRef()
 
-  const updateDebounceRef = React.useRef(debounce(() => { ImitationGlobal.state.store.recting = false; ImitationGlobal.state.function.update() }, 500))
+  const updateDebounce = React.useCallback(debounce(() => { ImitationGlobal.state.store.recting = false; ImitationGlobal.state.function.update() }, 500), [])
 
   React.useEffect(() => {
     const resizeObserver = new ResizeObserver(en => {
@@ -22,7 +22,7 @@ function App() {
       ImitationGlobal.state.store.rect = en[0].target.getBoundingClientRect()
       ImitationGlobal.state.function.update()
 
-      updateDebounceRef.current()
+      updateDebounce()
     })
 
     resizeObserver.observe(ref.current)

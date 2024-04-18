@@ -83,7 +83,7 @@ const caculateWidth = (path, width, direction) => {
   if (direction === 'y') return total.map(i => ({ ...path, y: path.y + i }))
 }
 
-const paintRender = (context, action) => {
+const pencilRender = (context, action) => {
   context.save()
   context.globalAlpha = action.alpha
   context.fillStyle = action.color
@@ -91,7 +91,7 @@ const paintRender = (context, action) => {
   context.restore()
 }
 
-const paintAction = () => {
+const pencilAction = () => {
   const ref = { positionOrigin: undefined, positionTarget: undefined, positionFirst: undefined }
 
   return (canvas, context, setting, status, relativeX, relativeY, offsetX, offsetY) => {
@@ -198,6 +198,6 @@ const paintAction = () => {
   }
 }
 
-const r = { _hash: _hash, type: type, label: label, paintRender: paintRender, paintAction: paintAction, settingComponent: settingComponent, settingDefault: settingDefault }
+const r = { _hash: _hash, type: type, label: label, pencilRender: pencilRender, pencilAction: pencilAction, settingComponent: settingComponent, settingDefault: settingDefault }
 
 export default r

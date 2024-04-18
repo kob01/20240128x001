@@ -1,30 +1,53 @@
 import React from 'react'
 
 import Grid from '@mui/material/Grid'
-import TextField from '@mui/material/TextField'
 import Slider from '@mui/material/Slider'
+import Tooltip from '@mui/material/Tooltip'
+import Paper from '@mui/material/Paper'
+import Button from '@mui/material/Button'
 
-import { TextFieldSX } from './utils.mui.sx'
+import { ClickAwayListener } from './View.Component.ClickAwayListener'
+import { ColorPicker } from './View.Component.ColorPicker'
+
+import { TextFieldSX, TooltipSX, PaperSX } from './utils.mui.sx'
 
 import { hash } from './utils.common'
 
-const _hash = '2d-Line-V2'
+const _hash = '2d-Line-V1'
 
 const type = 'Line'
 
-const name = 'Line-V2'
+const name = 'Line-V1'
 
 function settingComponent(props) {
   const { value, onChange } = props
 
   return <Grid container spacing={2}>
-    <Grid item xs={12}>
-      Color
-    </Grid>
-    <Grid item xs={12}>
-      <div style={{ position: 'relative' }}>
-        <TextField {...TextFieldSX()} value={value.color} onChange={e => { value.color = e.target.value; onChange(); }} fullWidth autoComplete='off' />
-        <TextField {...TextFieldSX()} value={value.color} onChange={e => { value.color = e.target.value; onChange(); }} fullWidth autoComplete='off' type='color' style={{ width: 64, position: 'absolute', top: 0, bottom: 0, right: 0, margin: 'auto' }} />
+    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div>
+        Color
+      </div>
+      <div>
+        <ClickAwayListener>
+          {
+            ({ open, setOpen, pushClickAwayRef }) => {
+              return <Tooltip
+                {...TooltipSX()}
+                open={open}
+                title={
+                  <Paper {...PaperSX()} style={{ padding: 16, width: 320 }} ref={el => pushClickAwayRef('Paper', el)}>
+                    <ColorPicker value={value.color} onChange={v => { value.color = v; onChange(); }} colors={['rgba(255, 0, 0, 1)', 'rgba(0, 255, 0, 1)', 'rgba(0, 0, 255, 1)']} />
+                  </Paper>
+                }
+                children={
+                  <Button variant='contained' style={{ background: 'white', color: value.color }} onClick={() => setOpen(true)} ref={el => pushClickAwayRef('Button', el)}>
+                    <span style={{ mixBlendMode: 'difference' }}>Pick</span>
+                  </Button>
+                }
+              />
+            }
+          }
+        </ClickAwayListener>
       </div>
     </Grid>
 
@@ -46,9 +69,9 @@ function settingComponent(props) {
   </Grid>
 }
 
-const settingDefault = { color: '#000000', alpha: 1, width: 1 }
+const settingDefault = { color: 'rgba(0, 0, 0, 1)', alpha: 1, width: 1 }
 
-const paintRender = (canvas, context, layer, action) => {
+const pencilRender = (canvas, context, layer, action) => {
   context.save()
 
   context.globalAlpha = action.setting.alpha
@@ -66,13 +89,13 @@ const paintRender = (canvas, context, layer, action) => {
   context.restore()
 }
 
-const paintAction = () => {
+const pencilAction = () => {
   const ref = { action: undefined }
 
   return (canvas, context, setting, layer, action, status, x, y) => {
 
     if (status === 'afterStart') {
-      ref.action = { _hash: hash(), paintHash: _hash, path: [{ x: Math.round(x), y: Math.round(y) }], setting: JSON.parse(JSON.stringify(setting)), visibility: true }
+      ref.action = { _hash: hash(), pencilHash: _hash, path: [{ x: Math.round(x), y: Math.round(y) }], setting: structuredClone(setting), visibility: true }
       action.push(ref.action)
     }
 
@@ -108,6 +131,6 @@ const paintAction = () => {
   }
 }
 
-const r = { _hash: _hash, type: type, name: name, paintRender: paintRender, paintAction: paintAction, settingComponent: settingComponent, settingDefault: settingDefault }
+const r = { _hash: _hash, type: type, name: name, pencilRender: pencilRender, pencilAction: pencilAction, settingComponent: settingComponent, settingDefault: settingDefault }
 
 export default r

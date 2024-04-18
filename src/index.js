@@ -5,6 +5,8 @@ import App from './View.App'
 
 import { ImitationGlobal } from './Imitation'
 
+import { wheelControl } from './utils.common'
+
 import icon from '../static/icon.png'
 
 const link = document.createElement('link')
@@ -24,7 +26,7 @@ const styleAppendI = () => {
     `body { padding: 0; margin: 0; font-size: 14px; transition: 1s all; }`,
     `body * { font-weight: bold !important; font-family: monospace !important; box-sizing: border-box; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }`,
     `img { pointer-events: none; }`,
-    `body { overscroll-behavior: none; }`,
+    `body { overscroll-behavior: none; }`
   ].join(' ')
 
   style.id = id
@@ -58,9 +60,9 @@ styleAppendII()
 
 ImitationGlobal.register(styleAppendII, state => [...Object.values(ImitationGlobal.state.store.theme.palette).map(i => i.main)])
 
-
-document.addEventListener('wheel', e => { if (e.wheelDelta === 240 || e.wheelDelta === -240) e.preventDefault() }, { passive: false })
-document.addEventListener('contextmenu', e => e.preventDefault(), { passive: false })
+// document.addEventListener('wheel', wheelControl((e) => { if (e.wheelMode === 1) e.preventDefault() }), { passive: false })
+window.addEventListener('wheel', (e) => { if (e.ctrlKey) e.preventDefault() }, { passive: false })
+window.addEventListener('contextmenu', e => e.preventDefault(), { passive: false })
 
 
 if (new URLSearchParams(new URL(window.location.href).search).get('vconsole')) {

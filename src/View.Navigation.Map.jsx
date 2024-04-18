@@ -16,8 +16,8 @@ import CanvasControl from './View.Navigation.Map.CanvasControl'
 import CanvasAction from './View.Navigation.Map.CanvasAction'
 import CanvasLayers from './View.Navigation.Map.CanvasLayers'
 import CanvasLayer from './View.Navigation.Map.CanvasLayer'
-import CanvasPaints from './View.Navigation.Map.CanvasPaints'
-import CanvasPaint from './View.Navigation.Map.CanvasPaint'
+import CanvasPencils from './View.Navigation.Map.CanvasPencils'
+import CanvasPencil from './View.Navigation.Map.CanvasPencil'
 import CanvasView from './View.Navigation.Map.CanvasView'
 
 const App = [
@@ -28,8 +28,8 @@ const App = [
   { Component: CanvasControl, _hash: 'CanvasControl', summary: 'Control', page: 'Canvas', Icon: LockIcon },
   { Component: CanvasLayers, _hash: 'CanvasLayers', summary: 'Layers', page: 'Canvas', Icon: LayersIcon },
   { Component: CanvasLayer, _hash: 'CanvasLayer', summary: 'Layer', page: 'Canvas' },
-  { Component: CanvasPaints, _hash: 'CanvasPaints', summary: 'Paints', page: 'Canvas', Icon: DrawIcon },
-  { Component: CanvasPaint, _hash: 'CanvasPaint', summary: 'Paint', page: 'Canvas'},
+  { Component: CanvasPencils, _hash: 'CanvasPencils', summary: 'Pencils', page: 'Canvas', Icon: DrawIcon },
+  { Component: CanvasPencil, _hash: 'CanvasPencil', summary: 'Pencil', page: 'Canvas'},
   { Component: CanvasView, _hash: 'CanvasView', summary: 'View', page: 'Canvas', Icon: ViewCarouselIcon },
 ]
 

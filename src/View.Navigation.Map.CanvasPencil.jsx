@@ -3,24 +3,25 @@ import React from 'react'
 import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
 
+import { ColorPicker } from './View.Component.ColorPicker'
+
 import { ImitationGlobal, ImitationNavigation, ImitationPageCanvas, withBindComponentPure } from './Imitation'
 
 import { DialogSX, TextFieldSX, TabsSX, DividerSX, SwitchSX, SelectSX, DrawerSX, AccordionSX, PaperSX, TooltipSX } from './utils.mui.sx'
 
 function App(props) {
   const renderWindowsFind = ImitationNavigation.state.memo.renderWindowsFind(props.renderWindowsHash)
-  const paintOptionFind = ImitationPageCanvas.state.memo.paintOptionFind(renderWindowsFind.property.paintOptionHash)
-  const paintSettingFind = ImitationPageCanvas.state.memo.paintSettingFind(renderWindowsFind.property.paintOptionHash)
+  const pencilFind = ImitationPageCanvas.state.memo.pencilFind(renderWindowsFind.property.pencilHash)
 
   return <Grid container spacing={2}>
 
     <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
       <div>Name</div>
-      <div>{paintOptionFind.name}</div>
+      <div>{pencilFind.name}</div>
     </Grid>
 
     <Grid item xs={12}>
-      <paintOptionFind.settingComponent value={paintSettingFind.setting} onChange={() => { ImitationPageCanvas.state.store.paint.setting = [...ImitationPageCanvas.state.store.paint.setting]; ImitationPageCanvas.state.function.update(); }} />
+      <pencilFind.settingComponent value={pencilFind.setting} onChange={() => { ImitationPageCanvas.state.function.update(); }} />
     </Grid>
 
   </Grid>

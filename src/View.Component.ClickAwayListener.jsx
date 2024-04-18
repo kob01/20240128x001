@@ -11,10 +11,11 @@ const useState = (props) => {
     if (window.ontouchstart !== undefined) return
 
     const mousedown = (e) => {
-      positionStart.current = { x: e.pageX, y: e.pageY }
+      positionStart.current = { x: e.pageX, y: e.pageY, contains: clickAwayRef.current.some(i => i.target && i.target.contains(e.target)) }
     }
 
     const mouseup = (e) => {
+      if (!positionStart.current) return
       if (e.pageX !== positionStart.current.x || e.pageY !== positionStart.current.y) return
       if (clickAwayRef.current.some(i => i.target && i.target.contains(e.target)) === true) return
       setOpen(false)
@@ -34,10 +35,11 @@ const useState = (props) => {
     if (window.ontouchstart === undefined) return
 
     const touchstart = (e) => {
-      positionStart.current = { x: e.targetTouches[0].pageX, y: e.targetTouches[0].pageY }
+      positionStart.current = { x: e.targetTouches[0].pageX, y: e.targetTouches[0].pageY, contains: clickAwayRef.current.some(i => i.target && i.target.contains(e.target)) }
     }
 
     const touchend = (e) => {
+      if (!positionStart.current) return
       if (e.changedTouches[0].pageX !== positionStart.current.x || e.changedTouches[0].pageY !== positionStart.current.y) return
       if (clickAwayRef.current.some(i => i.target && i.target.contains(e.target)) === true) return
       setOpen(false)

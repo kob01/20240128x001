@@ -38,7 +38,7 @@ ImitationInstance.state.function.update = () => {
 ImitationInstance.state.function.onLoad = () => {
   ImitationInstance.state.store.load = true
   ImitationInstance.state.store.rect = undefined
-  ImitationInstance.state.store.source = mockSource
+  ImitationInstance.state.store.source = structuredClone(mockSource)
   ImitationInstance.state.store.renderImage = [{ _hash: hash(), sourceHash: ImitationInstance.state.store.source[0]._hash, direction: 2 }]
   ImitationInstance.state.function.update()
 }

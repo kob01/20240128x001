@@ -17,7 +17,7 @@ ImitationInstance.state.update.now = performance.now()
 ImitationInstance.state.update.renderWindow = performance.now()
 
 
-ImitationInstance.state.store.mode = 0
+ImitationInstance.state.store.mode = 1
 
 ImitationInstance.state.store.renderWindow = []
 
@@ -39,10 +39,7 @@ ImitationInstance.state.function.renderWindowsAppend = (renderWindowsHash, prope
 }
 
 ImitationInstance.state.function.renderWindowsRemove = (_hash) => {
-  const renderWindowsFind = ImitationInstance.state.store.renderWindow.find(i => i._hash === _hash)
-
   ImitationInstance.state.store.renderWindow = ImitationInstance.state.store.renderWindow.filter(i => i._hash !== _hash)
-  renderWindowsFind.update = performance.now()
 
   ImitationInstance.state.function.updateRenderWindow()
 }
@@ -70,13 +67,8 @@ ImitationInstance.state.function.renderWindowsFixTranslate = (_hash) => {
   renderWindowsFind.translateY = Math.max(renderWindowsFind.translateY, (renderWindowsFind.accordionRef.offsetHeight - ImitationGlobal.state.store.rect.height + 32) / 2)
   renderWindowsFind.translateY = Math.min(renderWindowsFind.translateY, (ImitationGlobal.state.store.rect.height - renderWindowsFind.accordionRef.offsetHeight - 32) / 2)
 
-  renderWindowsFind.update = performance.now()
-
   ImitationInstance.state.function.updateRenderWindow()
 }
-
-ImitationInstance.state.function.renderWindowsFixTranslateThrottleLastRAF = throttleLastRAF(ImitationInstance.state.function.renderWindowsFixTranslate)
-
 
 ImitationInstance.state.memo.renderWindowsFind = (_hash, dep = []) => React.useMemo(() => {
   return ImitationInstance.state.store.renderWindow.find(i => i._hash === _hash)

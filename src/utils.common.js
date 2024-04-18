@@ -36,9 +36,34 @@ const debounce = (fn, time) => {
 
 const throttleLastRAF = (fn) => {
   var ref = { current: undefined }
-  var refRAF
+  var refTime
 
-  return (...args) => { ref.current = () => fn(...args); if (refRAF === undefined) requestAnimationFrame(() => { ref.current(...args); refRAF = undefined }); }
+  return (...args) => { ref.current = () => fn(...args); if (refTime === undefined) requestAnimationFrame(() => { ref.current(...args); refTime = undefined }); }
+}
+
+const throttleLastRIC = (fn) => {
+  var ref = { current: undefined }
+  var refTime
+
+  return (...args) => { ref.current = () => fn(...args); if (refTime === undefined) requestIdleCallback(() => { ref.current(...args); refTime = undefined }); }
+}
+
+const wheelControl = (callback) => {
+  var wheelTimeout
+  var wheelMode
+
+  return e => {
+    if (wheelMode === undefined && e.wheelDelta && Math.abs(e.wheelDelta) === 100) wheelMode = 0
+    if (wheelMode === undefined && e.wheelDelta && Math.abs(e.wheelDelta) < 100) wheelMode = 0
+    if (wheelMode === undefined && e.wheelDelta && Math.abs(e.wheelDelta) > 100) wheelMode = 1
+
+    clearTimeout(wheelTimeout)
+    wheelTimeout = setTimeout(() => { wheelMode = undefined; wheelTimeout = undefined; }, 100)
+
+    e.wheelMode = wheelMode
+
+    callback(e)
+  }
 }
 
 const fixed = (number) => {
@@ -93,4 +118,4 @@ const caculatePositionCenter = (wrapper, target, offset) => {
   return [sx, sy, swidth, sheight, x, y, width, height]
 }
 
-export { hash, rgbaSpilt, rgbaReplaceAlpha, debounce, throttleLastRAF, fixed, range, caculatePositionCenter }
+export { hash, rgbaSpilt, rgbaReplaceAlpha, debounce, throttleLastRAF, throttleLastRIC, wheelControl, fixed, range, caculatePositionCenter }

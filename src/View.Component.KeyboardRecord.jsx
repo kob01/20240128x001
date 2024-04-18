@@ -4,10 +4,12 @@ const useState = (props) => {
   const [code, setCode] = React.useState([])
 
   const onKeydown = (e) => {
+    if (props.enable === false) return
     setCode(pre => Array.from(new Set([...pre, e.code])).length === pre.length ? pre : Array.from(new Set([...pre, e.code])))
   }
 
   const onKeyup = (e) => {
+    if (props.enable === false) return
     setCode(pre => pre.filter(i => i !== e.code))
   }
 

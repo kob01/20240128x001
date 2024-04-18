@@ -1,4 +1,4 @@
-import mockCanvas from './mock.canvas.layer.json'
+import mockCanvas from './mock.canvas.json'
 
 const source = [
   {

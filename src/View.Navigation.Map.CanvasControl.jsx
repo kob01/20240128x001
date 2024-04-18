@@ -13,9 +13,9 @@ import { DialogSX, TextFieldSX, TabsSX, DividerSX, SwitchSX, SelectSX, DrawerSX,
 function App() {
   return <Grid container spacing={2}>
     <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-      <div>Enable Paint</div>
+      <div>Enable Pencil</div>
       <div>
-        <Switch {...SwitchSX()} checked={ImitationPageCanvas.state.store.control.paint} onChange={(e) => { ImitationPageCanvas.state.store.control.paint = e.target.checked; ImitationPageCanvas.state.function.update() }} />
+        <Switch {...SwitchSX()} checked={ImitationPageCanvas.state.store.control.draw} onChange={(e) => { ImitationPageCanvas.state.store.control.draw = e.target.checked; ImitationPageCanvas.state.function.update() }} />
       </div>
     </Grid>
   </Grid>
