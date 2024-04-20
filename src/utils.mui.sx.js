@@ -225,6 +225,18 @@ const AccordionSX = (reverse) => {
         borderRadius: '4px',
         margin: '0px',
         transition: '1s all',
+      },
+      '& .MuiCollapse-root': {
+        overflow: 'visible'
+      },
+      '& .MuiAccordionSummary-root.Mui-expanded': {
+        minHeight: 'initial'
+      },
+      '& .MuiAccordionSummary-content.Mui-expanded': {
+        margin: '16px 0'
+      },
+      '& .MuiAccordionDetails-root': {
+        padding: '16px'
       }
     }
   }

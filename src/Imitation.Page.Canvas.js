@@ -53,6 +53,8 @@ ImitationInstance.state.store.view.translateY = 0
 
 ImitationInstance.state.store.control.draw = true
 
+ImitationInstance.state.store.control.move = true
+
 ImitationInstance.state.store.active.layer = undefined
 
 ImitationInstance.state.store.active.pencil = undefined
@@ -207,7 +209,7 @@ ImitationInstance.state.function.onCanvasLayerRemove = (_hash) => {
 
   ImitationInstance.state.store.ref.layer = ImitationInstance.state.store.ref.layer.filter(i => i.layerHash !== _hash)
 
-  ImitationInstance.state.store.active.layer = undefined
+  ImitationInstance.state.store.active.layer = ImitationInstance.state.store.active.layer === _hash ? undefined : ImitationInstance.state.store.active.layer
 
   ImitationInstance.state.function.updateCanvasOnlinescreenRender()
   ImitationInstance.state.function.update()

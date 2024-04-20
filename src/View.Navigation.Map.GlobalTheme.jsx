@@ -20,8 +20,8 @@ import { throttleLastRAF, throttleLastRIC } from './utils.common'
 function App() {
   const updateThrottleLastRAF = React.useCallback(throttleLastRAF(ImitationGlobal.state.function.update), [])
 
-  return <Grid container spacing={2}>
-    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+  return <Grid container spacing={0}>
+    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',height:30 }}>
       <div>
         Theme Color Background
       </div>
@@ -38,9 +38,7 @@ function App() {
                   </Paper>
                 }
                 children={
-                  <Button variant='contained' onClick={() => setOpen(true)} ref={el => pushClickAwayRef('Button', el)}>
-                    Pick
-                  </Button>
+                  <Button variant='contained' style={{ width: 42, height: 24, minWidth: 'initial', background: ImitationGlobal.state.store.theme.palette.background.main }} onClick={() => setOpen(true)} ref={el => pushClickAwayRef('Button', el)}></Button>
                 }
               />
             }
@@ -49,7 +47,7 @@ function App() {
       </div>
     </Grid>
 
-    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',height:30 }}>
       <div>
         Theme Color Primary
       </div>
@@ -66,9 +64,7 @@ function App() {
                   </Paper>
                 }
                 children={
-                  <Button variant='contained' onClick={() => setOpen(true)} ref={el => pushClickAwayRef('Button', el)}>
-                    Pick
-                  </Button>
+                  <Button variant='contained' style={{ width: 42, height: 24, minWidth: 'initial', background: ImitationGlobal.state.store.theme.palette.primary.main }} onClick={() => setOpen(true)} ref={el => pushClickAwayRef('Button', el)}></Button>
                 }
               />
             }
@@ -76,7 +72,7 @@ function App() {
         </ClickAwayListener>
       </div>
     </Grid>
-  </Grid>
+  </Grid >
 }
 
 const dependence = [

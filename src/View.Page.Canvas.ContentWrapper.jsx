@@ -16,13 +16,15 @@ function App() {
   const pencilActionRunFind = ImitationPageCanvas.state.memo.pencilActionRunFind(ImitationPageCanvas.state.store.active.pencil)
   const pencilFind = ImitationPageCanvas.state.memo.pencilFind(ImitationPageCanvas.state.store.active.pencil)
 
-  const inControlPencil = ImitationPageCanvas.state.store.control.draw
+  const inControlDraw = ImitationPageCanvas.state.store.control.draw
+  const inControlMove = ImitationPageCanvas.state.store.control.move
 
   const updateDebounce500 = React.useCallback(debounce(ImitationPageCanvas.state.function.update, 500), [])
   const updateCanvasOffscreenRenderThrottleLastRAF = React.useCallback(throttleLastRAF(ImitationPageCanvas.state.function.updateCanvasOffscreenRender), [])
 
   const dragControlType = React.useRef()
   const dragControlProp = React.useRef()
+  const dragControlTime = React.useRef()
 
   const { code } = useKeyboardRecord({ enable: true })
 
@@ -39,10 +41,10 @@ function App() {
     const changedX = params.changedX
     const changedY = params.changedY
 
-    if (status === 'afterStart' && inSpace === false && inMeta === false && inControlPencil === true && canvasLayerFind !== undefined && canvasLayerFind.visibility === true) {
+    if (status === 'afterStart' && inSpace === false && inMeta === false && inControlDraw === true && canvasLayerFind !== undefined && canvasLayerFind.visibility === true) {
       dragControlType.current = 0
     }
-    if (status === 'afterStart' && inSpace === true && inMeta === false) {
+    if (status === 'afterStart' && inSpace === true && inMeta === false && inControlMove === true) {
       dragControlType.current = 1
     }
     if (status === 'afterStart' && inMeta === true && inSpace === false && canvasLayerFind !== undefined && canvasLayerFind.visibility === true) {
@@ -94,8 +96,10 @@ function App() {
     }
 
     if (status === 'afterEnd') {
+      clearTimeout(dragControlTime.current)
       dragControlType.current = undefined
       dragControlProp.current = undefined
+      dragControlTime.current = undefined
     }
   }
 
@@ -114,13 +118,15 @@ function App() {
     const inTouch2 = Boolean(params.x && params.x.length === 2 && params.y && params.y.length === 2)
     const inTouch3 = Boolean(params.x && params.x.length === 3 && params.y && params.y.length === 3)
 
-    if (status === 'afterStart' && inControlPencil === true && canvasLayerFind !== undefined && canvasLayerFind.visibility === true) {
-      dragControlType.current = 0
+    if (status === 'afterStart' && inControlDraw === true && canvasLayerFind !== undefined && canvasLayerFind.visibility === true) {
+      dragControlTime.current = setTimeout(() => dragControlType.current = 0, 100)
     }
-    if (status === 'afterStart' && inTouch2 === true) {
+    if (status === 'afterStart' && inTouch2 === true && inControlMove === true) {
+      clearTimeout(dragControlTime.current)
       dragControlType.current = 1
     }
     if (status === 'afterStart' && inTouch3 === true && canvasLayerFind !== undefined && canvasLayerFind.visibility === true) {
+      clearTimeout(dragControlTime.current)
       dragControlType.current = 2
     }
 
@@ -169,58 +175,53 @@ function App() {
     }
 
     if (status === 'afterEnd') {
+      clearTimeout(dragControlTime.current)
       dragControlType.current = undefined
       dragControlProp.current = undefined
+      dragControlTime.current = undefined
     }
   }
 
   const { onTouchStart } = useDragControlTouch({ enable: true, onChange: onChangeDragControlTouch })
 
-  const onWheel = React.useCallback(
-    wheelControl(
-      (e) => {
-        if (ImitationPageCanvas.state.store.recting === true) return
+  const onWheel = (e) => {
+    if (ImitationPageCanvas.state.store.recting === true) return
 
-        if (e.deltaY === 0) return
+    if (e.nativeEvent.ctrlKey === false && inControlMove === true) {
+      const offsetX = e.nativeEvent.deltaX / ImitationPageCanvas.state.store.view.scaleX * ImitationPageCanvas.state.store.view.dpr * 2 * -1
+      const offsetY = e.nativeEvent.deltaY / ImitationPageCanvas.state.store.view.scaleY * ImitationPageCanvas.state.store.view.dpr * 2 * -1
 
-        if (e.wheelMode === 0) {
-          const offsetX = e.deltaX / ImitationPageCanvas.state.store.view.scaleX * ImitationPageCanvas.state.store.view.dpr * 2 * -1
-          const offsetY = e.deltaY / ImitationPageCanvas.state.store.view.scaleY * ImitationPageCanvas.state.store.view.dpr * 2 * -1
+      ImitationPageCanvas.state.store.view.translateX = ImitationPageCanvas.state.store.view.translateX + offsetX
+      ImitationPageCanvas.state.store.view.translateY = ImitationPageCanvas.state.store.view.translateY + offsetY
 
-          ImitationPageCanvas.state.store.view.translateX = ImitationPageCanvas.state.store.view.translateX + offsetX
-          ImitationPageCanvas.state.store.view.translateY = ImitationPageCanvas.state.store.view.translateY + offsetY
+      ImitationPageCanvas.state.store.ref.layer.forEach(i => i.offscreenUpdate = true)
 
-          ImitationPageCanvas.state.store.ref.layer.forEach(i => i.offscreenUpdate = true)
+      updateCanvasOffscreenRenderThrottleLastRAF()
+      updateDebounce500()
+    }
 
-          updateCanvasOffscreenRenderThrottleLastRAF()
-          updateDebounce500()
-        }
+    if (e.nativeEvent.ctrlKey === true) {
+      var scaleX = range(Number(Number(ImitationPageCanvas.state.store.view.scaleX - ImitationPageCanvas.state.store.view.scaleX * 0.01 * e.nativeEvent.deltaY).toFixed(2)), 0.02, 24)
+      if (e.nativeEvent.deltaY < 0 && scaleX === ImitationPageCanvas.state.store.view.scaleX) var scaleX = range(ImitationPageCanvas.state.store.view.scaleX + 0.01, 0.02, 24)
+      if (e.nativeEvent.deltaY > 0 && scaleX === ImitationPageCanvas.state.store.view.scaleX) var scaleX = range(ImitationPageCanvas.state.store.view.scaleX - 0.01, 0.02, 24)
 
-        if (e.wheelMode === 1) {
-          var scaleX = range(Number(Number(ImitationPageCanvas.state.store.view.scaleX - ImitationPageCanvas.state.store.view.scaleX * 0.01 * e.deltaY).toFixed(2)), 0.02, 24)
-          if (e.deltaY < 0 && scaleX === ImitationPageCanvas.state.store.view.scaleX) var scaleX = range(ImitationPageCanvas.state.store.view.scaleX + 0.01, 0.02, 24)
-          if (e.deltaY > 0 && scaleX === ImitationPageCanvas.state.store.view.scaleX) var scaleX = range(ImitationPageCanvas.state.store.view.scaleX - 0.01, 0.02, 24)
+      var scaleY = range(Number(Number(ImitationPageCanvas.state.store.view.scaleY - ImitationPageCanvas.state.store.view.scaleY * 0.01 * e.nativeEvent.deltaY).toFixed(2)), 0.02, 24)
+      if (e.nativeEvent.deltaY < 0 && scaleY === ImitationPageCanvas.state.store.view.scaleY) var scaleY = range(ImitationPageCanvas.state.store.view.scaleY + 0.01, 0.02, 24)
+      if (e.nativeEvent.deltaY > 0 && scaleY === ImitationPageCanvas.state.store.view.scaleY) var scaleY = range(ImitationPageCanvas.state.store.view.scaleY - 0.01, 0.02, 24)
 
-          var scaleY = range(Number(Number(ImitationPageCanvas.state.store.view.scaleY - ImitationPageCanvas.state.store.view.scaleY * 0.01 * e.deltaY).toFixed(2)), 0.02, 24)
-          if (e.deltaY < 0 && scaleY === ImitationPageCanvas.state.store.view.scaleY) var scaleY = range(ImitationPageCanvas.state.store.view.scaleY + 0.01, 0.02, 24)
-          if (e.deltaY > 0 && scaleY === ImitationPageCanvas.state.store.view.scaleY) var scaleY = range(ImitationPageCanvas.state.store.view.scaleY - 0.01, 0.02, 24)
-          
-          ImitationPageCanvas.state.store.view.scaleX = scaleX
-          ImitationPageCanvas.state.store.view.scaleY = scaleY
+      ImitationPageCanvas.state.store.view.scaleX = scaleX
+      ImitationPageCanvas.state.store.view.scaleY = scaleY
 
-          ImitationPageCanvas.state.store.ref.layer.forEach(i => i.offscreenUpdate = true)
+      ImitationPageCanvas.state.store.ref.layer.forEach(i => i.offscreenUpdate = true)
 
-          updateCanvasOffscreenRenderThrottleLastRAF()
-          updateDebounce500()
-        }
-      }
-    ),
-    []
-  )
+      updateCanvasOffscreenRenderThrottleLastRAF()
+      updateDebounce500()
+    }
+  }
 
   const styleInDrag = { position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', overflow: 'hidden', width: '100%', height: '100%', transitionProperty: 'width, height', transitionDuration: '1s' }
 
-  return <div style={styleInDrag} onMouseDown={onMouseDown} onTouchStart={onTouchStart} onWheel={e => onWheel(e.nativeEvent)} children={<ContentRender />} />
+  return <div style={styleInDrag} onMouseDown={onMouseDown} onTouchStart={onTouchStart} onWheel={onWheel} children={<ContentRender />} />
 }
 
 export default App

@@ -8,11 +8,11 @@ import { TextFieldSX } from './utils.mui.sx'
 
 import { hash } from './utils.common'
 
-const _hash = '2d-Line-V2'
+const _hash = '2d-StraightLine-V2'
 
-const type = 'Line'
+const type = 'StraightLine'
 
-const name = 'Line-V2'
+const name = 'StraightLine-V2'
 
 function settingComponent(props) {
   const { value, onChange } = props
@@ -55,11 +55,9 @@ const pencilRender = (canvas, context, layer, action) => {
   context.strokeStyle = action.setting.color
   context.lineWidth = action.setting.width
 
-  action.path.forEach((i, index) => {
-    if (index === 0) context.beginPath(i.x, i.y)
-    if (index === 0) context.lineTo(i.x, i.y)
-    if (index !== 0) context.lineTo(i.x, i.y)
-  })
+  context.beginPath(action.path[0].x, action.path[0].y)
+  context.moveTo(action.path[0].x, action.path[0].y)
+  context.lineTo(action.path[1].x, action.path[1].y)
 
   context.stroke()
 
@@ -72,36 +70,16 @@ const pencilAction = () => {
   return (canvas, context, setting, layer, action, status, x, y) => {
 
     if (status === 'afterStart') {
-      ref.action = { _hash: hash(), pencilHash: _hash, path: [{ x: Math.round(x), y: Math.round(y) }], setting: structuredClone(setting), visibility: true }
+      ref.action = { _hash: hash(), pencilHash: _hash, path: [{ x: Math.round(x), y: Math.round(y) }, { x: Math.round(x), y: Math.round(y) }], setting: structuredClone(setting), visibility: true }
       action.push(ref.action)
     }
 
     if (status === 'afterMove') {
-      if (Math.round(x) !== ref.action.path[ref.action.path.length - 1].x || Math.round(y) !== ref.action.path[ref.action.path.length - 1].y) {
-        ref.action.path.push({ x: Math.round(x), y: Math.round(y) })
-        while (
-          ref.action.path[ref.action.path.length - 1] !== undefined &&
-          ref.action.path[ref.action.path.length - 2] !== undefined &&
-          ref.action.path[ref.action.path.length - 3] !== undefined &&
-          (
-            (ref.action.path[ref.action.path.length - 1].x === ref.action.path[ref.action.path.length - 2].x && ref.action.path[ref.action.path.length - 2].x === ref.action.path[ref.action.path.length - 3].x) ||
-            (ref.action.path[ref.action.path.length - 1].y === ref.action.path[ref.action.path.length - 2].y && ref.action.path[ref.action.path.length - 2].y === ref.action.path[ref.action.path.length - 3].y)
-          ) &&
-          (
-            (ref.action.path[ref.action.path.length - 1].x - ref.action.path[ref.action.path.length - 2].x === ref.action.path[ref.action.path.length - 2].x - ref.action.path[ref.action.path.length - 3].x) &&
-            (ref.action.path[ref.action.path.length - 1].y - ref.action.path[ref.action.path.length - 2].y === ref.action.path[ref.action.path.length - 2].y - ref.action.path[ref.action.path.length - 3].y)
-          )
-        ) {
-          ref.action.path = ref.action.path.filter((i) => i !== ref.action.path[ref.action.path.length - 2])
-        }
-      }
+      ref.action.path[1].x = Math.round(x)
+      ref.action.path[1].y = Math.round(y)
     }
 
     if (status === 'afterEnd') {
-      if (ref.action.path.length === 1) {
-        layer.action = layer.action.filter(i => i._hash !== ref.action._hash)
-      }
-
       ref.action = undefined
     }
 

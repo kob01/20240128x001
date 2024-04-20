@@ -14,15 +14,18 @@ import { debounce } from './utils.common'
 function App() {
   const ref = React.useRef()
 
-  const updateDebounce = React.useCallback(debounce(() => { ImitationGlobal.state.store.recting = false; ImitationGlobal.state.function.update() }, 500), [])
+  const updateDebounce = React.useCallback(debounce((rect) => { ImitationGlobal.state.store.recting = false; ImitationGlobal.state.store.rect = rect; ImitationGlobal.state.function.update() }, 500), [])
 
   React.useEffect(() => {
-    const resizeObserver = new ResizeObserver(en => {
-      ImitationGlobal.state.store.recting = true
-      ImitationGlobal.state.store.rect = en[0].target.getBoundingClientRect()
-      ImitationGlobal.state.function.update()
+    if (ImitationGlobal.state.store.load === false) return
 
-      updateDebounce()
+    const resizeObserver = new ResizeObserver(en => {
+      const rect = en[0].target.getBoundingClientRect()
+
+      if (ImitationGlobal.state.store.rect === undefined) { ImitationGlobal.state.store.rect = rect; ImitationGlobal.state.function.update(); }
+      if (ImitationGlobal.state.store.recting === false) { ImitationGlobal.state.store.recting = true; ImitationGlobal.state.function.update(); }
+
+      updateDebounce(en[0].target.getBoundingClientRect())
     })
 
     resizeObserver.observe(ref.current)

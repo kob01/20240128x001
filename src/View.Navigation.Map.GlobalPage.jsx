@@ -12,32 +12,24 @@ import { ImitationGlobal, withBindComponentPure } from './Imitation'
 function App() {
   return <Grid container spacing={0}>
     <Grid item xs={12}>
-      <Button fullWidth style={{ justifyContent: 'space-between', alignItems: 'center' }} component='div' onClick={(e) => { ImitationGlobal.state.store.page = 'Library'; ImitationPageCanvas.state.function.update() }}>
+      <Button fullWidth component='div' style={{ justifyContent: 'space-between', alignItems: 'center', padding: '4.5px 8px' }} onClick={(e) => { ImitationGlobal.state.store.page = 'Library'; ImitationGlobal.state.function.update() }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton size='small' style={{ opacity: ImitationGlobal.state.store.page === 'Library' ? 1 : 0.2, transition: '1s all' }}>
-            <MapIcon color='primary' fontSize='small' />
-          </IconButton>
-          <div style={{ margin: '0 4px' }}>Library</div>
+          <MapIcon color='primary' fontSize='small' style={{ opacity: ImitationGlobal.state.store.page === 'Library' ? 1 : 0.2, transition: '1s all' }} />
+          <div style={{ margin: '0 8px', fontSize: 12 }}>Library</div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton size='small'>
-            <SendIcon color='primary' fontSize='small' />
-          </IconButton>
+          <SendIcon color='primary' fontSize='small' />
         </div>
       </Button>
     </Grid>
     <Grid item xs={12}>
-      <Button fullWidth style={{ justifyContent: 'space-between', alignItems: 'center' }} component='div' onClick={(e) => { ImitationGlobal.state.store.page = 'Canvas'; ImitationGlobal.state.function.update() }}>
+      <Button fullWidth component='div' style={{ justifyContent: 'space-between', alignItems: 'center', padding: '4.5px 8px' }} onClick={(e) => { ImitationGlobal.state.store.page = 'Canvas'; ImitationGlobal.state.function.update() }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton size='small' style={{ opacity: ImitationGlobal.state.store.page === 'Canvas' ? 1 : 0.2, transition: '1s all' }}>
-            <MapIcon color='primary' fontSize='small' />
-          </IconButton>
-          <div style={{ margin: '0 4px' }}>Canvas</div>
+          <MapIcon color='primary' fontSize='small' style={{ opacity: ImitationGlobal.state.store.page === 'Canvas' ? 1 : 0.2, transition: '1s all' }} />
+          <div style={{ margin: '0 8px', fontSize: 12 }}>Canvas</div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton size='small'>
-            <SendIcon color='primary' fontSize='small' />
-          </IconButton>
+          <SendIcon color='primary' fontSize='small' />
         </div>
       </Button>
     </Grid>

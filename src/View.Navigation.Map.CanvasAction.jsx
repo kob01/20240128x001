@@ -6,36 +6,27 @@ import Grid from '@mui/material/Grid'
 import Switch from '@mui/material/Switch'
 
 import SaveIcon from '@mui/icons-material/Save'
+import SendIcon from '@mui/icons-material/Send'
 
 import { ImitationGlobal, ImitationNavigation, ImitationPageCanvas, withBindComponentPure } from './Imitation'
 
 import { DialogSX, TextFieldSX, TabsSX, DividerSX, SwitchSX, SelectSX, DrawerSX, AccordionSX, PaperSX, TooltipSX } from './utils.mui.sx'
 
 function App() {
-  return <Grid container spacing={0}>
-    <Grid item xs={12}>
-      <Button fullWidth style={{ justifyContent: 'flex-start', alignItems: 'center' }} component='div' onClick={() => { ImitationPageCanvas.state.function.onSave(0) }}>
-        <IconButton size='small' style={{ opacity: ImitationGlobal.state.store.page === 'Library' ? 1 : 0.2, transition: '1s all' }}>
-          <SaveIcon color='primary' fontSize='small' />
-        </IconButton>
-        <div style={{ margin: '0 4px' }}>Save Source</div>
-      </Button>
+  return <Grid container spacing={0} style={{ fontSize: 12 }}>
+    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div>Save</div>
+      <IconButton size='small' onClick={() => { ImitationPageCanvas.state.function.onSave(0) }}><SaveIcon color='primary' fontSize='small' /></IconButton>
     </Grid>
-    <Grid item xs={12}>
-      <Button fullWidth style={{ justifyContent: 'flex-start', alignItems: 'center' }} component='div' onClick={() => { ImitationPageCanvas.state.function.onSave(1) }}>
-        <IconButton size='small' style={{ opacity: ImitationGlobal.state.store.page === 'Library' ? 1 : 0.2, transition: '1s all' }}>
-          <SaveIcon color='primary' fontSize='small' />
-        </IconButton>
-        <div style={{ margin: '0 4px' }}>Save Canvas</div>
-      </Button>
+
+    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div>Save</div>
+      <IconButton size='small' onClick={() => { ImitationPageCanvas.state.function.onSave(1) }}><SaveIcon color='primary' fontSize='small' /></IconButton>
     </Grid>
-    <Grid item xs={12}>
-      <Button fullWidth style={{ justifyContent: 'flex-start', alignItems: 'center' }} component='div' onClick={() => { ImitationPageCanvas.state.function.onClear() }}>
-        <IconButton size='small' style={{ opacity: ImitationGlobal.state.store.page === 'Library' ? 1 : 0.2, transition: '1s all' }}>
-          <SaveIcon color='primary' fontSize='small' />
-        </IconButton>
-        <div style={{ margin: '0 4px' }}>Clear Canvas</div>
-      </Button>
+
+    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div>Clear Canvas</div>
+      <IconButton size='small' onClick={() => { ImitationPageCanvas.state.function.onClear() }}><SaveIcon color='primary' fontSize='small' /></IconButton>
     </Grid>
   </Grid>
 }

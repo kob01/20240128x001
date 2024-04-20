@@ -24,48 +24,42 @@ function App(props) {
   const canvasLayerFind = ImitationPageCanvas.state.memo.canvasLayerFind(renderWindowsFind.property.canvasLayerHash)
   const canvasLayerActionVisibilityTrackFindIndex = ImitationPageCanvas.state.memo.canvasLayerActionVisibilityTrackFindIndex(renderWindowsFind.property.canvasLayerHash, canvasLayerFind ? [canvasLayerFind.action.map(i => i.visibility).join('')] : [''])
 
-  if (canvasLayerFind === undefined) renderWindowsFind.hide = true
-
   if (canvasLayerFind === undefined) return null
 
-  return <Grid container spacing={2}>
+  return <Grid container spacing={0}>
 
-    <Grid item xs={12}>
+    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
       Hash ID: {canvasLayerFind._hash}
     </Grid>
 
-    <Grid item xs={12}>
-      <Grid container spacing={1}>
-        <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>Visibility</div>
-          <div>
-            <Switch {...SwitchSX()} checked={canvasLayerFind.visibility} onChange={(e) => { ImitationPageCanvas.state.function.onCanvasLayerVisibility(canvasLayerFind._hash, e.target.checked) }} />
-          </div>
-        </Grid>
-
-        <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>Copy Layer</div>
-          <IconButton onClick={() => { ImitationPageCanvas.state.function.onCanvasLayerCopy(canvasLayerFind._hash) }}><CopyAllIcon color='primary' /></IconButton>
-        </Grid>
-
-        <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>Remove Layer</div>
-          <IconButton onClick={() => { ImitationPageCanvas.state.function.onCanvasLayerRemove(canvasLayerFind._hash) }}><DeleteIcon color='primary' /></IconButton>
-        </Grid>
-
-        <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>Move Up Layer</div>
-          <IconButton onClick={() => { ImitationPageCanvas.state.function.onCanvasLayerMove(canvasLayerFind._hash, 0) }}><KeyboardArrowUpIcon color='primary' /></IconButton>
-        </Grid>
-
-        <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>Move Down Layer</div>
-          <IconButton onClick={() => { ImitationPageCanvas.state.function.onCanvasLayerMove(canvasLayerFind._hash, 1) }}><KeyboardArrowDownIcon color='primary' /></IconButton>
-        </Grid>
-      </Grid>
+    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
+      <div>Visibility</div>
+      <div>
+        <Switch {...SwitchSX()} size='small' checked={canvasLayerFind.visibility} onChange={(e) => { ImitationPageCanvas.state.function.onCanvasLayerVisibility(canvasLayerFind._hash, e.target.checked) }} />
+      </div>
     </Grid>
 
-    <Grid item xs={12}>
+    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div>Copy Layer</div>
+      <IconButton size='small' onClick={() => { ImitationPageCanvas.state.function.onCanvasLayerCopy(canvasLayerFind._hash) }}><CopyAllIcon color='primary' fontSize='small' /></IconButton>
+    </Grid>
+
+    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div>Remove Layer</div>
+      <IconButton size='small' onClick={() => { ImitationPageCanvas.state.function.onCanvasLayerRemove(canvasLayerFind._hash) }}><DeleteIcon color='primary' fontSize='small' /></IconButton>
+    </Grid>
+
+    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div>Move Up Layer</div>
+      <IconButton size='small' onClick={() => { ImitationPageCanvas.state.function.onCanvasLayerMove(canvasLayerFind._hash, 0) }}><KeyboardArrowUpIcon color='primary' fontSize='small' /></IconButton>
+    </Grid>
+
+    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div>Move Down Layer</div>
+      <IconButton size='small' onClick={() => { ImitationPageCanvas.state.function.onCanvasLayerMove(canvasLayerFind._hash, 1) }}><KeyboardArrowDownIcon color='primary' fontSize='small' /></IconButton>
+    </Grid>
+
+    {/* <Grid item xs={12}>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           Track {canvasLayerActionVisibilityTrackFindIndex}
@@ -85,7 +79,7 @@ function App(props) {
           </Grid>
         </Grid>
       </Grid>
-    </Grid>
+    </Grid> */}
 
   </Grid>
 }

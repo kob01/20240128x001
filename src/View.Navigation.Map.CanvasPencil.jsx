@@ -13,9 +13,9 @@ function App(props) {
   const renderWindowsFind = ImitationNavigation.state.memo.renderWindowsFind(props.renderWindowsHash)
   const pencilFind = ImitationPageCanvas.state.memo.pencilFind(renderWindowsFind.property.pencilHash)
 
-  return <Grid container spacing={2}>
+  return <Grid container spacing={0}>
 
-    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
       <div>Name</div>
       <div>{pencilFind.name}</div>
     </Grid>

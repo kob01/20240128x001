@@ -13,7 +13,6 @@ import NavigationMap from './View.Navigation.Map'
 
 import { useDragControl as useDragControlMouse } from './View.Component.DragControl.Mouse'
 import { useDragControl as useDragControlTouch } from './View.Component.DragControl.Touch'
-import { AnimationRAF, opacityAnimation } from './View.Component.AnimationRAF'
 
 import { ImitationGlobal, ImitationNavigation, withBindComponentPure } from './Imitation'
 
@@ -31,6 +30,21 @@ function NavigationRenderItem(props) {
   const [expand, setExpand] = React.useState(true)
 
   const [transitionProperty, setTransitionProperty] = React.useState('background, box-shadow, opacity, transform')
+
+  const style = React.useMemo(() => {
+    if (renderWindowsFind.load === true) {
+      return {
+        transform: `scale(1) translate(${renderWindowsFind.translateX}px, ${renderWindowsFind.translateY}px)`,
+        opacity: 1
+      }
+    }
+    if (renderWindowsFind.load === false) {
+      return {
+        transform: `scale(0) translate(0px, 0px)`,
+        opacity: 0
+      }
+    }
+  }, [renderWindowsFind.load, renderWindowsFind.translateX, renderWindowsFind.translateY])
 
   const onChangeDragControlMouse = (params) => {
     const status = params.status
@@ -160,36 +174,44 @@ function NavigationRenderItem(props) {
     }
   }, [])
 
-  return <AnimationRAF animation={opacityAnimation}>
-    {
-      ({ style }) => {
-        return <Accordion {...AccordionSX()} style={{ width: 360, maxWidth: ImitationGlobal.state.store.rect.width - 32, height: 'fit-content', maxHeight: ImitationGlobal.state.store.rect.height - 96, overflowY: 'auto', position: 'absolute', zIndex: renderWindowsFind.zIndex, transform: `translate(${renderWindowsFind.translateX}px, ${renderWindowsFind.translateY}px)`, transitionProperty: transitionProperty, transitionDuration: '1s', ...style }} expanded={expand} onMouseDown={onMouseDownAccordion} onTouchStart={onTouchStartAccordion} ref={el => renderWindowsFind.accordionRef = el}>
-          <AccordionSummary
-            onMouseDown={onMouseDown}
-            onTouchStart={onTouchStart}
-            expandIcon={
-              <IconButton onClick={() => ImitationNavigation.state.function.renderWindowsRemove(props._hash)} onMouseDown={e => e.stopPropagation()} onTouchStart={e => e.stopPropagation()}>
-                <CloseIcon color='primary' style={{ transition: 'all 1s' }} />
-              </IconButton>
-            }
-            children={
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <div style={{ height: 24, marginRight: 8 }}><ChangeHistoryIcon /></div>
-                <div>{content.summary}</div>
-              </div>
-            }
-            ref={el => renderWindowsFind.accordionSummaryRef = el}
-          />
-          {/* <Divider {...DividerSX()} style={{ margin: '0 16px', opacity: expand ? 1 : 0 }} /> */}
-          <AccordionDetails
-            children={
-              <content.Component renderWindowsHash={renderWindowsFind._hash} />
-            }
-          />
-        </Accordion>
+  return <Accordion {...AccordionSX()} style={{ width: 320, maxWidth: ImitationGlobal.state.store.rect.width - 32, height: 'fit-content', maxHeight: ImitationGlobal.state.store.rect.height - 96, overflowY: 'auto', position: 'absolute', zIndex: renderWindowsFind.zIndex, transitionProperty: transitionProperty, transitionDuration: '1s', ...style }} expanded={expand} onMouseDown={onMouseDownAccordion} onTouchStart={onTouchStartAccordion} ref={el => renderWindowsFind.accordionRef = el}>
+    <AccordionSummary
+      onMouseDown={onMouseDown}
+      onTouchStart={onTouchStart}
+      expandIcon={
+        <IconButton onClick={() => ImitationNavigation.state.function.renderWindowsRemove(props._hash)} onMouseDown={e => e.stopPropagation()} onTouchStart={e => e.stopPropagation()}>
+          <CloseIcon color='primary' />
+        </IconButton>
       }
-    }
-  </AnimationRAF>
+      children={
+        <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
+          <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', height: 0, marginRight: 8, width: expand ? 0 : 24, transition: '1s all' }}>
+            <ChangeHistoryIcon style={{ position: 'absolute', transform: `scale(${expand ? 0 : 1})`, transition: '1s all' }} />
+            <ChangeHistoryIcon style={{ position: 'absolute', transform: `scale(${expand ? 0 : 1}) rotate(180deg)`, transition: '1s all' }} />
+          </div>
+          <div >{content.summary}</div>
+        </div>
+      }
+      ref={el => renderWindowsFind.accordionSummaryRef = el}
+    />
+
+    <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <Divider {...DividerSX()} style={{ width: expand ? 'calc(100% -  32px)' : 0, transition: '1s all' }} />
+      <ChangeHistoryIcon style={{ position: 'absolute', transform: `scale(${expand ? 1 : 0}) rotate(180deg)`, transition: '1s all' }} />
+    </div>
+
+    <AccordionDetails
+      style={{ fontSize: 12 }}
+      children={
+        <content.Component renderWindowsHash={renderWindowsFind._hash} />
+      }
+    />
+
+    <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}>
+      <Divider {...DividerSX()} style={{ width: expand ? 'calc(100% -  32px)' : 0, transition: '1s all' }} />
+      <ChangeHistoryIcon style={{ position: 'absolute', transform: `scale(${expand ? 1 : 0})`, transition: '1s all' }} />
+    </div>
+  </Accordion>
 }
 
 function App() {

@@ -11,17 +11,18 @@ import { debounce } from './utils.common'
 function App() {
   const ref = React.useRef()
 
-  const updateDebounce = React.useCallback(debounce(() => { ImitationPageLibrary.state.store.recting = false; ImitationPageLibrary.state.function.update() }, 500), [])
+  const updateDebounce = React.useCallback(debounce((rect) => { ImitationPageLibrary.state.store.recting = false; ImitationPageLibrary.state.store.rect = rect; ImitationPageLibrary.state.function.update() }, 500), [])
 
   React.useEffect(() => {
     if (ImitationPageLibrary.state.store.load === false) return
 
     const resizeObserver = new ResizeObserver(en => {
-      ImitationPageLibrary.state.store.recting = true
-      ImitationPageLibrary.state.store.rect = en[0].target.getBoundingClientRect()
-      ImitationPageLibrary.state.function.update()
+      const rect = en[0].target.getBoundingClientRect()
 
-      updateDebounce()
+      if (ImitationPageLibrary.state.store.rect === undefined) { ImitationPageLibrary.state.store.rect = rect; ImitationPageLibrary.state.function.update(); }
+      if (ImitationPageLibrary.state.store.recting === false) { ImitationPageLibrary.state.store.recting = true; ImitationPageLibrary.state.function.update(); }
+
+      updateDebounce(rect)
     })
 
     resizeObserver.observe(ref.current)

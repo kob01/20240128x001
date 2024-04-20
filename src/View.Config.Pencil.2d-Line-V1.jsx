@@ -22,8 +22,8 @@ const name = 'Line-V1'
 function settingComponent(props) {
   const { value, onChange } = props
 
-  return <Grid container spacing={2}>
-    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+  return <Grid container spacing={0}>
+    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
       <div>
         Color
       </div>
@@ -40,9 +40,7 @@ function settingComponent(props) {
                   </Paper>
                 }
                 children={
-                  <Button variant='contained' style={{ background: 'white', color: value.color }} onClick={() => setOpen(true)} ref={el => pushClickAwayRef('Button', el)}>
-                    <span style={{ mixBlendMode: 'difference' }}>Pick</span>
-                  </Button>
+                  <Button variant='contained' style={{ width: 42, height: 24, minWidth: 'initial', background: value.color }} onClick={() => setOpen(true)} ref={el => pushClickAwayRef('Button', el)}></Button>
                 }
               />
             }
@@ -51,19 +49,19 @@ function settingComponent(props) {
       </div>
     </Grid>
 
-    <Grid item xs={12}>
-      Alpha {value.alpha}
-    </Grid>
-    <Grid item xs={12}>
-      <Slider value={value.alpha} onChange={(e, v) => { value.alpha = v; onChange(); }} min={0} max={1} step={0.1} />
+    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
+      <div>Alpha</div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ marginRight: 12 }}>{value.alpha.toFixed(2)}</div>
+        <Slider size='small' style={{ width: 120 }} value={value.alpha} onChange={(e, v) => { value.alpha = v; onChange(); }} min={0} max={1} step={0.1} />
+      </div>
     </Grid>
 
-    <Grid item xs={12}>
-      Width {value.width}
-    </Grid>
-    <Grid item xs={12}>
-      <div style={{ position: 'relative' }}>
-        <Slider value={value.width} onChange={(e, v) => { value.width = v; onChange(); }} min={1} max={10} step={1} />
+    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
+      <div>Width</div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ marginRight: 12 }}>{value.width.toFixed(2)}</div>
+        <Slider size='small' style={{ width: 120 }} value={value.width} onChange={(e, v) => { value.width = v; onChange(); }} min={1} max={10} step={1} />
       </div>
     </Grid>
   </Grid>
@@ -80,7 +78,7 @@ const pencilRender = (canvas, context, layer, action) => {
 
   action.path.forEach((i, index) => {
     if (index === 0) context.beginPath(i.x, i.y)
-    if (index === 0) context.lineTo(i.x, i.y)
+    if (index === 0) context.moveTo(i.x, i.y)
     if (index !== 0) context.lineTo(i.x, i.y)
   })
 
@@ -121,10 +119,6 @@ const pencilAction = () => {
     }
 
     if (status === 'afterEnd') {
-      if (ref.action.path.length === 1) {
-        layer.action = layer.action.filter(i => i._hash !== ref.action._hash)
-      }
-
       ref.action = undefined
     }
 

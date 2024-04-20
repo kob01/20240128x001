@@ -212,7 +212,7 @@ function Content(props) {
 
     <img style={{ position: 'absolute', transition: '1s all', opacity: (styleImage !== undefined && ImitationPageLibrary.state.store.recting === false) ? 1 : 0, ...styleImage }} src={sourceFind.src} onTransitionEnd={e => e.stopPropagation()} />
 
-    <CircularProgress color='primary' style={{ position: 'absolute', transition: '1s all', opacity: (styleImage === undefined || ImitationPageLibrary.state.store.recting === true) ? 1 : 0 }} onTransitionEnd={e => e.stopPropagation()} />
+    <CircularProgress color='primary' style={{ position: 'absolute', pointerEvents: 'none', transition: '1s all', opacity: (styleImage === undefined || ImitationPageLibrary.state.store.recting === true) ? 1 : 0 }} onTransitionEnd={e => e.stopPropagation()} />
 
   </div>
 }

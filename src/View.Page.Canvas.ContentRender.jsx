@@ -115,7 +115,7 @@ function App() {
   }, [])
 
   React.useEffect(() => {
-    if (ImitationPageCanvas.state.store.recting === true || ImitationPageCanvas.state.store.rect.width === 0 || ImitationPageCanvas.state.store.rect.height === 0) return
+    if (ImitationPageCanvas.state.store.recting === true || ImitationPageCanvas.state.store.rect === undefined || ImitationPageCanvas.state.store.rect.width === 0 || ImitationPageCanvas.state.store.rect.height === 0) return
 
     setStyleW(ImitationPageCanvas.state.store.rect.width)
     setStyleH(ImitationPageCanvas.state.store.rect.height)
@@ -143,7 +143,7 @@ function App() {
 
   return <>
     <canvas style={{ position: 'absolute', width: styleW, height: styleH, opacity: ImitationPageCanvas.state.store.recting === false ? 1 : 0, transition: transition }} width={realW} height={realH} ref={refFunction} />
-    <CircularProgress color='primary' style={{ position: 'absolute', opacity: ImitationPageCanvas.state.store.recting === true ? 1 : 0, transition: '1s all' }} />
+    <CircularProgress color='primary' style={{ position: 'absolute', pointerEvents: 'none', opacity: ImitationPageCanvas.state.store.recting === true ? 1 : 0, transition: '1s all' }} />
   </>
 }
 
