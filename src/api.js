@@ -5,30 +5,44 @@ import mockCanvasSource from './mock.canvas.source.json'
 import mockCanvasSourceEmpty from './mock.canvas.source.empty.json'
 import mockCanvasActive from './mock.canvas.active.json'
 
-const apiLocalStorage = () => {
-  return new Promise(r => {
+var mode = 'localStorage'
+
+if (new URLSearchParams(new URL(window.location.href).search).get('mock')) {
+  mode = 'mock'
+}
+
+const load = () => {
+  if (mode === 'mock') {
+    return {
+      source: structuredClone(mockCanvasSource),
+      active: structuredClone(mockCanvasActive),
+      accordionWindow: structuredClone(mockNavigationAccordionWindow)
+    }
+  }
+
+  if (mode === 'localStorage') {
     const cache = window.localStorage.getItem('cache') ? JSON.parse(window.localStorage.getItem('cache')) : undefined
 
-    if (cache) {
-      ImitationPageCanvas.state.function.onInit({ source: cache.localStorageCanvasSource, active: cache.localStorageCanvasActive })
-      ImitationNavigation.state.function.onInit({ accordionWindow: cache.localStorageNavigationAccordionWindow })
+    if (cache === undefined) return {
+      source: mockCanvasSourceEmpty,
+      active: {},
+      accordionWindow: []
     }
 
-    if (!cache) {
-      ImitationPageCanvas.state.function.onInit({ source: mockCanvasSourceEmpty })
+    if (cache !== undefined) return {
+      source: cache.localStorageCanvasSource,
+      active: cache.localStorageCanvasActive,
+      accordionWindow: cache.localStorageNavigationAccordionWindow
     }
-
-    r()
-  })
+  }
 }
 
-const apiMock = () => {
-  return new Promise(r => {
-    ImitationPageCanvas.state.function.onInit({ source: structuredClone(mockCanvasSource), active: structuredClone(mockCanvasActive) })
-    ImitationNavigation.state.function.onInit({ accordionWindow: structuredClone(mockNavigationAccordionWindow) })
-
-    r()
-  })
+const apiNavigation = () => {
+  return new Promise(r => r(load()))
 }
 
-export { apiLocalStorage, apiMock }
+const apiCanvas = () => {
+  return new Promise(r => r(load()))
+}
+
+export { apiNavigation, apiCanvas }

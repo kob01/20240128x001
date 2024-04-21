@@ -10,12 +10,7 @@ function App() {
 
   React.useEffect(() => () => ImitationNavigation.state.function.onUnload(), [])
 
-  if (ImitationNavigation.state.store.load === false) return null
-
-  return <>
-    <NavigationGuide />
-    <NavigationContent />
-  </>
+  return <><NavigationGuide /><NavigationContent /></>
 }
 
 const dependence = [

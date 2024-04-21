@@ -5,6 +5,7 @@ import Accordion from '@mui/material/Accordion'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import AccordionDetails from '@mui/material/AccordionDetails'
 import Divider from '@mui/material/Divider'
+import CircularProgress from '@mui/material/CircularProgress'
 
 import ChangeHistoryIcon from '@mui/icons-material/ChangeHistory'
 import CloseIcon from '@mui/icons-material/Close'
@@ -209,7 +210,20 @@ function NavigationRenderItem(props) {
     <AccordionDetails
       style={{ fontSize: 12 }}
       children={
-        <content.Component accordionWindowsHash={accordionWindowsFind._hash} />
+        <>
+          {
+            content.page === 'Canvas' && ImitationPageCanvas.state.store.source === undefined ?
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <CircularProgress size={24} color='primary' style={{ margin: 'auto' }} />
+              </div>
+              : null
+          }
+          {
+            content.page !== 'Canvas' || ImitationPageCanvas.state.store.source !== undefined ?
+              <content.Component accordionWindowsHash={accordionWindowsFind._hash} />
+              : null
+          }
+        </>
       }
     />
 
@@ -230,8 +244,8 @@ function App() {
 
 const dependence = [
   { instance: ImitationNavigation, dependence: state => [ImitationNavigation.state.update.accordionWindow] },
-  { instance: ImitationGlobal, dependence: state => [ImitationGlobal.state.store.rect, ImitationGlobal.state.store.recting, ImitationGlobal.state.store.page] }
-
+  { instance: ImitationGlobal, dependence: state => [ImitationGlobal.state.store.rect, ImitationGlobal.state.store.recting, ImitationGlobal.state.store.page] },
+  { instance: ImitationPageCanvas, dependence: state => [ImitationPageCanvas.state.store.source] },
 ]
 
 export default withBindComponentPure(App, dependence)

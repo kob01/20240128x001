@@ -6,6 +6,8 @@ import ImitationGlobal from './Imitation.Global'
 
 import { hash, throttleLastRAF } from './utils.common'
 
+import { apiNavigation } from './api'
+
 const ImitationInstance = new Imitation()
 
 
@@ -38,23 +40,33 @@ ImitationInstance.state.function.updateAccordionWindow = () => {
   ImitationInstance.dispatch()
 }
 
-ImitationInstance.state.function.onInit = (props) => {
-  ImitationInstance.state.store.accordionWindow = props.accordionWindow
-
-  ImitationInstance.state.store.ref.accordionWindow = ImitationInstance.state.store.accordionWindow.map(i => {
-    return { _hash: hash(), accordionWindowHash: i._hash }
-  })
-  
-  ImitationInstance.state.function.update()
-}
-
 ImitationInstance.state.function.onLoad = () => {
-  ImitationInstance.state.store.load = true
-  ImitationInstance.state.function.update()
+  ImitationGlobal.state.function.loadingUp()
+
+  apiNavigation()
+    .then(res => {
+      const process = () => {
+        const accordionWindow = res.accordionWindow.shift()
+        if (accordionWindow !== undefined) {
+          ImitationInstance.state.store.accordionWindow.push(accordionWindow)
+          ImitationInstance.state.store.ref.accordionWindow.push({ _hash: hash(), accordionWindowHash: accordionWindow._hash })
+          ImitationInstance.state.function.update()
+        }
+      }
+
+      const loop = () => {
+        requestIdleCallback((idle) => {
+          while (idle.timeRemaining() > 4) process()
+          if (res.accordionWindow.length > 0) loop()
+          if (res.accordionWindow.length === 0) ImitationGlobal.state.function.loadingDown()
+        })
+      }
+
+      loop()
+    })
 }
 
 ImitationInstance.state.function.onUnload = () => {
-  ImitationInstance.state.store.load = false
   ImitationInstance.state.function.update()
 }
 

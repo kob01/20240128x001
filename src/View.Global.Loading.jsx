@@ -3,6 +3,9 @@ import React from 'react'
 import Backdrop from '@mui/material/Backdrop'
 import CircularProgress from '@mui/material/CircularProgress'
 
+import ChangeHistoryIcon from '@mui/icons-material/ChangeHistory'
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked'
+
 import { ImitationGlobal, withBindComponentPure } from './Imitation'
 
 function App() {
@@ -20,7 +23,9 @@ function App() {
 
   }, [ImitationGlobal.state.store.loading])
 
-  return <Backdrop open={open} style={{ zIndex: 10000 }}><CircularProgress color='primary' /></Backdrop>
+  return <Backdrop open={open} style={{ zIndex: 10000, background: 'none' }}>
+    <CircularProgress color='primary' />
+  </Backdrop >
 }
 
 const dependence = [{ instance: ImitationGlobal, dependence: state => [ImitationGlobal.state.store.loading] }]

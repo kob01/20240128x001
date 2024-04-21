@@ -11,11 +11,11 @@ function App() {
 
   const loadRef = React.useRef(false)
 
+  const [opacity, setOpacity] = React.useState(0)
   const [styleW, setStyleW] = React.useState()
   const [styleH, setStyleH] = React.useState()
   const [realW, setRealW] = React.useState()
   const [realH, setRealH] = React.useState()
-  const [transition, setTransition] = React.useState('1s all')
 
   const refFunction = el => ImitationPageCanvas.state.store.ref.canvas = el
 
@@ -124,6 +124,15 @@ function App() {
   }, [ImitationPageCanvas.state.store.recting, ImitationPageCanvas.state.store.rect, ImitationPageCanvas.state.store.view.dpr])
 
   React.useEffect(() => {
+    if (ImitationPageCanvas.state.store.recting === true || ImitationPageCanvas.state.store.rect === undefined) {
+      setOpacity(0)
+    }
+    if (ImitationPageCanvas.state.store.recting === false && ImitationPageCanvas.state.store.rect !== undefined) {
+      requestAnimationFrame(() => setOpacity(1))
+    }
+  }, [ImitationPageCanvas.state.store.recting, ImitationPageCanvas.state.store.rect])
+
+  React.useEffect(() => {
     if (realW !== undefined && realW !== 0 && realH !== undefined && realH !== 0) canvasOffscreenInit()
   }, [styleW, styleH, realW, realH])
 
@@ -141,10 +150,7 @@ function App() {
 
   React.useEffect(() => loadRef.current = true, [])
 
-  return <>
-    <canvas style={{ position: 'absolute', width: styleW, height: styleH, opacity: ImitationPageCanvas.state.store.recting === false ? 1 : 0, transition: transition }} width={realW} height={realH} ref={refFunction} />
-    <CircularProgress color='primary' style={{ position: 'absolute', pointerEvents: 'none', opacity: ImitationPageCanvas.state.store.recting === true ? 1 : 0, transition: '1s all' }} />
-  </>
+  return <canvas style={{ position: 'absolute', width: styleW, height: styleH, opacity: opacity, transition: '1s all' }} width={realW} height={realH} ref={refFunction} />
 }
 
 const dependence = [

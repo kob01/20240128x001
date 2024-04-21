@@ -1,16 +1,11 @@
 import Imitation from 'imitation-imm'
 
-import { apiLocalStorage, apiMock } from './api'
-
 const ImitationInstance = new Imitation()
 
 ImitationInstance.state = { update: {}, store: {}, function: {}, memo: {} }
 
 
 ImitationInstance.state.update.now = performance.now()
-
-
-ImitationInstance.state.store.load = false
 
 ImitationInstance.state.store.rect = undefined
 
@@ -30,21 +25,23 @@ ImitationInstance.state.function.update = () => {
   ImitationInstance.dispatch()
 }
 
-ImitationInstance.state.function.onLoad = () => {
-  apiLocalStorage()
-    .then(() => {
-      ImitationInstance.state.store.load = true
-      ImitationInstance.state.function.update()
-    })
-}
-
-ImitationInstance.state.function.onUnload = () => {
-  ImitationInstance.state.store.load = false
+ImitationInstance.state.function.messageAppend = (message) => {
+  ImitationInstance.state.store.message = message
   ImitationInstance.state.function.update()
 }
 
-ImitationInstance.state.function.messageAppend = (message) => {
-  ImitationInstance.state.store.message = message
+ImitationInstance.state.function.loadingPlus = () => {
+  ImitationInstance.state.store.loading = ImitationInstance.state.store.loading + 1
+  ImitationInstance.state.function.update()
+}
+
+ImitationInstance.state.function.loadingUp = () => {
+  ImitationInstance.state.store.loading = ImitationInstance.state.store.loading + 1
+  ImitationInstance.state.function.update()
+}
+
+ImitationInstance.state.function.loadingDown = () => {
+  ImitationInstance.state.store.loading = ImitationInstance.state.store.loading - 1
   ImitationInstance.state.function.update()
 }
 

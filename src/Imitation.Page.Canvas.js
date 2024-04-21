@@ -4,7 +4,11 @@ import Imitation from 'imitation-imm'
 
 import PencilInit from './View.Config.Pencil'
 
+import ImitationGlobal from './Imitation.Global'
+
 import { hash, debounce, throttleLastRAF } from './utils.common'
+
+import { apiCanvas } from './api'
 
 const ImitationInstance = new Imitation()
 
@@ -22,8 +26,6 @@ ImitationInstance.state.update.canvasOffscreenRender = performance.now()
 
 ImitationInstance.state.update.canvasOnlinescreenRender = performance.now()
 
-
-ImitationInstance.state.store.load = false
 
 ImitationInstance.state.store.rect = undefined
 
@@ -80,42 +82,38 @@ ImitationInstance.state.function.updateCanvasOnlinescreenRender = () => {
   ImitationInstance.dispatch()
 }
 
-ImitationInstance.state.function.onInit = (props) => {
-  if (props.source) {
-    ImitationInstance.state.store.source = props.source
-
-    ImitationInstance.state.store.ref.layer = ImitationInstance.state.store.source.canvas.layer.map(i => {
-      return {
-        _hash: hash(),
-        layerHash: i._hash,
-        offscreenExceptLastActionCanvas: undefined,
-        offscreenExceptLastActionContext: undefined,
-        offscreenCanvas: undefined,
-        offscreenContext: undefined,
-        offscreenExceptLastActionUpdate: false,
-        offscreenComposeLastActionUpdate: false,
-        offscreenUpdate: false,
-      }
-    })
-  }
-
-  if (props.active) {
-    ImitationInstance.state.store.active.layer = props.active.layer
-    ImitationInstance.state.store.active.pencil = props.active.pencil
-    ImitationInstance.state.store.active.action = props.active.action
-  }
-
-
-  ImitationInstance.state.function.update()
-}
-
 ImitationInstance.state.function.onLoad = () => {
-  ImitationInstance.state.store.load = true
-  ImitationInstance.state.function.update()
+  ImitationGlobal.state.function.loadingUp()
+
+  apiCanvas()
+    .then(res => {
+      ImitationInstance.state.store.source = res.source
+
+      ImitationInstance.state.store.ref.layer = ImitationInstance.state.store.source.canvas.layer.map(i => {
+        return {
+          _hash: hash(),
+          layerHash: i._hash,
+          offscreenExceptLastActionCanvas: undefined,
+          offscreenExceptLastActionContext: undefined,
+          offscreenCanvas: undefined,
+          offscreenContext: undefined,
+          offscreenExceptLastActionUpdate: false,
+          offscreenComposeLastActionUpdate: false,
+          offscreenUpdate: false,
+        }
+      })
+
+      ImitationInstance.state.store.active.layer = res.active.layer
+      ImitationInstance.state.store.active.pencil = res.active.pencil
+      ImitationInstance.state.store.active.action = res.active.action
+
+      ImitationInstance.state.function.update()
+
+      ImitationGlobal.state.function.loadingDown()
+    })
 }
 
 ImitationInstance.state.function.onUnload = () => {
-  ImitationInstance.state.store.load = false
   ImitationInstance.state.function.update()
 }
 

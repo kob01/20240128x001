@@ -14,8 +14,6 @@ function App() {
   const updateDebounce = React.useCallback(debounce((rect) => { ImitationPageCanvas.state.store.recting = false; ImitationPageCanvas.state.store.rect = rect; ImitationPageCanvas.state.function.update() }, 500), [])
 
   React.useEffect(() => {
-    if (ImitationPageCanvas.state.store.load === false) return
-
     const resizeObserver = new ResizeObserver(en => {
       const rect = en[0].target.getBoundingClientRect()
 
@@ -28,25 +26,17 @@ function App() {
     resizeObserver.observe(ref.current)
 
     return () => resizeObserver.disconnect()
-  }, [ImitationPageCanvas.state.store.load])
+  }, [])
 
   React.useEffect(() => ImitationPageCanvas.state.function.onLoad(), [])
 
   React.useEffect(() => () => ImitationPageCanvas.state.function.onUnload(), [])
 
-  if (ImitationPageCanvas.state.store.load === false) return null
-
-  return <AnimationRAF animation={opacityAnimation}>
+  return <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }} ref={el => ref.current = el}>
     {
-      ({ style }) => {
-        return <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', transition: '1s all', ...style }} ref={el => ref.current = el}>
-          {
-            ImitationPageCanvas.state.store.rect !== undefined ? <ContentWrapper /> : null
-          }
-        </div>
-      }
+      ImitationPageCanvas.state.store.source !== undefined && ImitationPageCanvas.state.store.rect !== undefined ? <ContentWrapper /> : null
     }
-  </AnimationRAF>
+  </div>
 }
 
 const dependence = [
