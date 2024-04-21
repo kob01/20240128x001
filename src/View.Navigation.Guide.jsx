@@ -92,7 +92,7 @@ function App() {
                     return <HoverListener>
                       {
                         ({ hover, onMouseEnter, onMouseLeave }) => {
-                          return <Button style={{ transform: `scale(${animationed && ImitationNavigation.state.store.mode === 1 ? 1 : 0})`, transition: '1s all', transitionDelay: `${transitionDelay}s` }} onClick={() => { clearTimeout(timeRef.current); ImitationNavigation.state.function.renderWindowsAppend(i._hash) }} disabled={disabled} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+                          return <Button style={{ transform: `scale(${animationed && ImitationNavigation.state.store.mode === 1 ? 1 : 0})`, transition: '1s all', transitionDelay: `${transitionDelay}s` }} onClick={() => { clearTimeout(timeRef.current); ImitationNavigation.state.function.accordionWindowsAppend(i._hash) }} disabled={disabled} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
                             <i.Icon style={{ transform: `translateY(${hover ? -2 : 0}px)`, transition: '1s all' }} />
                           </Button>
                         }

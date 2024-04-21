@@ -11,15 +11,21 @@ const ImitationInstance = new Imitation()
 
 ImitationInstance.state = { update: {}, store: {}, function: {}, memo: {} }
 
+ImitationInstance.state.store = { ref: {} }
+
 
 ImitationInstance.state.update.now = performance.now()
 
-ImitationInstance.state.update.renderWindow = performance.now()
+ImitationInstance.state.update.accordionWindow = performance.now()
 
+
+ImitationInstance.state.store.load = false
 
 ImitationInstance.state.store.mode = 1
 
-ImitationInstance.state.store.renderWindow = []
+ImitationInstance.state.store.accordionWindow = []
+
+ImitationInstance.state.store.ref.accordionWindow = []
 
 
 ImitationInstance.state.function.update = () => {
@@ -27,56 +33,85 @@ ImitationInstance.state.function.update = () => {
   ImitationInstance.dispatch()
 }
 
-ImitationInstance.state.function.updateRenderWindow = () => {
-  ImitationInstance.state.update.renderWindow = performance.now()
+ImitationInstance.state.function.updateAccordionWindow = () => {
+  ImitationInstance.state.update.accordionWindow = performance.now()
   ImitationInstance.dispatch()
 }
 
-ImitationInstance.state.function.renderWindowsAppend = (renderWindowsHash, property) => {
-  ImitationInstance.state.store.renderWindow.push({ _hash: hash(), renderWindowsHash: renderWindowsHash, property: property, update: performance.now(), load: false, hide: false })
+ImitationInstance.state.function.onInit = (props) => {
+  ImitationInstance.state.store.accordionWindow = props.accordionWindow
 
-  ImitationInstance.state.function.updateRenderWindow()
+  ImitationInstance.state.store.ref.accordionWindow = ImitationInstance.state.store.accordionWindow.map(i => {
+    return { _hash: hash(), accordionWindowHash: i._hash }
+  })
+  
+  ImitationInstance.state.function.update()
 }
 
-ImitationInstance.state.function.renderWindowsRemove = (_hash) => {
-  ImitationInstance.state.store.renderWindow = ImitationInstance.state.store.renderWindow.filter(i => i._hash !== _hash)
-
-  ImitationInstance.state.function.updateRenderWindow()
+ImitationInstance.state.function.onLoad = () => {
+  ImitationInstance.state.store.load = true
+  ImitationInstance.state.function.update()
 }
 
-ImitationInstance.state.function.renderWindowsActive = (_hash) => {
-  const zIndex = ImitationInstance.state.store.renderWindow.find(i => i._hash === _hash).zIndex
+ImitationInstance.state.function.onUnload = () => {
+  ImitationInstance.state.store.load = false
+  ImitationInstance.state.function.update()
+}
 
-  ImitationInstance.state.store.renderWindow.forEach(i => {
+ImitationInstance.state.function.accordionWindowsAppend = (accordionWindowsHash, property) => {
+  const accordionWindowHash = hash()
+
+  ImitationInstance.state.store.accordionWindow.push({ _hash: accordionWindowHash, accordionWindowsHash: accordionWindowsHash, property: property, update: performance.now(), load: false, hide: false })
+  ImitationInstance.state.store.ref.accordionWindow.push({ _hash: hash(), accordionWindowHash: accordionWindowHash })
+
+  ImitationInstance.state.function.updateAccordionWindow()
+}
+
+ImitationInstance.state.function.accordionWindowsRemove = (_hash) => {
+  ImitationInstance.state.store.accordionWindow = ImitationInstance.state.store.accordionWindow.filter(i => i._hash !== _hash)
+  ImitationInstance.state.store.ref.accordionWindow = ImitationInstance.state.store.ref.accordionWindow.filter(i => i.accordionWindowHash !== _hash)
+
+  ImitationInstance.state.function.updateAccordionWindow()
+}
+
+ImitationInstance.state.function.accordionWindowsActive = (_hash) => {
+  const zIndex = ImitationInstance.state.store.accordionWindow.find(i => i._hash === _hash).zIndex
+
+  ImitationInstance.state.store.accordionWindow.forEach(i => {
     if (i._hash === _hash) i.update = performance.now()
     if (i._hash !== _hash && i.zIndex > zIndex) i.update = performance.now()
-    if (i._hash === _hash) i.zIndex = ImitationInstance.state.store.renderWindow.length
+    if (i._hash === _hash) i.zIndex = ImitationInstance.state.store.accordionWindow.length
     if (i._hash !== _hash && i.zIndex > zIndex) i.zIndex = i.zIndex - 1
   })
 
-  ImitationInstance.state.function.updateRenderWindow()
+  ImitationInstance.state.function.updateAccordionWindow()
 }
 
-ImitationInstance.state.function.renderWindowsFixTranslate = (_hash) => {
-  const renderWindowsFind = ImitationInstance.state.store.renderWindow.find(i => i._hash === _hash)
+ImitationInstance.state.function.accordionWindowsFixTranslate = (_hash) => {
+  const accordionWindowsFind = ImitationInstance.state.store.accordionWindow.find(i => i._hash === _hash)
+  const accordionWindowsRefFind = ImitationInstance.state.store.ref.accordionWindow.find(i => i.accordionWindowHash === _hash)
 
-  if (renderWindowsFind === undefined) return
+  if (accordionWindowsFind === undefined) return
 
-  renderWindowsFind.translateX = Math.max(renderWindowsFind.translateX, (renderWindowsFind.accordionRef.offsetWidth - ImitationGlobal.state.store.rect.width + 32) / 2)
-  renderWindowsFind.translateX = Math.min(renderWindowsFind.translateX, (ImitationGlobal.state.store.rect.width - renderWindowsFind.accordionRef.offsetWidth - 32) / 2)
-  renderWindowsFind.translateY = Math.max(renderWindowsFind.translateY, (renderWindowsFind.accordionRef.offsetHeight - ImitationGlobal.state.store.rect.height + 32) / 2)
-  renderWindowsFind.translateY = Math.min(renderWindowsFind.translateY, (ImitationGlobal.state.store.rect.height - renderWindowsFind.accordionRef.offsetHeight - 32) / 2)
+  accordionWindowsFind.translateX = Math.max(accordionWindowsFind.translateX, (accordionWindowsRefFind.accordionRef.offsetWidth - ImitationGlobal.state.store.rect.width + 32) / 2)
+  accordionWindowsFind.translateX = Math.min(accordionWindowsFind.translateX, (ImitationGlobal.state.store.rect.width - accordionWindowsRefFind.accordionRef.offsetWidth - 32) / 2)
+  accordionWindowsFind.translateY = Math.max(accordionWindowsFind.translateY, (accordionWindowsRefFind.accordionRef.offsetHeight - ImitationGlobal.state.store.rect.height + 32) / 2)
+  accordionWindowsFind.translateY = Math.min(accordionWindowsFind.translateY, (ImitationGlobal.state.store.rect.height - accordionWindowsRefFind.accordionRef.offsetHeight - 32) / 2)
 
-  ImitationInstance.state.function.updateRenderWindow()
+  ImitationInstance.state.function.updateAccordionWindow()
 }
 
-ImitationInstance.state.memo.renderWindowsFind = (_hash, dep = []) => React.useMemo(() => {
-  return ImitationInstance.state.store.renderWindow.find(i => i._hash === _hash)
-}, [...dep, _hash, ImitationInstance.state.store.renderWindow, ImitationInstance.state.store.renderWindow.length])
+ImitationInstance.state.memo.accordionWindowsFind = (_hash, dep = []) => React.useMemo(() => {
+  return ImitationInstance.state.store.accordionWindow.find(i => i._hash === _hash)
+}, [...dep, _hash, ImitationInstance.state.store.accordionWindow, ImitationInstance.state.store.accordionWindow.length])
 
-ImitationInstance.state.memo.renderWindowsFindIndex = (_hash, dep = []) => React.useMemo(() => {
-  return ImitationInstance.state.store.renderWindow.findIndex(i => i._hash === _hash)
-}, [...dep, _hash, ImitationInstance.state.store.renderWindow, ImitationInstance.state.store.renderWindow.length])
+ImitationInstance.state.memo.accordionWindowsRefFind = (_hash, dep = []) => React.useMemo(() => {
+  return ImitationInstance.state.store.ref.accordionWindow.find(i => i.accordionWindowHash === _hash)
+}, [...dep, _hash, ImitationInstance.state.store.ref.accordionWindow, ImitationInstance.state.store.ref.accordionWindow.length])
+
+ImitationInstance.state.memo.accordionWindowsFindIndex = (_hash, dep = []) => React.useMemo(() => {
+  return ImitationInstance.state.store.accordionWindow.findIndex(i => i._hash === _hash)
+}, [...dep, _hash, ImitationInstance.state.store.accordionWindow, ImitationInstance.state.store.accordionWindow.length])
 
 
 export default ImitationInstance

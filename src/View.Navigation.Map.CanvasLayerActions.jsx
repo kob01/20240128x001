@@ -7,6 +7,7 @@ import Grid from '@mui/material/Grid'
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
 import VisibilityIcon from '@mui/icons-material/Visibility'
+import LayersIcon from '@mui/icons-material/Layers'
 
 import { ImitationGlobal, ImitationNavigation, ImitationPageCanvas, withBindComponentPure } from './Imitation'
 
@@ -21,10 +22,18 @@ function App(props) {
 
   if (canvasLayerFind === undefined) return null
 
-  return <Grid container spacing={2}>
+  return <Grid container spacing={0}>
 
-    <Grid item xs={12}>
+    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
       Layer Hash ID: {canvasLayerFind._hash}
+    </Grid>
+
+    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
+      <div>Track Visibility</div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ marginRight: 12 }}>{canvasLayerActionVisibilityTrackFindIndex}</div>
+        <Slider size='small' style={{ width: 120 }} value={canvasLayerActionVisibilityTrackFindIndex} onChange={(e, v) => { ImitationPageCanvas.state.function.onCanvasLayerActionVisibilityTracks(canvasLayerFind._hash, v) }} min={0} max={canvasLayerFind.action.length} step={1} />
+      </div>
     </Grid>
 
     {
@@ -36,36 +45,14 @@ function App(props) {
               <div style={{ margin: '0 8px', fontSize: 12 }}>{i._hash}</div>
             </div>
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              <VisibilityIcon color='primary' fontSize='small' style={{ marginRight: 8, opacity: i.visibility ? 1 : 0.2, transition: '1s all' }} onClick={(e) => { e.stopPropagation(); ImitationPageCanvas.state.function.onCanvasLayerActionVisibility(accordionWindowsFind.property.canvasLayerHash, i._hash, !i.visibility) }} />
-              <DeleteIcon color='primary' fontSize='small' style={{ marginRight: 8 }} onClick={(e) => { e.stopPropagation(); ImitationPageCanvas.state.function.onCanvasLayerRemove(i._hash) }} />
-              <EditIcon color='primary' fontSize='small' onClick={(e) => { e.stopPropagation(); ImitationNavigation.state.function.accordionWindowsAppend('CanvasLayer', { canvasLayerHash: i._hash }) }} />
+              <VisibilityIcon color='primary' fontSize='small' style={{ marginRight: 8, opacity: i.visibility ? 1 : 0.2, transition: '1s all' }} onClick={(e) => { e.stopPropagation(); ImitationPageCanvas.state.function.onCanvasLayerActionVisibility(canvasLayerFind._hash, i._hash, !i.visibility) }} />
+              <DeleteIcon color='primary' fontSize='small' style={{ marginRight: 8 }} onClick={(e) => { e.stopPropagation(); ImitationPageCanvas.state.function.onCanvasLayerActionRemove(canvasLayerFind._hash, i._hash) }} />
+              <EditIcon color='primary' fontSize='small' onClick={(e) => { e.stopPropagation(); ImitationNavigation.state.function.accordionWindowsAppend('CanvasLayerAction', { canvasLayerHash: canvasLayerFind._hash, canvasLayerActionHash: i._hash }) }} />
             </div>
           </Button>
         </Grid >
       })
     }
-
-    <Grid item xs={12}>
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          Track {canvasLayerActionVisibilityTrackFindIndex}
-        </Grid>
-        <Grid item xs={12}>
-          <Slider value={canvasLayerActionVisibilityTrackFindIndex} onChange={(e, v) => { ImitationPageCanvas.state.function.onCanvasLayerActionVisibilityTracks(canvasLayerFind._hash, v) }} min={0} max={canvasLayerFind.action.length} step={1} />
-        </Grid>
-        <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Grid container spacing={1}>
-            {
-              canvasLayerFind.action.map((i, index) => {
-                return <Grid item key={i._hash}>
-                  <Button variant={i.visibility ? 'contained' : 'outlined'} style={{ padding: 0, width: 36, height: 36, minWidth: 'auto' }} color='primary' onClick={() => ImitationPageCanvas.state.function.onCanvasLayerActionVisibilityTrack(canvasLayerFind._hash, index)}>{String(index + 1).padStart(2, '0')}</Button>
-                </Grid>
-              })
-            }
-          </Grid>
-        </Grid>
-      </Grid>
-    </Grid>
 
   </Grid>
 }

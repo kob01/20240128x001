@@ -17,11 +17,20 @@ import { DialogSX, TextFieldSX, TabsSX, DividerSX, SwitchSX, SelectSX, DrawerSX,
 
 import { throttleLastRAF, throttleLastRIC } from './utils.common'
 
+
+
 function App() {
+  const colors = [
+    'rgba(255, 0, 0, 1)',
+    'rgba(0, 255, 0, 1)',
+    'rgba(0, 0, 255, 1)',
+    'rgba(0, 0, 60, 0.55)'
+  ]
+
   const updateThrottleLastRAF = React.useCallback(throttleLastRAF(ImitationGlobal.state.function.update), [])
 
   return <Grid container spacing={0}>
-    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',height:30 }}>
+    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
       <div>
         Theme Color Background
       </div>
@@ -34,7 +43,7 @@ function App() {
                 open={open}
                 title={
                   <Paper {...PaperSX()} style={{ padding: 16, width: 320 }} ref={el => pushClickAwayRef('Paper', el)}>
-                    <ColorPicker value={ImitationGlobal.state.store.theme.palette.background.main} onChange={v => { ImitationGlobal.state.store.theme.palette.background.main = v; updateThrottleLastRAF() }} colors={['rgba(255, 0, 0, 1)', 'rgba(0, 255, 0, 1)', 'rgba(0, 0, 255, 1)']} />
+                    <ColorPicker value={ImitationGlobal.state.store.theme.palette.background.main} onChange={v => { ImitationGlobal.state.store.theme.palette.background.main = v; updateThrottleLastRAF() }} colors={colors} />
                   </Paper>
                 }
                 children={
@@ -47,7 +56,7 @@ function App() {
       </div>
     </Grid>
 
-    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',height:30 }}>
+    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
       <div>
         Theme Color Primary
       </div>
@@ -60,7 +69,7 @@ function App() {
                 open={open}
                 title={
                   <Paper {...PaperSX()} style={{ padding: 16, width: 320 }} ref={el => pushClickAwayRef('Paper', el)}>
-                    <ColorPicker value={ImitationGlobal.state.store.theme.palette.primary.main} onChange={v => { ImitationGlobal.state.store.theme.palette.primary.main = v; updateThrottleLastRAF() }} colors={['rgba(255, 0, 0, 1)', 'rgba(0, 255, 0, 1)', 'rgba(0, 0, 255, 1)']} />
+                    <ColorPicker value={ImitationGlobal.state.store.theme.palette.primary.main} onChange={v => { ImitationGlobal.state.store.theme.palette.primary.main = v; updateThrottleLastRAF() }} colors={colors} />
                   </Paper>
                 }
                 children={

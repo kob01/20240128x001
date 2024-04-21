@@ -20,7 +20,7 @@ function App() {
   return <Grid container spacing={0}>
     {
       ImitationPageCanvas.state.store.source.canvas.layer.map(i => {
-        return <Grid key={i._hash} item xs={12}>
+        return <Grid key={i._hash} item xs={12} style={{ height: 30 }}>
           <Button fullWidth component='div' style={{ justifyContent: 'space-between', alignItems: 'center', padding: '4.5px 8px' }} onClick={(e) => { ImitationPageCanvas.state.store.active.layer = i._hash; ImitationPageCanvas.state.function.update() }}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <LayersIcon color='primary' fontSize='small' style={{ opacity: ImitationPageCanvas.state.store.active.layer === i._hash ? 1 : 0.2, transition: '1s all' }} />
@@ -29,7 +29,7 @@ function App() {
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <VisibilityIcon color='primary' fontSize='small' style={{ marginRight: 8, opacity: i.visibility ? 1 : 0.2, transition: '1s all' }} onClick={(e) => { e.stopPropagation(); ImitationPageCanvas.state.function.onCanvasLayerVisibility(i._hash, !i.visibility) }} />
               <DeleteIcon color='primary' fontSize='small' style={{ marginRight: 8 }} onClick={(e) => { e.stopPropagation(); ImitationPageCanvas.state.function.onCanvasLayerRemove(i._hash) }} />
-              <EditIcon color='primary' fontSize='small' onClick={(e) => { e.stopPropagation(); ImitationNavigation.state.function.renderWindowsAppend('CanvasLayer', { canvasLayerHash: i._hash }) }} />
+              <EditIcon color='primary' fontSize='small' onClick={(e) => { e.stopPropagation(); ImitationNavigation.state.function.accordionWindowsAppend('CanvasLayer', { canvasLayerHash: i._hash }) }} />
             </div>
           </Button>
         </Grid >
@@ -41,7 +41,7 @@ function App() {
         <AddIcon color='primary' fontSize='small' />
       </Button>
     </Grid>
-  </Grid >
+  </Grid>
 }
 
 const dependence = [

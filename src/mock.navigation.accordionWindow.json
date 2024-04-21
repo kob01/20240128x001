@@ -1,0 +1,71 @@
+[
+  {
+    "_hash": "9QR641ODXF8OO1PR",
+    "accordionWindowsHash": "CanvasLayers",
+    "update": 22217.300000000745,
+    "load": false,
+    "hide": false,
+    "translateX": -724,
+    "translateY": -342,
+    "zIndex": 3
+  },
+  {
+    "_hash": "6JFR26KUQ1GKWYHC",
+    "accordionWindowsHash": "CanvasLayer",
+    "property": {
+      "canvasLayerHash": "W847DNS8SRSBJ0D6"
+    },
+    "update": 66331.5,
+    "load": false,
+    "hide": false,
+    "translateX": -724,
+    "translateY": -80,
+    "zIndex": 4
+  },
+  {
+    "_hash": "QV30L0ND2UR4DX23",
+    "accordionWindowsHash": "CanvasPencils",
+    "update": 57108,
+    "load": false,
+    "hide": false,
+    "translateX": 724,
+    "translateY": -343,
+    "zIndex": 4
+  },
+  {
+    "_hash": "OGRGXRP1DDJTF2AV",
+    "accordionWindowsHash": "CanvasPencil",
+    "property": {
+      "pencilHash": "2d-Line-V1"
+    },
+    "update": 55271.199999999255,
+    "load": false,
+    "hide": false,
+    "translateX": 724,
+    "translateY": 313,
+    "zIndex": 4
+  },
+  {
+    "_hash": "GD0EQTZEWDFW4FVK",
+    "accordionWindowsHash": "CanvasLayerActions",
+    "property": {
+      "canvasLayerHash": "W847DNS8SRSBJ0D6"
+    },
+    "update": 67707.39999999851,
+    "load": false,
+    "hide": false,
+    "translateX": -724,
+    "translateY": 282,
+    "zIndex": 5
+  },
+  {
+    "_hash": "QTJK5KPMI1LNXJ5I",
+    "accordionWindowsHash": "GlobalSetting",
+    "update": 80117.19999999925,
+    "load": false,
+    "hide": false,
+    "translateX": 45,
+    "translateY": -343,
+    "zIndex": 6
+  }
+]

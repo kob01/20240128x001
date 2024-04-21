@@ -4,8 +4,6 @@ import Imitation from 'imitation-imm'
 
 import { hash } from './utils.common'
 
-import mockSource from './mock.source'
-
 const ImitationInstance = new Imitation()
 
 
@@ -35,11 +33,13 @@ ImitationInstance.state.function.update = () => {
   ImitationInstance.dispatch()
 }
 
+ImitationInstance.state.function.onInit = () => {
+  ImitationInstance.state.store.renderImage = [{ _hash: hash(), sourceHash: ImitationInstance.state.store.source[0]._hash, direction: 2 }]
+}
+
 ImitationInstance.state.function.onLoad = () => {
   ImitationInstance.state.store.load = true
   ImitationInstance.state.store.rect = undefined
-  ImitationInstance.state.store.source = structuredClone(mockSource)
-  ImitationInstance.state.store.renderImage = [{ _hash: hash(), sourceHash: ImitationInstance.state.store.source[0]._hash, direction: 2 }]
   ImitationInstance.state.function.update()
 }
 

@@ -10,8 +10,12 @@ import { ImitationGlobal, ImitationNavigation, ImitationPageCanvas, withBindComp
 import { DialogSX, TextFieldSX, TabsSX, DividerSX, SwitchSX, SelectSX, DrawerSX, AccordionSX, PaperSX, TooltipSX } from './utils.mui.sx'
 
 function App(props) {
-  const renderWindowsFind = ImitationNavigation.state.memo.renderWindowsFind(props.renderWindowsHash)
-  const pencilFind = ImitationPageCanvas.state.memo.pencilFind(renderWindowsFind.property.pencilHash)
+  const accordionWindowsFind = ImitationNavigation.state.memo.accordionWindowsFind(props.accordionWindowsHash)
+  const pencilFind = ImitationPageCanvas.state.memo.pencilFind(accordionWindowsFind.property.pencilHash)
+
+  if (pencilFind === undefined) accordionWindowsFind.hide = true
+
+  if (pencilFind === undefined) return null
 
   return <Grid container spacing={0}>
 

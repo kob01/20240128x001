@@ -19,14 +19,14 @@ function App() {
   return <Grid container spacing={0}>
     {
       ImitationPageCanvas.state.store.pencil.map(i => {
-        return <Grid key={i._hash} item xs={12}>
+        return <Grid key={i._hash} item xs={12} style={{ height: 30 }}>
           <Button fullWidth component='div' style={{ justifyContent: 'space-between', alignItems: 'center', padding: '4.5px 8px' }} onClick={(e) => { ImitationPageCanvas.state.store.active.pencil = i._hash; ImitationPageCanvas.state.function.update() }}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <ColorLensIcon color='primary' fontSize='small' style={{ opacity: ImitationPageCanvas.state.store.active.pencil === i._hash ? 1 : 0.2, transition: '1s all' }} />
               <div style={{ margin: '0 8px', fontSize: 12 }}>{i.name}</div>
             </div>
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              <EditIcon color='primary' fontSize='small' onClick={(e) => { e.stopPropagation(); ImitationNavigation.state.function.renderWindowsAppend('CanvasPencil', { pencilHash: i._hash }) }}></EditIcon>
+              <EditIcon color='primary' fontSize='small' onClick={(e) => { e.stopPropagation(); ImitationNavigation.state.function.accordionWindowsAppend('CanvasPencil', { pencilHash: i._hash }) }}></EditIcon>
             </div>
           </Button>
         </Grid>

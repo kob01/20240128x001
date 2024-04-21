@@ -11,7 +11,7 @@ import { ImitationGlobal, withBindComponentPure } from './Imitation'
 
 function App() {
   return <Grid container spacing={0}>
-    <Grid item xs={12}>
+    <Grid item xs={12} style={{ height: 30 }}>
       <Button fullWidth component='div' style={{ justifyContent: 'space-between', alignItems: 'center', padding: '4.5px 8px' }} onClick={(e) => { ImitationGlobal.state.store.page = 'Library'; ImitationGlobal.state.function.update() }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <MapIcon color='primary' fontSize='small' style={{ opacity: ImitationGlobal.state.store.page === 'Library' ? 1 : 0.2, transition: '1s all' }} />
@@ -22,7 +22,7 @@ function App() {
         </div>
       </Button>
     </Grid>
-    <Grid item xs={12}>
+    <Grid item xs={12} style={{ height: 30 }}>
       <Button fullWidth component='div' style={{ justifyContent: 'space-between', alignItems: 'center', padding: '4.5px 8px' }} onClick={(e) => { ImitationGlobal.state.store.page = 'Canvas'; ImitationGlobal.state.function.update() }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <MapIcon color='primary' fontSize='small' style={{ opacity: ImitationGlobal.state.store.page === 'Canvas' ? 1 : 0.2, transition: '1s all' }} />

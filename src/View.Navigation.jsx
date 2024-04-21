@@ -6,6 +6,12 @@ import NavigationContent from './View.Navigation.Content'
 import { ImitationNavigation, withBindComponentPure } from './Imitation'
 
 function App() {
+  React.useEffect(() => ImitationNavigation.state.function.onLoad(), [])
+
+  React.useEffect(() => () => ImitationNavigation.state.function.onUnload(), [])
+
+  if (ImitationNavigation.state.store.load === false) return null
+
   return <>
     <NavigationGuide />
     <NavigationContent />

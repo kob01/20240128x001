@@ -14,37 +14,38 @@ import NavigationMap from './View.Navigation.Map'
 import { useDragControl as useDragControlMouse } from './View.Component.DragControl.Mouse'
 import { useDragControl as useDragControlTouch } from './View.Component.DragControl.Touch'
 
-import { ImitationGlobal, ImitationNavigation, withBindComponentPure } from './Imitation'
+import { ImitationGlobal, ImitationNavigation, ImitationPageCanvas, withBindComponentPure } from './Imitation'
 
 import { DialogSX, TextFieldSX, TabsSX, DividerSX, SwitchSX, SelectSX, DrawerSX, AccordionSX, PaperSX, TooltipSX, TooltipSXNavigation } from './utils.mui.sx'
 
 import { throttleLastRAF } from './utils.common'
 
 function NavigationRenderItem(props) {
-  const renderWindowsFind = ImitationNavigation.state.memo.renderWindowsFind(props._hash)
+  const accordionWindowsFind = ImitationNavigation.state.memo.accordionWindowsFind(props._hash)
+  const accordionWindowsRefFind = ImitationNavigation.state.memo.accordionWindowsRefFind(props._hash)
 
-  const content = NavigationMap.find(i => i._hash === renderWindowsFind.renderWindowsHash)
+  const content = NavigationMap.find(i => i._hash === accordionWindowsFind.accordionWindowsHash)
 
-  const renderWindowsFixTranslateThrottleLastRAF = React.useCallback(throttleLastRAF(ImitationNavigation.state.function.renderWindowsFixTranslate), [])
+  const accordionWindowsFixTranslateThrottleLastRAF = React.useCallback(throttleLastRAF(ImitationNavigation.state.function.accordionWindowsFixTranslate), [])
 
   const [expand, setExpand] = React.useState(true)
 
   const [transitionProperty, setTransitionProperty] = React.useState('background, box-shadow, opacity, transform')
 
   const style = React.useMemo(() => {
-    if (renderWindowsFind.load === true) {
+    if (accordionWindowsFind.load === true) {
       return {
-        transform: `scale(1) translate(${renderWindowsFind.translateX}px, ${renderWindowsFind.translateY}px)`,
+        transform: `scale(1) translate(${accordionWindowsFind.translateX}px, ${accordionWindowsFind.translateY}px)`,
         opacity: 1
       }
     }
-    if (renderWindowsFind.load === false) {
+    if (accordionWindowsFind.load === false) {
       return {
         transform: `scale(0) translate(0px, 0px)`,
         opacity: 0
       }
     }
-  }, [renderWindowsFind.load, renderWindowsFind.translateX, renderWindowsFind.translateY])
+  }, [accordionWindowsFind.load, accordionWindowsFind.translateX, accordionWindowsFind.translateY])
 
   const onChangeDragControlMouse = (params) => {
     const status = params.status
@@ -55,9 +56,9 @@ function NavigationRenderItem(props) {
     const continuedY = params.continuedY
 
     if (status === 'afterMove') {
-      renderWindowsFind.translateX = renderWindowsFind.translateX + changedX
-      renderWindowsFind.translateY = renderWindowsFind.translateY + changedY
-      renderWindowsFixTranslateThrottleLastRAF(renderWindowsFind._hash)
+      accordionWindowsFind.translateX = accordionWindowsFind.translateX + changedX
+      accordionWindowsFind.translateY = accordionWindowsFind.translateY + changedY
+      accordionWindowsFixTranslateThrottleLastRAF(accordionWindowsFind._hash)
     }
 
     if (status === 'afterEnd') {
@@ -79,9 +80,9 @@ function NavigationRenderItem(props) {
     const continuedY = params.continuedY[0]
 
     if (status === 'afterMove') {
-      renderWindowsFind.translateX = renderWindowsFind.translateX + changedX
-      renderWindowsFind.translateY = renderWindowsFind.translateY + changedY
-      renderWindowsFixTranslateThrottleLastRAF(renderWindowsFind._hash)
+      accordionWindowsFind.translateX = accordionWindowsFind.translateX + changedX
+      accordionWindowsFind.translateY = accordionWindowsFind.translateY + changedY
+      accordionWindowsFixTranslateThrottleLastRAF(accordionWindowsFind._hash)
     }
 
     if (status === 'afterEnd') {
@@ -94,70 +95,75 @@ function NavigationRenderItem(props) {
 
   const { onTouchStart } = useDragControlTouch({ enable: true, onChange: onChangeDragControlTouch })
 
-  const onMouseDownAccordion = window.ontouchstart === undefined ? () => ImitationNavigation.state.function.renderWindowsActive(renderWindowsFind._hash) : null
-  const onTouchStartAccordion = window.ontouchstart !== undefined ? () => ImitationNavigation.state.function.renderWindowsActive(renderWindowsFind._hash) : null
+  const onMouseDownAccordion = window.ontouchstart === undefined ? () => ImitationNavigation.state.function.accordionWindowsActive(accordionWindowsFind._hash) : null
+  const onTouchStartAccordion = window.ontouchstart !== undefined ? () => ImitationNavigation.state.function.accordionWindowsActive(accordionWindowsFind._hash) : null
 
   React.useEffect(() => {
     if (ImitationGlobal.state.store.rect === undefined) return
 
-    if (renderWindowsFind.load === true) {
-      renderWindowsFixTranslateThrottleLastRAF(renderWindowsFind._hash)
+    if (accordionWindowsFind.load === true) {
+      accordionWindowsFixTranslateThrottleLastRAF(accordionWindowsFind._hash)
     }
 
-    if (renderWindowsFind.load === false) {
-      if (ImitationNavigation.state.store.renderWindow.length === 1) {
-        renderWindowsFind.translateX = (renderWindowsFind.accordionRef.offsetWidth - ImitationGlobal.state.store.rect.width + 32) / 2
-        renderWindowsFind.translateY = (renderWindowsFind.accordionRef.offsetHeight - ImitationGlobal.state.store.rect.height + 32) / 2
-        renderWindowsFind.zIndex = 1
-        renderWindowsFind.load = true
+    if (accordionWindowsFind.load === false) {
+      if (ImitationNavigation.state.store.accordionWindow.length === 1) {
+        accordionWindowsFind.translateX = (accordionWindowsRefFind.accordionRef.offsetWidth - ImitationGlobal.state.store.rect.width + 32) / 2
+        accordionWindowsFind.translateY = (accordionWindowsRefFind.accordionRef.offsetHeight - ImitationGlobal.state.store.rect.height + 32) / 2
+        accordionWindowsFind.zIndex = 1
+        accordionWindowsFind.load = true
       }
-      if (ImitationNavigation.state.store.renderWindow.length > 1) {
-        const zIndexFind = ImitationNavigation.state.store.renderWindow.filter(i => i._hash !== renderWindowsFind._hash).reduce((t, i) => t.zIndex > i.zIndex ? t : i, { zIndex: 0 })
+      if (ImitationNavigation.state.store.accordionWindow.length > 1 && (accordionWindowsFind.translateX === undefined && accordionWindowsFind.translateY === undefined && accordionWindowsFind.zIndex === undefined)) {
+        const zIndexFind = ImitationNavigation.state.store.accordionWindow.filter(i => i._hash !== accordionWindowsFind._hash).reduce((t, i) => t.zIndex > i.zIndex ? t : i, { zIndex: 0 })
+        const zIndexRefFind = ImitationNavigation.state.store.ref.accordionWindow.find(i => i.accordionWindowHash === zIndexFind._hash)
 
-        const xAlignMax = (ImitationGlobal.state.store.rect.width - renderWindowsFind.accordionRef.offsetWidth - 32) / 2
-        const xAlignMin = (renderWindowsFind.accordionRef.offsetWidth - ImitationGlobal.state.store.rect.width + 32) / 2
-        const yAlignMax = (ImitationGlobal.state.store.rect.height - renderWindowsFind.accordionRef.offsetHeight - 32) / 2
-        const yAlignMin = (renderWindowsFind.accordionRef.offsetHeight - ImitationGlobal.state.store.rect.height + 32) / 2
+        const xAlignMax = (ImitationGlobal.state.store.rect.width - accordionWindowsRefFind.accordionRef.offsetWidth - 32) / 2
+        const xAlignMin = (accordionWindowsRefFind.accordionRef.offsetWidth - ImitationGlobal.state.store.rect.width + 32) / 2
+        const yAlignMax = (ImitationGlobal.state.store.rect.height - accordionWindowsRefFind.accordionRef.offsetHeight - 32) / 2
+        const yAlignMin = (accordionWindowsRefFind.accordionRef.offsetHeight - ImitationGlobal.state.store.rect.height + 32) / 2
 
-        const xAlignRight = zIndexFind.translateX - zIndexFind.accordionRef.offsetWidth / 2 + renderWindowsFind.accordionRef.offsetWidth / 2 + 32
-        const xAlignLeft = zIndexFind.translateX + zIndexFind.accordionRef.offsetWidth / 2 - renderWindowsFind.accordionRef.offsetWidth / 2 - 32
-        const yAlignBottom = zIndexFind.translateY - zIndexFind.accordionRef.offsetHeight / 2 + renderWindowsFind.accordionRef.offsetHeight / 2 + 32
-        const yAlignTop = zIndexFind.translateY + zIndexFind.accordionRef.offsetHeight / 2 - renderWindowsFind.accordionRef.offsetHeight / 2 - 32
+        const xAlignRight = zIndexFind.translateX - zIndexRefFind.accordionRef.offsetWidth / 2 + accordionWindowsRefFind.accordionRef.offsetWidth / 2 + 32
+        const xAlignLeft = zIndexFind.translateX + zIndexRefFind.accordionRef.offsetWidth / 2 - accordionWindowsRefFind.accordionRef.offsetWidth / 2 - 32
+        const yAlignBottom = zIndexFind.translateY - zIndexRefFind.accordionRef.offsetHeight / 2 + accordionWindowsRefFind.accordionRef.offsetHeight / 2 + 32
+        const yAlignTop = zIndexFind.translateY + zIndexRefFind.accordionRef.offsetHeight / 2 - accordionWindowsRefFind.accordionRef.offsetHeight / 2 - 32
 
-        if (xAlignLeft > xAlignMin) renderWindowsFind.translateX = xAlignLeft
-        if (xAlignRight < xAlignMax) renderWindowsFind.translateX = xAlignRight
-        if (yAlignTop > yAlignMin) renderWindowsFind.translateY = yAlignTop
-        if (yAlignBottom < yAlignMax) renderWindowsFind.translateY = yAlignBottom
+        if (xAlignLeft > xAlignMin) accordionWindowsFind.translateX = xAlignLeft
+        if (xAlignRight < xAlignMax) accordionWindowsFind.translateX = xAlignRight
+        if (yAlignTop > yAlignMin) accordionWindowsFind.translateY = yAlignTop
+        if (yAlignBottom < yAlignMax) accordionWindowsFind.translateY = yAlignBottom
 
-        if (renderWindowsFind.translateX === undefined) renderWindowsFind.translateX = 0
-        if (renderWindowsFind.translateY === undefined) renderWindowsFind.translateY = 0
+        if (accordionWindowsFind.translateX === undefined) accordionWindowsFind.translateX = 0
+        if (accordionWindowsFind.translateY === undefined) accordionWindowsFind.translateY = 0
 
-        renderWindowsFind.zIndex = zIndexFind.zIndex + 1
-        renderWindowsFind.load = true
+        accordionWindowsFind.zIndex = zIndexFind.zIndex + 1
+        accordionWindowsFind.load = true
       }
 
-      renderWindowsFixTranslateThrottleLastRAF(renderWindowsFind._hash)
+      if (ImitationNavigation.state.store.accordionWindow.length > 1 && accordionWindowsFind.translateX !== undefined && accordionWindowsFind.translateY !== undefined && accordionWindowsFind.zIndex !== undefined) {
+        accordionWindowsFind.load = true
+      }
+
+      accordionWindowsFixTranslateThrottleLastRAF(accordionWindowsFind._hash)
     }
   }, [ImitationGlobal.state.store.rect])
 
   React.useEffect(() => {
     if (content.page !== '*' && content.page !== ImitationGlobal.state.store.page && content.page.includes(ImitationGlobal.state.store.page) === false) {
-      ImitationNavigation.state.function.renderWindowsRemove(props._hash)
+      ImitationNavigation.state.function.accordionWindowsRemove(props._hash)
     }
   }, [ImitationGlobal.state.store.page])
 
   React.useEffect(() => {
-    if (renderWindowsFind.hide === true) {
-      ImitationNavigation.state.function.renderWindowsRemove(props._hash)
+    if (accordionWindowsFind.hide === true) {
+      ImitationNavigation.state.function.accordionWindowsRemove(props._hash)
     }
-  }, [renderWindowsFind.hide])
+  }, [accordionWindowsFind.hide])
 
   React.useEffect(() => {
     const resizeObserver = new ResizeObserver(() => {
-      renderWindowsFixTranslateThrottleLastRAF(renderWindowsFind._hash)
+      accordionWindowsFixTranslateThrottleLastRAF(accordionWindowsFind._hash)
     })
 
-    resizeObserver.observe(renderWindowsFind.accordionRef)
+    resizeObserver.observe(accordionWindowsRefFind.accordionRef)
 
     return () => resizeObserver.disconnect()
   }, [])
@@ -165,21 +171,21 @@ function NavigationRenderItem(props) {
   React.useEffect(() => {
     const event = e => e.preventDefault()
 
-    renderWindowsFind.accordionSummaryRef.addEventListener('touchmove', event)
+    accordionWindowsRefFind.accordionSummaryRef.addEventListener('touchmove', event)
 
     return () => {
-      if (renderWindowsFind.accordionSummaryRef) {
-        renderWindowsFind.accordionSummaryRef.removeEventListener('touchmove', event)
+      if (accordionWindowsRefFind.accordionSummaryRef) {
+        accordionWindowsRefFind.accordionSummaryRef.removeEventListener('touchmove', event)
       }
     }
   }, [])
 
-  return <Accordion {...AccordionSX()} style={{ width: 320, maxWidth: ImitationGlobal.state.store.rect.width - 32, height: 'fit-content', maxHeight: ImitationGlobal.state.store.rect.height - 96, overflowY: 'auto', position: 'absolute', zIndex: renderWindowsFind.zIndex, transitionProperty: transitionProperty, transitionDuration: '1s', ...style }} expanded={expand} onMouseDown={onMouseDownAccordion} onTouchStart={onTouchStartAccordion} ref={el => renderWindowsFind.accordionRef = el}>
+  return <Accordion {...AccordionSX()} style={{ width: 320, maxWidth: ImitationGlobal.state.store.rect.width - 32, height: 'fit-content', maxHeight: ImitationGlobal.state.store.rect.height - 96, overflowY: 'auto', position: 'absolute', zIndex: accordionWindowsFind.zIndex, transitionProperty: transitionProperty, transitionDuration: '1s', ...style }} expanded={expand} onMouseDown={onMouseDownAccordion} onTouchStart={onTouchStartAccordion} ref={el => accordionWindowsRefFind.accordionRef = el}>
     <AccordionSummary
       onMouseDown={onMouseDown}
       onTouchStart={onTouchStart}
       expandIcon={
-        <IconButton onClick={() => ImitationNavigation.state.function.renderWindowsRemove(props._hash)} onMouseDown={e => e.stopPropagation()} onTouchStart={e => e.stopPropagation()}>
+        <IconButton onClick={() => ImitationNavigation.state.function.accordionWindowsRemove(props._hash)} onMouseDown={e => e.stopPropagation()} onTouchStart={e => e.stopPropagation()}>
           <CloseIcon color='primary' />
         </IconButton>
       }
@@ -192,7 +198,7 @@ function NavigationRenderItem(props) {
           <div >{content.summary}</div>
         </div>
       }
-      ref={el => renderWindowsFind.accordionSummaryRef = el}
+      ref={el => accordionWindowsRefFind.accordionSummaryRef = el}
     />
 
     <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -203,7 +209,7 @@ function NavigationRenderItem(props) {
     <AccordionDetails
       style={{ fontSize: 12 }}
       children={
-        <content.Component renderWindowsHash={renderWindowsFind._hash} />
+        <content.Component accordionWindowsHash={accordionWindowsFind._hash} />
       }
     />
 
@@ -217,14 +223,15 @@ function NavigationRenderItem(props) {
 function App() {
   return <div style={{ position: 'absolute', zIndex: 900, width: 0, height: 0, left: 0, right: 0, top: 0, bottom: 0, margin: 'auto', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
     {
-      ImitationNavigation.state.store.renderWindow.map((i => <NavigationRenderItem key={i._hash} {...i} />))
+      ImitationNavigation.state.store.accordionWindow.map((i => <NavigationRenderItem key={i._hash} {...i} />))
     }
   </div>
 }
 
 const dependence = [
-  { instance: ImitationNavigation, dependence: state => [ImitationNavigation.state.update.renderWindow] },
+  { instance: ImitationNavigation, dependence: state => [ImitationNavigation.state.update.accordionWindow] },
   { instance: ImitationGlobal, dependence: state => [ImitationGlobal.state.store.rect, ImitationGlobal.state.store.recting, ImitationGlobal.state.store.page] }
+
 ]
 
 export default withBindComponentPure(App, dependence)

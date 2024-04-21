@@ -13,8 +13,8 @@ import { range, debounce, throttleLastRAF, wheelControl } from './utils.common'
 function App() {
   const canvasLayerFind = ImitationPageCanvas.state.memo.canvasLayerFind(ImitationPageCanvas.state.store.active.layer)
   const canvasLayerRefFind = ImitationPageCanvas.state.memo.canvasLayerRefFind(ImitationPageCanvas.state.store.active.layer)
-  const pencilActionRunFind = ImitationPageCanvas.state.memo.pencilActionRunFind(ImitationPageCanvas.state.store.active.pencil)
   const pencilFind = ImitationPageCanvas.state.memo.pencilFind(ImitationPageCanvas.state.store.active.pencil)
+  const pencilActionRunFind = ImitationPageCanvas.state.memo.pencilActionRunFind(ImitationPageCanvas.state.store.active.pencil)
 
   const inControlDraw = ImitationPageCanvas.state.store.control.draw
   const inControlMove = ImitationPageCanvas.state.store.control.move
@@ -41,7 +41,7 @@ function App() {
     const changedX = params.changedX
     const changedY = params.changedY
 
-    if (status === 'afterStart' && inSpace === false && inMeta === false && inControlDraw === true && canvasLayerFind !== undefined && canvasLayerFind.visibility === true) {
+    if (status === 'afterStart' && inSpace === false && inMeta === false && inControlDraw === true && canvasLayerFind !== undefined && canvasLayerFind.visibility === true && pencilActionRunFind !== undefined) {
       dragControlType.current = 0
     }
     if (status === 'afterStart' && inSpace === true && inMeta === false && inControlMove === true) {
@@ -118,7 +118,7 @@ function App() {
     const inTouch2 = Boolean(params.x && params.x.length === 2 && params.y && params.y.length === 2)
     const inTouch3 = Boolean(params.x && params.x.length === 3 && params.y && params.y.length === 3)
 
-    if (status === 'afterStart' && inControlDraw === true && canvasLayerFind !== undefined && canvasLayerFind.visibility === true) {
+    if (status === 'afterStart' && inControlDraw === true && canvasLayerFind !== undefined && canvasLayerFind.visibility === true && pencilActionRunFind !== undefined) {
       dragControlTime.current = setTimeout(() => dragControlType.current = 0, 100)
     }
     if (status === 'afterStart' && inTouch2 === true && inControlMove === true) {

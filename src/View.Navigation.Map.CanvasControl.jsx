@@ -4,8 +4,6 @@ import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
 import Switch from '@mui/material/Switch'
 
-import SaveIcon from '@mui/icons-material/Save'
-
 import { ImitationGlobal, ImitationNavigation, ImitationPageCanvas, withBindComponentPure } from './Imitation'
 
 import { DialogSX, TextFieldSX, TabsSX, DividerSX, SwitchSX, SelectSX, DrawerSX, AccordionSX, PaperSX, TooltipSX } from './utils.mui.sx'

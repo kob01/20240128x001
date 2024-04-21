@@ -31,7 +31,11 @@ function App() {
     resizeObserver.observe(ref.current)
 
     return () => resizeObserver.disconnect()
-  }, [])
+  }, [ImitationGlobal.state.store.load])
+
+  React.useEffect(() => ImitationGlobal.state.function.onLoad(), [])
+
+  React.useEffect(() => () => ImitationGlobal.state.function.onUnload(), [])
 
   return <ThemeProvider theme={createTheme(ImitationGlobal.state.store.theme)}>
 
@@ -39,16 +43,18 @@ function App() {
       <Loading />
       <Message />
       {
-        ImitationGlobal.state.store.rect !== undefined ? <Page /> : null
+        ImitationGlobal.state.store.load === true && ImitationGlobal.state.store.rect !== undefined ? <Page /> : null
       }
       {
-        ImitationGlobal.state.store.rect !== undefined ? <Navigation /> : null
+        ImitationGlobal.state.store.load === true && ImitationGlobal.state.store.rect !== undefined ? <Navigation /> : null
       }
     </div>
 
   </ThemeProvider>
 }
 
-const dependence = [{ instance: ImitationGlobal, dependence: state => [ImitationGlobal.state.store.rect, ImitationGlobal.state.store.recting, ...Object.values(state.store.theme.palette).map(i => i.main)] }]
+const dependence = [
+  { instance: ImitationGlobal, dependence: state => [ImitationGlobal.state.store.rect, ImitationGlobal.state.store.recting, ImitationGlobal.state.store.load, ...Object.values(state.store.theme.palette).map(i => i.main)] }
+]
 
 export default withBindComponentPure(App, dependence)

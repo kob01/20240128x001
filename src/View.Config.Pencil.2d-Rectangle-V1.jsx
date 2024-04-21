@@ -5,19 +5,20 @@ import Slider from '@mui/material/Slider'
 import Tooltip from '@mui/material/Tooltip'
 import Paper from '@mui/material/Paper'
 import Button from '@mui/material/Button'
+import Switch from '@mui/material/Switch'
 
 import { ClickAwayListener } from './View.Component.ClickAwayListener'
 import { ColorPicker } from './View.Component.ColorPicker'
 
-import { TextFieldSX, TooltipSX, PaperSX } from './utils.mui.sx'
+import { TextFieldSX, TooltipSX, PaperSX, SwitchSX } from './utils.mui.sx'
 
 import { hash } from './utils.common'
 
-const _hash = '2d-StraightLine-V2'
+const _hash = '2d-Rectangle-V2'
 
-const type = 'StraightLine'
+const type = 'Rectangle'
 
-const name = 'StraightLine-V2'
+const name = 'Rectangle-V2'
 
 function settingComponent(props) {
   const { value, onChange } = props
@@ -64,23 +65,42 @@ function settingComponent(props) {
         <Slider size='small' style={{ width: 120 }} value={value.width} onChange={(e, v) => { value.width = v; onChange(); }} min={1} max={10} step={1} />
       </div>
     </Grid>
+
+    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
+      <div>Mode Stroke</div>
+      <div>
+        <Switch {...SwitchSX()} size='small' checked={value.stroke} onChange={(e) => { value.stroke = e.target.checked; value.fill = !value.stroke; onChange(); }} />
+      </div>
+    </Grid>
+
+    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
+      <div>Mode Fill</div>
+      <div>
+        <Switch {...SwitchSX()} size='small' checked={value.fill} onChange={(e) => { value.fill = e.target.checked; value.stroke = !value.fill; onChange(); }} />
+      </div>
+    </Grid>
   </Grid>
 }
 
-const settingDefault = { color: 'rgba(0, 0, 0, 1)', alpha: 1, width: 1, path: [] }
+const settingDefault = { color: 'rgba(0, 0, 0, 1)', alpha: 1, width: 1, stroke: true, fill: false, path: [] }
 
 const pencilRender = (canvas, context, layer, action) => {
   context.save()
 
   context.globalAlpha = action.setting.alpha
   context.strokeStyle = action.setting.color
+  context.fillStyle = action.setting.color
   context.lineWidth = action.setting.width
 
   context.beginPath(action.setting.path[0].x, action.setting.path[0].y)
   context.moveTo(action.setting.path[0].x, action.setting.path[0].y)
+  context.lineTo(action.setting.path[1].x, action.setting.path[0].y)
   context.lineTo(action.setting.path[1].x, action.setting.path[1].y)
+  context.lineTo(action.setting.path[0].x, action.setting.path[1].y)
+  context.closePath()
 
-  context.stroke()
+  if (action.setting.stroke) context.stroke()
+  if (action.setting.fill) context.fill()
 
   context.restore()
 }

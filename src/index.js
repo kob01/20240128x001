@@ -5,8 +5,6 @@ import App from './View.App'
 
 import { ImitationGlobal } from './Imitation'
 
-import './mock.imitation'
-
 import icon from '../static/icon.png'
 
 const link = document.createElement('link')
