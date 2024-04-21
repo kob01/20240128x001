@@ -6,7 +6,7 @@ import { useKeyboardRecord } from './View.Component.KeyboardRecord'
 
 import ContentRender from './View.Page.Canvas.ContentRender'
 
-import { ImitationPageCanvas } from './Imitation'
+import { ImitationPageCanvas, ImitationGlobal } from './Imitation'
 
 import { range, debounce, throttleLastRAF, wheelControl } from './utils.common'
 
@@ -41,8 +41,16 @@ function App() {
     const changedX = params.changedX
     const changedY = params.changedY
 
-    if (status === 'afterStart' && inSpace === false && inMeta === false && inControlDraw === true && canvasLayerFind !== undefined && canvasLayerFind.visibility === true && pencilActionRunFind !== undefined) {
-      dragControlType.current = 0
+    if (status === 'afterStart' && inSpace === false && inMeta === false && inControlDraw === true) {
+      if (canvasLayerFind === undefined) {
+        ImitationGlobal.state.function.messageAppend('No Layer Select')
+      }
+      if (pencilActionRunFind === undefined) {
+        ImitationGlobal.state.function.messageAppend('No Pencil Select')
+      }
+      if (canvasLayerFind !== undefined && canvasLayerFind.visibility === true && pencilActionRunFind !== undefined) {
+        dragControlType.current = 0
+      }
     }
     if (status === 'afterStart' && inSpace === true && inMeta === false && inControlMove === true) {
       dragControlType.current = 1
@@ -118,8 +126,16 @@ function App() {
     const inTouch2 = Boolean(params.x && params.x.length === 2 && params.y && params.y.length === 2)
     const inTouch3 = Boolean(params.x && params.x.length === 3 && params.y && params.y.length === 3)
 
-    if (status === 'afterStart' && inControlDraw === true && canvasLayerFind !== undefined && canvasLayerFind.visibility === true && pencilActionRunFind !== undefined) {
-      dragControlTime.current = setTimeout(() => dragControlType.current = 0, 100)
+    if (status === 'afterStart' && inControlDraw === true) {
+      if (canvasLayerFind === undefined) {
+        ImitationGlobal.state.function.messageAppend('No Layer Select')
+      }
+      if (pencilActionRunFind === undefined) {
+        ImitationGlobal.state.function.messageAppend('No Pencil Select')
+      }
+      if (canvasLayerFind !== undefined && canvasLayerFind.visibility === true && pencilActionRunFind !== undefined) {
+        dragControlTime.current = setTimeout(() => dragControlType.current = 0, 100)
+      }
     }
     if (status === 'afterStart' && inTouch2 === true && inControlMove === true) {
       clearTimeout(dragControlTime.current)

@@ -21,7 +21,7 @@ ImitationInstance.state.update.accordionWindow = performance.now()
 
 ImitationInstance.state.store.load = false
 
-ImitationInstance.state.store.mode = 1
+ImitationInstance.state.store.mode = 0
 
 ImitationInstance.state.store.accordionWindow = []
 

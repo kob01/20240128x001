@@ -2,6 +2,7 @@ import { ImitationGlobal, ImitationNavigation, ImitationPageCanvas, ImitationPag
 
 import mockNavigationAccordionWindow from './mock.navigation.accordionWindow.json'
 import mockCanvasSource from './mock.canvas.source.json'
+import mockCanvasSourceEmpty from './mock.canvas.source.empty.json'
 import mockCanvasActive from './mock.canvas.active.json'
 
 const apiLocalStorage = () => {
@@ -13,6 +14,10 @@ const apiLocalStorage = () => {
       ImitationNavigation.state.function.onInit({ accordionWindow: cache.localStorageNavigationAccordionWindow })
     }
 
+    if (!cache) {
+      ImitationPageCanvas.state.function.onInit({ source: mockCanvasSourceEmpty })
+    }
+
     r()
   })
 }
@@ -21,7 +26,7 @@ const apiMock = () => {
   return new Promise(r => {
     ImitationPageCanvas.state.function.onInit({ source: structuredClone(mockCanvasSource), active: structuredClone(mockCanvasActive) })
     ImitationNavigation.state.function.onInit({ accordionWindow: structuredClone(mockNavigationAccordionWindow) })
-    
+
     r()
   })
 }
