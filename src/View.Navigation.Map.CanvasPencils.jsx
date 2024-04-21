@@ -26,7 +26,7 @@ function App() {
               <div style={{ margin: '0 8px', fontSize: 12 }}>{i.name}</div>
             </div>
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              <EditIcon color='primary' fontSize='small' onClick={(e) => { e.stopPropagation(); ImitationNavigation.state.function.accordionWindowsAppend('CanvasPencil', { pencilHash: i._hash }) }}></EditIcon>
+              <EditIcon color='primary' fontSize='small' onClick={(e) => { e.stopPropagation(); ImitationNavigation.state.function.accordionWindowsAppendThrottlePipeTime500('CanvasPencil', { pencilHash: i._hash }) }}></EditIcon>
             </div>
           </Button>
         </Grid>

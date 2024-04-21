@@ -62,7 +62,7 @@ function App() {
               return <HoverListener>
                 {
                   ({ hover, onMouseEnter, onMouseLeave }) => {
-                    return <Button style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', transform: `scale(${animationed && ImitationNavigation.state.store.mode === 1 ? 1 : 0})`, transition: '1s all', transitionDelay: `${transitionDelay}` }} onClick={() => { clearTimeout(timeRef.current); ImitationNavigation.state.store.mode = 0; ImitationNavigation.state.function.update(); }} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+                    return <Button style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', transform: `scale(${animationed && ImitationNavigation.state.store.mode === 1 ? 1 : 0})`, transition: '1s all', transitionDelay: `${transitionDelay}` }} onClick={() => { initTime(timeRef.current); ImitationNavigation.state.store.mode = 0; ImitationNavigation.state.function.update(); }} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
                       <RadioButtonUncheckedIcon style={{ opacity: 0.1 }} />
                       <ChangeHistoryIcon style={{ position: 'absolute', transform: `translateY(${hover ? 2 * -1 : 2}px)`, transition: '1s all' }} />
                       <ChangeHistoryIcon style={{ position: 'absolute', transform: `translateY(${hover ? 2 : 2 * -1}px) rotate(180deg)`, transition: '1s all' }} />
@@ -91,7 +91,7 @@ function App() {
                     return <HoverListener>
                       {
                         ({ hover, onMouseEnter, onMouseLeave }) => {
-                          return <Button style={{ transform: `scale(${animationed && ImitationNavigation.state.store.mode === 1 ? 1 : 0})`, transition: '1s all', transitionDelay: `${transitionDelay}s` }} onClick={() => { clearTimeout(timeRef.current); ImitationNavigation.state.function.accordionWindowsAppend(i._hash) }} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+                          return <Button style={{ transform: `scale(${animationed && ImitationNavigation.state.store.mode === 1 ? 1 : 0})`, transition: '1s all', transitionDelay: `${transitionDelay}s` }} onClick={() => { initTime(timeRef.current); ImitationNavigation.state.function.accordionWindowsAppendThrottlePipeTime500(i._hash) }} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
                             <i.Icon style={{ transform: `translateY(${hover ? -2 : 0}px)`, transition: '1s all' }} />
                           </Button>
                         }

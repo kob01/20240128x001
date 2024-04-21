@@ -14,6 +14,7 @@ if (new URLSearchParams(new URL(window.location.href).search).get('mock')) {
 const load = () => {
   if (mode === 'mock') {
     return {
+      status: 'mock',
       source: structuredClone(mockCanvasSource),
       active: structuredClone(mockCanvasActive),
       accordionWindow: structuredClone(mockNavigationAccordionWindow)
@@ -24,12 +25,14 @@ const load = () => {
     const cache = window.localStorage.getItem('cache') ? JSON.parse(window.localStorage.getItem('cache')) : undefined
 
     if (cache === undefined) return {
+      status: 'empty',
       source: mockCanvasSourceEmpty,
       active: {},
       accordionWindow: []
     }
 
     if (cache !== undefined) return {
+      status: 'filled',
       source: cache.localStorageCanvasSource,
       active: cache.localStorageCanvasActive,
       accordionWindow: cache.localStorageNavigationAccordionWindow

@@ -4,24 +4,35 @@ import Snackbar from '@mui/material/Snackbar'
 
 import { ImitationGlobal, withBindComponentPure } from './Imitation'
 
-function App() {
-  const ref = React.useRef()
+import { hash } from './utils.common'
 
-  const [open, setOpen] = React.useState(false)
+function App() {
+  
+  const ref = React.useRef([])
 
   React.useEffect(() => {
+    ImitationGlobal.state.store.message.forEach(i => {
+      if (ref.current.find(i_ => i_.messsageHash === i._hash) === undefined) {
+        const timeHash = hash()
 
-    if (ref.current) clearTimeout(ref.current)
+        const r = {
+          _hash: timeHash,
+          messsageHash: i._hash,
+          timeout: setTimeout(() => { ImitationGlobal.state.function.messageRemove(i._hash); ref.current = ref.current.filter(i => i._hash !== timeHash); }, 2500)
+        }
 
-    if (ImitationGlobal.state.store.message !== '') ref.current = setTimeout(() => { ImitationGlobal.state.store.message = ''; ImitationGlobal.state.function.update(); setOpen(false); ref.current = null }, 1500)
-
-    if (ImitationGlobal.state.store.message !== '') setOpen(true)
-
-    if (ImitationGlobal.state.store.message === '') setOpen(false)
-
+        ref.current.push(r)
+      }
+    })
   }, [ImitationGlobal.state.store.message])
 
-  return <Snackbar open={open} message={ImitationGlobal.state.store.message} anchorOrigin={{ vertical: 'top', horizontal: 'center' }} />
+  React.useEffect(() => {
+    return () => ref.current.forEach(i => clearTimeout(i))
+  }, [])
+
+  return ImitationGlobal.state.store.message.map(((i, index) => {
+    return <Snackbar key={i._hash} open={true} message={i.message} anchorOrigin={{ vertical: 'top', horizontal: 'center' }} style={{ top: 32 + index * 64, transition: '1s all' }} />
+  }))
 }
 
 const dependence = [{ instance: ImitationGlobal, dependence: state => [ImitationGlobal.state.store.message] }]

@@ -6,7 +6,7 @@ import PencilInit from './View.Config.Pencil'
 
 import ImitationGlobal from './Imitation.Global'
 
-import { hash, debounce, throttleLastRAF } from './utils.common'
+import { hash, debounce, throttleLastRAF, throttlePipeTime } from './utils.common'
 
 import { apiCanvas } from './api'
 

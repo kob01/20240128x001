@@ -47,7 +47,7 @@ function App(props) {
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <VisibilityIcon color='primary' fontSize='small' style={{ marginRight: 8, opacity: i.visibility ? 1 : 0.2, transition: '1s all' }} onClick={(e) => { e.stopPropagation(); ImitationPageCanvas.state.function.onCanvasLayerActionVisibility(canvasLayerFind._hash, i._hash, !i.visibility) }} />
               <DeleteIcon color='primary' fontSize='small' style={{ marginRight: 8 }} onClick={(e) => { e.stopPropagation(); ImitationPageCanvas.state.function.onCanvasLayerActionRemove(canvasLayerFind._hash, i._hash) }} />
-              <EditIcon color='primary' fontSize='small' onClick={(e) => { e.stopPropagation(); ImitationNavigation.state.function.accordionWindowsAppend('CanvasLayerAction', { canvasLayerHash: canvasLayerFind._hash, canvasLayerActionHash: i._hash }) }} />
+              <EditIcon color='primary' fontSize='small' onClick={(e) => { e.stopPropagation(); ImitationNavigation.state.function.accordionWindowsAppendThrottlePipeTime500('CanvasLayerAction', { canvasLayerHash: canvasLayerFind._hash, canvasLayerActionHash: i._hash }) }} />
             </div>
           </Button>
         </Grid >

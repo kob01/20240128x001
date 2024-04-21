@@ -6,7 +6,7 @@ import { useKeyboardRecord } from './View.Component.KeyboardRecord'
 
 import ContentRender from './View.Page.Canvas.ContentRender'
 
-import { ImitationPageCanvas, ImitationGlobal } from './Imitation'
+import { ImitationPageCanvas, ImitationNavigation, ImitationGlobal } from './Imitation'
 
 import { range, debounce, throttleLastRAF, wheelControl } from './utils.common'
 
@@ -43,10 +43,16 @@ function App() {
 
     if (status === 'afterStart' && inSpace === false && inMeta === false && inControlDraw === true) {
       if (canvasLayerFind === undefined) {
-        ImitationGlobal.state.function.messageAppend('No Layer Select')
+        if (ImitationNavigation.state.store.accordionWindow.find(i => i.accordionWindowsHash === 'CanvasLayers') === undefined) {
+          ImitationNavigation.state.function.accordionWindowsAppendThrottlePipeTime500('CanvasLayers')
+        }
+        ImitationGlobal.state.function.messageAppendThrottlePipeTime500('No Layer Select')
       }
       if (pencilActionRunFind === undefined) {
-        ImitationGlobal.state.function.messageAppend('No Pencil Select')
+        if (ImitationNavigation.state.store.accordionWindow.find(i => i.accordionWindowsHash === 'CanvasPencils') === undefined) {
+          ImitationNavigation.state.function.accordionWindowsAppendThrottlePipeTime500('CanvasPencils')
+        }
+        ImitationGlobal.state.function.messageAppendThrottlePipeTime500('No Pencil Select')
       }
       if (canvasLayerFind !== undefined && canvasLayerFind.visibility === true && pencilActionRunFind !== undefined) {
         dragControlType.current = 0
@@ -128,13 +134,19 @@ function App() {
 
     if (status === 'afterStart' && inControlDraw === true) {
       if (canvasLayerFind === undefined) {
-        ImitationGlobal.state.function.messageAppend('No Layer Select')
+        if (ImitationNavigation.state.store.accordionWindow.find(i => i.accordionWindowsHash === 'CanvasLayers') === undefined) {
+          ImitationNavigation.state.function.accordionWindowsAppendThrottlePipeTime500('CanvasLayers')
+        }
+        ImitationGlobal.state.function.messageAppendThrottlePipeTime500('No Layer Select')
       }
       if (pencilActionRunFind === undefined) {
-        ImitationGlobal.state.function.messageAppend('No Pencil Select')
+        if (ImitationNavigation.state.store.accordionWindow.find(i => i.accordionWindowsHash === 'CanvasPencils') === undefined) {
+          ImitationNavigation.state.function.accordionWindowsAppendThrottlePipeTime500('CanvasPencils')
+        }
+        ImitationGlobal.state.function.messageAppendThrottlePipeTime500('No Pencil Select')
       }
       if (canvasLayerFind !== undefined && canvasLayerFind.visibility === true && pencilActionRunFind !== undefined) {
-        dragControlTime.current = setTimeout(() => dragControlType.current = 0, 100)
+        dragControlType.current = 0
       }
     }
     if (status === 'afterStart' && inTouch2 === true && inControlMove === true) {

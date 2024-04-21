@@ -4,7 +4,7 @@ import Imitation from 'imitation-imm'
 
 import ImitationGlobal from './Imitation.Global'
 
-import { hash, throttleLastRAF } from './utils.common'
+import { hash, throttlePipeTime } from './utils.common'
 
 import { apiNavigation } from './api'
 
@@ -45,24 +45,22 @@ ImitationInstance.state.function.onLoad = () => {
 
   apiNavigation()
     .then(res => {
-      const process = () => {
-        const accordionWindow = res.accordionWindow.shift()
-        if (accordionWindow !== undefined) {
+      if (res.accordionWindow.length > 0) {
+        const process = (accordionWindow, end) => {
           ImitationInstance.state.store.accordionWindow.push(accordionWindow)
           ImitationInstance.state.store.ref.accordionWindow.push({ _hash: hash(), accordionWindowHash: accordionWindow._hash })
           ImitationInstance.state.function.update()
+          if (end) ImitationGlobal.state.function.loadingDown()
         }
+
+        const processThrottlePipeTime500 = throttlePipeTime(process, 200)
+
+        res.accordionWindow.forEach((i, index) => processThrottlePipeTime500(i, index === res.accordionWindow.length - 1))
       }
 
-      const loop = () => {
-        requestIdleCallback((idle) => {
-          while (idle.timeRemaining() > 4) process()
-          if (res.accordionWindow.length > 0) loop()
-          if (res.accordionWindow.length === 0) ImitationGlobal.state.function.loadingDown()
-        })
+      if (res.accordionWindow.length === 0) {
+        ImitationGlobal.state.function.loadingDown()
       }
-
-      loop()
     })
 }
 
@@ -78,6 +76,8 @@ ImitationInstance.state.function.accordionWindowsAppend = (accordionWindowsHash,
 
   ImitationInstance.state.function.updateAccordionWindow()
 }
+
+ImitationInstance.state.function.accordionWindowsAppendThrottlePipeTime500 = throttlePipeTime(ImitationInstance.state.function.accordionWindowsAppend, 500)
 
 ImitationInstance.state.function.accordionWindowsRemove = (_hash) => {
   ImitationInstance.state.store.accordionWindow = ImitationInstance.state.store.accordionWindow.filter(i => i._hash !== _hash)

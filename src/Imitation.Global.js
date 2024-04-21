@@ -1,5 +1,7 @@
 import Imitation from 'imitation-imm'
 
+import { hash, debounce, throttlePipeTime } from './utils.common'
+
 const ImitationInstance = new Imitation()
 
 ImitationInstance.state = { update: {}, store: {}, function: {}, memo: {} }
@@ -13,7 +15,7 @@ ImitationInstance.state.store.recting = false
 
 ImitationInstance.state.store.loading = 0
 
-ImitationInstance.state.store.message = ''
+ImitationInstance.state.store.message = []
 
 ImitationInstance.state.store.page = 'Canvas'
 
@@ -26,7 +28,14 @@ ImitationInstance.state.function.update = () => {
 }
 
 ImitationInstance.state.function.messageAppend = (message) => {
-  ImitationInstance.state.store.message = message
+  ImitationInstance.state.store.message = [...ImitationInstance.state.store.message, { _hash: hash(), message: message }]
+  ImitationInstance.state.function.update()
+}
+
+ImitationInstance.state.function.messageAppendThrottlePipeTime500 = throttlePipeTime(ImitationInstance.state.function.messageAppend, 500)
+
+ImitationInstance.state.function.messageRemove = (_hash) => {
+  ImitationInstance.state.store.message = ImitationInstance.state.store.message.filter(i => i._hash !== _hash)
   ImitationInstance.state.function.update()
 }
 

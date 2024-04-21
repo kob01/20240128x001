@@ -57,7 +57,7 @@ function App(props) {
 
     <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
       <div>Check Actions</div>
-      <IconButton size='small' onClick={() => { ImitationNavigation.state.function.accordionWindowsAppend('CanvasLayerActions', { canvasLayerHash: canvasLayerFind._hash }) }}><LayersIcon color='primary' fontSize='small' /></IconButton>
+      <IconButton size='small' onClick={() => { ImitationNavigation.state.function.accordionWindowsAppendThrottlePipeTime500('CanvasLayerActions', { canvasLayerHash: canvasLayerFind._hash }) }}><LayersIcon color='primary' fontSize='small' /></IconButton>
     </Grid>
 
   </Grid>

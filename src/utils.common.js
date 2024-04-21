@@ -35,17 +35,32 @@ const debounce = (fn, time) => {
 }
 
 const throttleLastRAF = (fn) => {
-  var ref = { current: undefined }
-  var refTime
+  var ref = { current: undefined, time: undefined }
 
-  return (...args) => { ref.current = () => fn(...args); if (refTime === undefined) requestAnimationFrame(() => { ref.current(...args); refTime = undefined }); }
+  return (...args) => { ref.current = () => fn(...args); if (ref.time === undefined) requestAnimationFrame(() => { ref.current(...args); ref.time = undefined }); }
 }
 
 const throttleLastRIC = (fn) => {
-  var ref = { current: undefined }
-  var refTime
+  var ref = { current: undefined, time: undefined }
 
-  return (...args) => { ref.current = () => fn(...args); if (refTime === undefined) requestIdleCallback(() => { ref.current(...args); refTime = undefined }); }
+  return (...args) => { ref.current = () => fn(...args); if (ref.time === undefined) requestIdleCallback(() => { ref.current(...args); ref.time = undefined }); }
+}
+
+const throttlePipeTime = (fn, time) => {
+  var ref = { current: [], run: false }
+
+  const loop = () => {
+    ref.run = true
+
+    if (ref.current.length > 0) ref.current.shift()()
+
+    setTimeout(() => {
+      if (ref.current.length > 0) loop()
+      if (ref.current.length === 0) ref.run = false
+    }, time)
+  }
+
+  return (...args) => { ref.current.push(() => fn(...args)); if (ref.run === false) loop(); }
 }
 
 const wheelControl = (callback) => {
@@ -118,4 +133,4 @@ const caculatePositionCenter = (wrapper, target, offset) => {
   return [sx, sy, swidth, sheight, x, y, width, height]
 }
 
-export { hash, rgbaSpilt, rgbaReplaceAlpha, debounce, throttleLastRAF, throttleLastRIC, wheelControl, fixed, range, caculatePositionCenter }
+export { hash, rgbaSpilt, rgbaReplaceAlpha, debounce, throttleLastRAF, throttleLastRIC, throttlePipeTime, wheelControl, fixed, range, caculatePositionCenter }
