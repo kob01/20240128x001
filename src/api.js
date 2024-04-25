@@ -1,5 +1,7 @@
 import { ImitationGlobal, ImitationNavigation, ImitationPageCanvas, ImitationPageLibrary, withBindComponentPure } from './Imitation'
 
+import { localStorageCache } from  './const'
+
 import mockNavigationAccordionWindow from './mock.navigation.accordionWindow.json'
 import mockCanvasSource from './mock.canvas.source.json'
 import mockCanvasSourceEmpty from './mock.canvas.source.empty.json'
@@ -22,7 +24,7 @@ const load = () => {
   }
 
   if (mode === 'localStorage') {
-    const cache = window.localStorage.getItem('cache') ? JSON.parse(window.localStorage.getItem('cache')) : undefined
+    const cache = window.localStorage.getItem(localStorageCache) ? JSON.parse(window.localStorage.getItem(localStorageCache)) : undefined
 
     if (cache === undefined) return {
       status: 'empty',

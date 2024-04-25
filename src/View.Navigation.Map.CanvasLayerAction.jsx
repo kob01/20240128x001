@@ -15,16 +15,21 @@ import { ButtonSX, DialogSX, TextFieldSX, TabsSX, DividerSX, SwitchSX, SelectSX,
 function App(props) {
   const accordionWindowsFind = ImitationNavigation.state.memo.accordionWindowsFind(props.accordionWindowsHash)
   const canvasLayerFind = ImitationPageCanvas.state.memo.canvasLayerFind(accordionWindowsFind.property.canvasLayerHash)
+  const canvasLayerActionFind = ImitationPageCanvas.state.memo.canvasLayerActionFind(accordionWindowsFind.property.canvasLayerHash, accordionWindowsFind.property.canvasLayerActionHash)
   const canvasLayerActionVisibilityTrackFindIndex = ImitationPageCanvas.state.memo.canvasLayerActionVisibilityTrackFindIndex(accordionWindowsFind.property.canvasLayerHash, canvasLayerFind ? [canvasLayerFind.action.map(i => i.visibility).join('')] : [''])
 
-  if (canvasLayerFind === undefined) accordionWindowsFind.hide = true
+  if (canvasLayerFind === undefined || canvasLayerActionFind === undefined) accordionWindowsFind.hide = true
 
-  if (canvasLayerFind === undefined) return null
+  if (canvasLayerFind === undefined || canvasLayerActionFind === undefined) return null
 
   return <Grid container spacing={2}>
 
     <Grid item xs={12}>
       Layer Hash ID: {canvasLayerFind._hash}
+    </Grid>
+
+    <Grid item xs={12}>
+      Action Hash ID: {canvasLayerActionFind._hash}
     </Grid>
 
     {

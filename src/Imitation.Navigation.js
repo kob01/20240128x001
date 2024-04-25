@@ -71,7 +71,7 @@ ImitationInstance.state.function.onUnload = () => {
 ImitationInstance.state.function.accordionWindowsAppend = (accordionWindowsHash, property) => {
   const accordionWindowHash = hash()
 
-  ImitationInstance.state.store.accordionWindow.push({ _hash: accordionWindowHash, accordionWindowsHash: accordionWindowsHash, property: property, update: performance.now(), load: false, hide: false })
+  ImitationInstance.state.store.accordionWindow.push({ _hash: accordionWindowHash, accordionWindowsHash: accordionWindowsHash, property: property, translateX: undefined, translateY: undefined, zIndex: undefined, expand: true, load: false, hide: false })
   ImitationInstance.state.store.ref.accordionWindow.push({ _hash: hash(), accordionWindowHash: accordionWindowHash })
 
   ImitationInstance.state.function.updateAccordionWindow()

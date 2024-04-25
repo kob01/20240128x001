@@ -29,8 +29,6 @@ function NavigationRenderItem(props) {
 
   const accordionWindowsFixTranslateThrottleLastRAF = React.useCallback(throttleLastRAF(ImitationNavigation.state.function.accordionWindowsFixTranslate), [])
 
-  const [expand, setExpand] = React.useState(true)
-
   const [transitionProperty, setTransitionProperty] = React.useState('background, box-shadow, opacity, transform')
 
   const style = React.useMemo(() => {
@@ -63,7 +61,10 @@ function NavigationRenderItem(props) {
     }
 
     if (status === 'afterEnd') {
-      if (continuedX === 0 && continuedY === 0) setExpand(!expand)
+      if (continuedX === 0 && continuedY === 0) {
+        accordionWindowsFind.expand = !accordionWindowsFind.expand
+        ImitationNavigation.state.function.update()
+      }
     }
 
     if (status === 'afterStart') setTransitionProperty('background, box-shadow, opacity')
@@ -87,7 +88,10 @@ function NavigationRenderItem(props) {
     }
 
     if (status === 'afterEnd') {
-      if (continuedX === 0 && continuedY === 0) setExpand(!expand)
+      if (continuedX === 0 && continuedY === 0) {
+        accordionWindowsFind.expand = !accordionWindowsFind.expand
+        ImitationNavigation.state.function.update()
+      }
     }
 
     if (status === 'afterStart') setTransitionProperty('background, box-shadow, opacity')
@@ -107,7 +111,7 @@ function NavigationRenderItem(props) {
     }
 
     if (accordionWindowsFind.load === false) {
-      if (ImitationNavigation.state.store.accordionWindow.length === 1) {
+      if (ImitationNavigation.state.store.accordionWindow.length === 1 && (accordionWindowsFind.translateX === undefined && accordionWindowsFind.translateY === undefined)) {
         accordionWindowsFind.translateX = (accordionWindowsRefFind.accordionRef.offsetWidth - ImitationGlobal.state.store.rect.width + 32) / 2
         accordionWindowsFind.translateY = (accordionWindowsRefFind.accordionRef.offsetHeight - ImitationGlobal.state.store.rect.height + 32) / 2
         accordionWindowsFind.zIndex = 1
@@ -181,7 +185,7 @@ function NavigationRenderItem(props) {
     }
   }, [])
 
-  return <Accordion {...AccordionSX()} style={{ width: 320, maxWidth: ImitationGlobal.state.store.rect.width - 32, height: 'fit-content', maxHeight: ImitationGlobal.state.store.rect.height - 96, overflowY: 'auto', position: 'absolute', zIndex: accordionWindowsFind.zIndex, transitionProperty: transitionProperty, transitionDuration: '1s', ...style }} expanded={expand} onMouseDown={onMouseDownAccordion} onTouchStart={onTouchStartAccordion} ref={el => accordionWindowsRefFind.accordionRef = el}>
+  return <Accordion {...AccordionSX()} style={{ width: 320, maxWidth: ImitationGlobal.state.store.rect.width - 32, height: 'fit-content', maxHeight: ImitationGlobal.state.store.rect.height - 96, overflowY: 'auto', position: 'absolute', zIndex: accordionWindowsFind.zIndex, transitionProperty: transitionProperty, transitionDuration: '1s', ...style }} expanded={accordionWindowsFind.expand} onMouseDown={onMouseDownAccordion} onTouchStart={onTouchStartAccordion} ref={el => accordionWindowsRefFind.accordionRef = el}>
     <AccordionSummary
       onMouseDown={onMouseDown}
       onTouchStart={onTouchStart}
@@ -192,9 +196,9 @@ function NavigationRenderItem(props) {
       }
       children={
         <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
-          <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', height: 0, marginRight: 8, width: expand ? 0 : 24, transition: '1s all' }}>
-            <ChangeHistoryIcon style={{ position: 'absolute', transform: `scale(${expand ? 0 : 1})`, transition: '1s all' }} />
-            <ChangeHistoryIcon style={{ position: 'absolute', transform: `scale(${expand ? 0 : 1}) rotate(180deg)`, transition: '1s all' }} />
+          <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', height: 0, marginRight: 8, width: accordionWindowsFind.expand ? 0 : 24, transition: '1s all' }}>
+            <ChangeHistoryIcon style={{ position: 'absolute', transform: `scale(${accordionWindowsFind.expand ? 0 : 1})`, transition: '1s all' }} />
+            <ChangeHistoryIcon style={{ position: 'absolute', transform: `scale(${accordionWindowsFind.expand ? 0 : 1}) rotate(180deg)`, transition: '1s all' }} />
           </div>
           <div >{content.summary}</div>
         </div>
@@ -203,8 +207,8 @@ function NavigationRenderItem(props) {
     />
 
     <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <Divider {...DividerSX()} style={{ width: expand ? 'calc(100% -  32px)' : 0, transition: '1s all' }} />
-      <ChangeHistoryIcon style={{ position: 'absolute', transform: `scale(${expand ? 1 : 0}) rotate(180deg)`, transition: '1s all' }} />
+      <Divider {...DividerSX()} style={{ width: accordionWindowsFind.expand ? 'calc(100% -  32px)' : 0, transition: '1s all' }} />
+      <ChangeHistoryIcon style={{ position: 'absolute', transform: `scale(${accordionWindowsFind.expand ? 1 : 0}) rotate(180deg)`, transition: '1s all' }} />
     </div>
 
     <AccordionDetails
@@ -228,16 +232,34 @@ function NavigationRenderItem(props) {
     />
 
     <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}>
-      <Divider {...DividerSX()} style={{ width: expand ? 'calc(100% -  32px)' : 0, transition: '1s all' }} />
-      <ChangeHistoryIcon style={{ position: 'absolute', transform: `scale(${expand ? 1 : 0})`, transition: '1s all' }} />
+      <Divider {...DividerSX()} style={{ width: accordionWindowsFind.expand ? 'calc(100% -  32px)' : 0, transition: '1s all' }} />
+      <ChangeHistoryIcon style={{ position: 'absolute', transform: `scale(${accordionWindowsFind.expand ? 1 : 0})`, transition: '1s all' }} />
     </div>
   </Accordion>
+}
+
+function NavigationRenderItemMemo(props) {
+  const accordionWindowsFind = ImitationNavigation.state.memo.accordionWindowsFind(props._hash)
+
+  const render = React.useMemo(
+    () => {
+      return <NavigationRenderItem {...props} />
+    },
+    [
+      ...Object.values(accordionWindowsFind),
+      ImitationGlobal.state.store.rect,
+      ImitationGlobal.state.store.page,
+      ...Object.values(ImitationGlobal.state.store.theme.palette).map(i => i.main)
+    ]
+  )
+
+  return render
 }
 
 function App() {
   return <div style={{ position: 'absolute', zIndex: 900, width: 0, height: 0, left: 0, right: 0, top: 0, bottom: 0, margin: 'auto', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
     {
-      ImitationNavigation.state.store.accordionWindow.map((i => <NavigationRenderItem key={i._hash} {...i} />))
+      ImitationNavigation.state.store.accordionWindow.map((i => <NavigationRenderItemMemo key={i._hash} {...i} />))
     }
   </div>
 }

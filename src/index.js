@@ -12,7 +12,6 @@ link.rel = 'icon'
 link.href = icon
 document.head.append(link)
 
-
 const styleAppendI = () => {
   const id = '*'
 

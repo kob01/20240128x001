@@ -358,13 +358,20 @@ ImitationInstance.state.memo.canvasLayerRefFind = (layerHash, dep = []) => React
   return ImitationInstance.state.store.ref.layer.find(i => i.layerHash === layerHash)
 }, [...dep, layerHash, ImitationInstance.state.store.ref.layer, ImitationInstance.state.store.ref.layer.length])
 
+ImitationInstance.state.memo.canvasLayerActionFind = (layerHash, layerActionHash, dep = []) => React.useMemo(() => {
+  const canvasLayerFind = ImitationInstance.state.store.source.canvas.layer.find(i => i._hash === layerHash)
+  if (canvasLayerFind === undefined) return undefined
+  if (canvasLayerFind !== undefined) return canvasLayerFind.action.find(i => i._hash === layerActionHash)
+}, [...dep, layerHash, layerActionHash, ImitationInstance.state.store.source.canvas.layer, ImitationInstance.state.store.source.canvas.layer.length])
 
 ImitationInstance.state.memo.pencilFind = (_hash, dep = []) => React.useMemo(() => {
   return ImitationInstance.state.store.pencil.find(i => i._hash === _hash)
 }, [...dep, _hash, ImitationInstance.state.store.pencil, ImitationInstance.state.store.pencil.length])
 
 ImitationInstance.state.memo.pencilActionRunFind = (_hash, dep = []) => React.useMemo(() => {
-  return ImitationInstance.state.store.pencil.find(i => i._hash === _hash) ? ImitationInstance.state.store.pencil.find(i => i._hash === _hash).pencilAction() : undefined
+  const pencilFind = ImitationInstance.state.store.pencil.find(i => i._hash === _hash)
+  if (pencilFind === undefined) return undefined
+  if (pencilFind !== undefined) return pencilFind.pencilAction()
 }, [...dep, _hash, ImitationInstance.state.store.pencil, ImitationInstance.state.store.pencil.length])
 
 ImitationInstance.state.memo.pencilRenderFindMap = (key, dep = []) => React.useMemo(() => {

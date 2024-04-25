@@ -1,1 +1,77 @@
-[{"_hash":"9QR641ODXF8OO1PR","accordionWindowsHash":"CanvasLayers","update":22217.300000000745,"load":false,"hide":false,"translateX":-784,"translateY":-372.16668701171875,"zIndex":1},{"_hash":"6JFR26KUQ1GKWYHC","accordionWindowsHash":"CanvasLayer","property":{"canvasLayerHash":"W847DNS8SRSBJ0D6"},"update":7010.5,"load":false,"hide":false,"translateX":-784,"translateY":-80,"zIndex":4},{"_hash":"QV30L0ND2UR4DX23","accordionWindowsHash":"CanvasPencils","update":11098,"load":false,"hide":false,"translateX":784,"translateY":-373.16668701171875,"zIndex":4},{"_hash":"OGRGXRP1DDJTF2AV","accordionWindowsHash":"CanvasPencil","property":{"pencilHash":"2d-Line-V1"},"update":11098.099999997765,"load":false,"hide":false,"translateX":784,"translateY":343.16668701171875,"zIndex":5},{"_hash":"GD0EQTZEWDFW4FVK","accordionWindowsHash":"CanvasLayerActions","property":{"canvasLayerHash":"W847DNS8SRSBJ0D6"},"update":6057.199999999255,"load":false,"hide":false,"translateX":-784,"translateY":313.16668701171875,"zIndex":4},{"_hash":"QTJK5KPMI1LNXJ5I","accordionWindowsHash":"GlobalSetting","update":13416.099999997765,"load":false,"hide":false,"translateX":784,"translateY":6.83331298828125,"zIndex":6}]
+[
+  {
+    "_hash": "FTWZR5K004GWFU59",
+    "accordionWindowsHash": "CanvasLayers",
+    "translateX": -724,
+    "translateY": -342,
+    "zIndex": 3,
+    "expand": true,
+    "load": false,
+    "hide": false,
+    "update": 13184.29999999702
+  },
+  {
+    "_hash": "YE25J2NVSRV3W4GH",
+    "accordionWindowsHash": "CanvasPencils",
+    "translateX": 724,
+    "translateY": -343,
+    "zIndex": 2,
+    "expand": true,
+    "load": false,
+    "hide": false,
+    "update": 13184.29999999702
+  },
+  {
+    "_hash": "2PD1HXKHDM812RT9",
+    "accordionWindowsHash": "CanvasPencil",
+    "property": {
+      "pencilHash": "2d-Line-V1"
+    },
+    "translateX": 724,
+    "translateY": -30,
+    "zIndex": 1,
+    "expand": true,
+    "load": false,
+    "hide": false,
+    "update": 13184.29999999702
+  },
+  {
+    "_hash": "5V2SC6W4EBKRVRBL",
+    "accordionWindowsHash": "CanvasLayer",
+    "property": {
+      "canvasLayerHash": "W847DNS8SRSBJ0D6"
+    },
+    "translateX": -724,
+    "translateY": -69,
+    "zIndex": 4,
+    "expand": true,
+    "load": false,
+    "hide": false,
+    "update": 15973.29999999702
+  },
+  {
+    "_hash": "MA6GK2RCNHIIHLFP",
+    "accordionWindowsHash": "CanvasLayerActions",
+    "property": {
+      "canvasLayerHash": "W847DNS8SRSBJ0D6"
+    },
+    "translateX": -724,
+    "translateY": 283,
+    "zIndex": 5,
+    "expand": true,
+    "load": false,
+    "hide": false,
+    "update": 17195.59999999404
+  },
+  {
+    "_hash": "GO2KHOUMJ6XK4LCP",
+    "accordionWindowsHash": "GlobalSetting",
+    "translateX": 724,
+    "translateY": 313,
+    "zIndex": 6,
+    "expand": true,
+    "load": false,
+    "hide": false,
+    "update": 26348.89999999106
+  }
+]

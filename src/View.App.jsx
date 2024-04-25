@@ -48,7 +48,7 @@ function App() {
 }
 
 const dependence = [
-  { instance: ImitationGlobal, dependence: state => [ImitationGlobal.state.store.rect, ImitationGlobal.state.store.recting, ImitationGlobal.state.store.load, ...Object.values(state.store.theme.palette).map(i => i.main)] }
+  { instance: ImitationGlobal, dependence: state => [ImitationGlobal.state.store.rect, ImitationGlobal.state.store.recting, ImitationGlobal.state.store.load, ...Object.values(ImitationGlobal.state.store.theme.palette).map(i => i.main)] }
 ]
 
 export default withBindComponentPure(App, dependence)

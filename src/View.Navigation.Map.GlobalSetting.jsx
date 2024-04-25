@@ -11,6 +11,8 @@ import { ImitationGlobal, ImitationNavigation, ImitationPageCanvas, withBindComp
 
 import { DialogSX, TextFieldSX, TabsSX, DividerSX, SwitchSX, SelectSX, DrawerSX, AccordionSX, PaperSX, TooltipSX } from './utils.mui.sx'
 
+import { localStorageCache } from  './const'
+
 function App() {
   const navigationAccordionWindow = () => JSON.stringify(ImitationNavigation.state.store.accordionWindow.map(i => ({ ...i, load: false })))
   const canvasSource = () => JSON.stringify(ImitationPageCanvas.state.store.source)
@@ -23,11 +25,11 @@ function App() {
       localStorageCanvasActive: JSON.parse(canvasActive())
     }
 
-    window.localStorage.setItem('cache', JSON.stringify(cache))
+    window.localStorage.setItem(localStorageCache, JSON.stringify(cache))
   }
 
   const clearLocalStorage = () => {
-    window.localStorage.removeItem('cache')
+    window.localStorage.removeItem(localStorageCache)
   }
 
   return <Grid container spacing={0} style={{ fontSize: 12 }}>
