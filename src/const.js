@@ -1,3 +1,3 @@
-const localStorageCache = 'cache-1'
+const localStorageCache = 'cache-2'
 
 export { localStorageCache }

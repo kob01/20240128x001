@@ -90,10 +90,8 @@ ImitationInstance.state.function.accordionWindowsActive = (_hash) => {
   const zIndex = ImitationInstance.state.store.accordionWindow.find(i => i._hash === _hash).zIndex
 
   ImitationInstance.state.store.accordionWindow.forEach(i => {
-    if (i._hash === _hash) i.update = performance.now()
-    if (i._hash !== _hash && i.zIndex > zIndex) i.update = performance.now()
     if (i._hash === _hash) i.zIndex = ImitationInstance.state.store.accordionWindow.length
-    if (i._hash !== _hash && i.zIndex > zIndex) i.zIndex = i.zIndex - 1
+    if (i._hash !== _hash && i.zIndex >= zIndex) i.zIndex = i.zIndex - 1
   })
 
   ImitationInstance.state.function.updateAccordionWindow()

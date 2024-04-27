@@ -39,7 +39,7 @@ function Information() {
     </Grid>
 
     {/* <Grid item xs={12}>
-      <NavigationAccordion text={'Action'} type={['library', 'action']}>
+      <NavigationAccordion text={'Draw'} type={['library', 'graph']}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <Button fullWidth style={{ position: 'relative', justifyContent: 'flex-start' }} onClick={() => { }}><EditIcon style={{ marginRight: 8 }} />Edit</Button>

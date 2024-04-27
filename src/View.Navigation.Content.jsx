@@ -200,7 +200,7 @@ function NavigationRenderItem(props) {
             <ChangeHistoryIcon style={{ position: 'absolute', transform: `scale(${accordionWindowsFind.expand ? 0 : 1})`, transition: '1s all' }} />
             <ChangeHistoryIcon style={{ position: 'absolute', transform: `scale(${accordionWindowsFind.expand ? 0 : 1}) rotate(180deg)`, transition: '1s all' }} />
           </div>
-          <div >{content.summary}</div>
+          <div >{content.summary} {accordionWindowsFind.zIndex}</div>
         </div>
       }
       ref={el => accordionWindowsRefFind.accordionSummaryRef = el}
@@ -208,11 +208,11 @@ function NavigationRenderItem(props) {
 
     <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
       <Divider {...DividerSX()} style={{ width: accordionWindowsFind.expand ? 'calc(100% -  32px)' : 0, transition: '1s all' }} />
-      <ChangeHistoryIcon style={{ position: 'absolute', transform: `scale(${accordionWindowsFind.expand ? 1 : 0}) rotate(180deg)`, transition: '1s all' }} />
+      <ChangeHistoryIcon fontSize='small' style={{ position: 'absolute', transform: `scale(${accordionWindowsFind.expand ? 1 : 0}) rotate(180deg)`, transition: '1s all' }} />
     </div>
 
     <AccordionDetails
-      style={{ fontSize: 12 }}
+      style={{ fontSize: 12, overflowX: 'hidden' }}
       children={
         <>
           {
@@ -231,10 +231,10 @@ function NavigationRenderItem(props) {
       }
     />
 
-    <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}>
+    {/* <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}>
       <Divider {...DividerSX()} style={{ width: accordionWindowsFind.expand ? 'calc(100% -  32px)' : 0, transition: '1s all' }} />
-      <ChangeHistoryIcon style={{ position: 'absolute', transform: `scale(${accordionWindowsFind.expand ? 1 : 0})`, transition: '1s all' }} />
-    </div>
+      <ChangeHistoryIcon fontSize='small' style={{ position: 'absolute', transform: `scale(${accordionWindowsFind.expand ? 1 : 0})`, transition: '1s all' }} />
+    </div> */}
   </Accordion>
 }
 

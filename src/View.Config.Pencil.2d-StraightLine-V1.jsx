@@ -13,14 +13,14 @@ import { TextFieldSX, TooltipSX, PaperSX } from './utils.mui.sx'
 
 import { hash } from './utils.common'
 
-const _hash = '2d-StraightLine-V2'
+const _hash = 'YWRS25OLPFRT77O7'
 
 const type = 'StraightLine'
 
-const name = 'StraightLine-V2'
+const name = 'StraightLine-V1'
 
 function settingComponent(props) {
-  const { value, onChange } = props
+  const { value, onChange, inDraw, inGraph } = props
 
   return <Grid container spacing={0}>
     <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
@@ -64,53 +64,87 @@ function settingComponent(props) {
         <Slider size='small' style={{ width: 120 }} value={value.width} onChange={(e, v) => { value.width = v; onChange(); }} min={1} max={10} step={1} />
       </div>
     </Grid>
+
+    {
+      inGraph ?
+        <>
+          <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
+            <div>Path Start X</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <TextField {...TextFieldSXSmall()} size='small' style={{ width: 120 }} value={value.path[0].x} onChange={(e) => { value.path[0].x = e.target.value; onChange(); }} />
+            </div>
+          </Grid>
+
+          <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
+            <div>Path Start Y</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <TextField {...TextFieldSXSmall()} size='small' style={{ width: 120 }} value={value.path[0].y} onChange={(e) => { value.path[0].y = e.target.value; onChange(); }} />
+            </div>
+          </Grid>
+
+          <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
+            <div>Path Start X</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <TextField {...TextFieldSXSmall()} size='small' style={{ width: 120 }} value={value.path[1].x} onChange={(e) => { value.path[1].x = e.target.value; onChange(); }} />
+            </div>
+          </Grid>
+
+          <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
+            <div>Path Start Y</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <TextField {...TextFieldSXSmall()} size='small' style={{ width: 120 }} value={value.path[1].y} onChange={(e) => { value.path[1].y = e.target.value; onChange(); }} />
+            </div>
+          </Grid>
+        </>
+        : null
+    }
   </Grid>
 }
 
 const settingDefault = { color: 'rgba(0, 0, 0, 1)', alpha: 1, width: 1, path: [] }
 
-const pencilRender = (canvas, context, layer, action) => {
+const pencilRender = (canvas, context, layer, graph) => {
   context.save()
 
-  context.globalAlpha = action.setting.alpha
-  context.strokeStyle = action.setting.color
-  context.lineWidth = action.setting.width
+  context.globalAlpha = graph.setting.alpha
+  context.strokeStyle = graph.setting.color
+  context.lineWidth = graph.setting.width
 
-  context.beginPath(action.setting.path[0].x, action.setting.path[0].y)
-  context.moveTo(action.setting.path[0].x, action.setting.path[0].y)
-  context.lineTo(action.setting.path[1].x, action.setting.path[1].y)
+  context.beginPath(graph.setting.path[0].x, graph.setting.path[0].y)
+  context.moveTo(graph.setting.path[0].x, graph.setting.path[0].y)
+  context.lineTo(graph.setting.path[1].x, graph.setting.path[1].y)
 
   context.stroke()
 
   context.restore()
 }
 
-const pencilAction = () => {
-  const ref = { action: undefined }
+const pencilDraw = () => {
+  const ref = { graph: undefined }
 
-  return (canvas, context, setting, layer, action, status, x, y) => {
+  return (canvas, context, setting, layer, graph, status, x, y) => {
 
     if (status === 'afterStart') {
-      ref.action = { _hash: hash(), pencilHash: _hash, visibility: true, setting: structuredClone(setting) }
-      action.push(ref.action)
+      ref.graph = { _hash: hash(), pencilHash: _hash, visibility: true, setting: structuredClone(setting) }
+      graph.push(ref.graph)
     }
 
     if (status === 'afterStart') {
-      ref.action.setting.path.push({ x: Math.round(x), y: Math.round(y) }, { x: Math.round(x), y: Math.round(y) })
+      ref.graph.setting.path.push({ x: Math.round(x), y: Math.round(y) }, { x: Math.round(x), y: Math.round(y) })
     }
 
     if (status === 'afterMove') {
-      ref.action.setting.path[1].x = Math.round(x)
-      ref.action.setting.path[1].y = Math.round(y)
+      ref.graph.setting.path[1].x = Math.round(x)
+      ref.graph.setting.path[1].y = Math.round(y)
     }
 
     if (status === 'afterEnd') {
-      ref.action = undefined
+      ref.graph = undefined
     }
 
   }
 }
 
-const r = { _hash: _hash, type: type, name: name, pencilRender: pencilRender, pencilAction: pencilAction, settingComponent: settingComponent, settingDefault: settingDefault }
+const r = { _hash: _hash, type: type, name: name, pencilRender: pencilRender, pencilDraw: pencilDraw, settingComponent: settingComponent, settingDefault: settingDefault }
 
 export default r

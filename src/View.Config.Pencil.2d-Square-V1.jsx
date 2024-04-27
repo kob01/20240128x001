@@ -15,11 +15,11 @@ import { TextFieldSXSmall, TooltipSX, PaperSX, SwitchSX } from './utils.mui.sx'
 
 import { hash } from './utils.common'
 
-const _hash = 'HMSHKH7G4AGOPKFR'
+const _hash = 'YY7BA1LAVJVWOLIA'
 
-const type = 'Rectangle'
+const type = 'Square'
 
-const name = 'Rectangle-V1'
+const name = 'Square-V2'
 
 function settingComponent(props) {
   const { value, onChange, inDraw, inGraph } = props
@@ -85,28 +85,28 @@ function settingComponent(props) {
       inGraph ?
         <>
           <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
-            <div>Path Start X</div>
+            <div>Path Center X</div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <TextField {...TextFieldSXSmall()} size='small' style={{ width: 120 }} value={value.path[0].x} onChange={(e) => { value.path[0].x = e.target.value; onChange(); }} />
             </div>
           </Grid>
 
           <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
-            <div>Path Start Y</div>
+            <div>Path Center Y</div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <TextField {...TextFieldSXSmall()} size='small' style={{ width: 120 }} value={value.path[0].y} onChange={(e) => { value.path[0].y = e.target.value; onChange(); }} />
             </div>
           </Grid>
 
           <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
-            <div>Path Start X</div>
+            <div>Path Radius X</div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <TextField {...TextFieldSXSmall()} size='small' style={{ width: 120 }} value={value.path[1].x} onChange={(e) => { value.path[1].x = e.target.value; onChange(); }} />
             </div>
           </Grid>
 
           <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
-            <div>Path Start Y</div>
+            <div>Path Radius Y</div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <TextField {...TextFieldSXSmall()} size='small' style={{ width: 120 }} value={value.path[1].y} onChange={(e) => { value.path[1].y = e.target.value; onChange(); }} />
             </div>
@@ -120,6 +120,13 @@ function settingComponent(props) {
 const settingDefault = { color: 'rgba(0, 0, 0, 1)', alpha: 1, width: 1, stroke: true, fill: false, path: [] }
 
 const pencilRender = (canvas, context, layer, graph) => {
+  const r =
+    Math.pow(
+      Math.pow(Math.abs(graph.setting.path[1].x - graph.setting.path[0].x), 2) +
+      Math.pow(Math.abs(graph.setting.path[1].y - graph.setting.path[0].y), 2),
+      1 / 2
+    )
+
   context.save()
 
   context.globalAlpha = graph.setting.alpha
@@ -128,8 +135,8 @@ const pencilRender = (canvas, context, layer, graph) => {
   context.lineWidth = graph.setting.width
 
   context.beginPath()
-  
-  context.rect(graph.setting.path[0].x, graph.setting.path[0].y, graph.setting.path[1].x - graph.setting.path[0].x, graph.setting.path[1].y - graph.setting.path[0].y)
+
+  context.rect(graph.setting.path[0].x - r, graph.setting.path[0].y - r, r * 2, r * 2)
 
   if (graph.setting.stroke) context.stroke()
   if (graph.setting.fill) context.fill()

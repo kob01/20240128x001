@@ -61,7 +61,10 @@ const TooltipSXNavigation = (reverse) => {
 const TextFieldSX = (reverse) => {
   return {
     sx: {
-      '& input, & .MuiInputBase-multiline': { fontSize: '14px', padding: '12px' },
+      '& input, & .MuiInputBase-multiline': {
+        fontSize: '14px',
+        padding: '12px'
+      },
       // '& label': { fontSize: '12px', lineHeight: 1, padding: 0, background: 'white' },
       // '& label.MuiFormLabel-filled, & label.Mui-focused, & .MuiInputLabel-shrink': { padding: '4px', marginTop: '2px', background: 'white' },
       // '& fieldset': { top: 0 },
@@ -75,6 +78,19 @@ const TextFieldSX = (reverse) => {
       '& .MuiInputBase-root:hover fieldset': {
         borderColor: themeColor('primary', reverse),
       }
+    }
+  }
+}
+
+const TextFieldSXSmall = (reverse) => {
+  return {
+    sx: {
+      ...TextFieldSX(reverse),
+      '& input, & .MuiInputBase-multiline': {
+        fontSize: '12px',
+        lineHeight: 1,
+        padding: '4px 8px'
+      },
     }
   }
 }
@@ -255,4 +271,4 @@ const PaperSX = (reverse) => {
   }
 }
 
-export { ButtonSX, TooltipSX, TextFieldSX, AutocompleteSX, SelectSX, DrawerSX, DialogSX, TabsSX, DividerSX, SwitchSX, AccordionSX, PaperSX, TooltipSXNavigation }
+export { ButtonSX, TooltipSX, TextFieldSX, TextFieldSXSmall, AutocompleteSX, SelectSX, DrawerSX, DialogSX, TabsSX, DividerSX, SwitchSX, AccordionSX, PaperSX, TooltipSXNavigation }

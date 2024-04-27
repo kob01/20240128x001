@@ -83,15 +83,15 @@ const caculateWidth = (path, width, direction) => {
   if (direction === 'y') return total.map(i => ({ ...path, y: path.y + i }))
 }
 
-const pencilRender = (context, action) => {
+const pencilRender = (context, graph) => {
   context.save()
-  context.globalAlpha = action.alpha
-  context.fillStyle = action.color
-  context.fillRect(action.x, action.y, 1, 1)
+  context.globalAlpha = graph.alpha
+  context.fillStyle = graph.color
+  context.fillRect(graph.x, graph.y, 1, 1)
   context.restore()
 }
 
-const pencilAction = () => {
+const pencilDraw = () => {
   const ref = { positionOrigin: undefined, positionTarget: undefined, positionFirst: undefined }
 
   return (canvas, context, setting, status, relativeX, relativeY, offsetX, offsetY) => {
@@ -198,6 +198,6 @@ const pencilAction = () => {
   }
 }
 
-const r = { _hash: _hash, type: type, label: label, pencilRender: pencilRender, pencilAction: pencilAction, settingComponent: settingComponent, settingDefault: settingDefault }
+const r = { _hash: _hash, type: type, label: label, pencilRender: pencilRender, pencilDraw: pencilDraw, settingComponent: settingComponent, settingDefault: settingDefault }
 
 export default r

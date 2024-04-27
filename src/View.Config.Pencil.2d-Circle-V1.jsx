@@ -15,11 +15,11 @@ import { TextFieldSXSmall, TooltipSX, PaperSX, SwitchSX } from './utils.mui.sx'
 
 import { hash } from './utils.common'
 
-const _hash = 'HMSHKH7G4AGOPKFR'
+const _hash = 'CDJ3WDJAXOUO01XR'
 
-const type = 'Rectangle'
+const type = 'Circle'
 
-const name = 'Rectangle-V1'
+const name = 'Circle-V1'
 
 function settingComponent(props) {
   const { value, onChange, inDraw, inGraph } = props
@@ -81,32 +81,55 @@ function settingComponent(props) {
       </div>
     </Grid>
 
+    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
+      <div>Angle Counterclockwise</div>
+      <div>
+        <Switch {...SwitchSX()} size='small' checked={value.counterclockwise} onChange={(e) => { value.counterclockwise = e.target.checked; value.stroke = !value.fill; onChange(); }} />
+      </div>
+    </Grid>
+
+    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
+      <div>Angle Start</div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ marginRight: 12 }}>{value.sAngle.toFixed(2)}</div>
+        <Slider size='small' style={{ width: 120 }} value={value.sAngle / 2} onChange={(e, v) => { value.sAngle = v * 2; onChange(); }} min={0} max={1} step={0.01} />
+      </div>
+    </Grid>
+
+    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
+      <div>Angle End</div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ marginRight: 12 }}>{value.eAngle.toFixed(2)}</div>
+        <Slider size='small' style={{ width: 120 }} value={value.eAngle / 2} onChange={(e, v) => { value.eAngle = v * 2; onChange(); }} min={0} max={1} step={0.01} />
+      </div>
+    </Grid>
+
     {
       inGraph ?
         <>
           <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
-            <div>Path Start X</div>
+            <div>Path Center X</div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <TextField {...TextFieldSXSmall()} size='small' style={{ width: 120 }} value={value.path[0].x} onChange={(e) => { value.path[0].x = e.target.value; onChange(); }} />
             </div>
           </Grid>
 
           <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
-            <div>Path Start Y</div>
+            <div>Path Center Y</div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <TextField {...TextFieldSXSmall()} size='small' style={{ width: 120 }} value={value.path[0].y} onChange={(e) => { value.path[0].y = e.target.value; onChange(); }} />
             </div>
           </Grid>
 
           <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
-            <div>Path Start X</div>
+            <div>Path Radius X</div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <TextField {...TextFieldSXSmall()} size='small' style={{ width: 120 }} value={value.path[1].x} onChange={(e) => { value.path[1].x = e.target.value; onChange(); }} />
             </div>
           </Grid>
 
           <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
-            <div>Path Start Y</div>
+            <div>Path Radius Y</div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <TextField {...TextFieldSXSmall()} size='small' style={{ width: 120 }} value={value.path[1].y} onChange={(e) => { value.path[1].y = e.target.value; onChange(); }} />
             </div>
@@ -117,9 +140,18 @@ function settingComponent(props) {
   </Grid>
 }
 
-const settingDefault = { color: 'rgba(0, 0, 0, 1)', alpha: 1, width: 1, stroke: true, fill: false, path: [] }
+const settingDefault = { color: 'rgba(0, 0, 0, 1)', alpha: 1, width: 1, stroke: true, fill: false, counterclockwise: false, sAngle: 0, eAngle: 2, path: [] }
 
 const pencilRender = (canvas, context, layer, graph) => {
+  const r =
+    Math.round(
+      Math.pow(
+        Math.pow(Math.abs(graph.setting.path[1].x - graph.setting.path[0].x), 2) +
+        Math.pow(Math.abs(graph.setting.path[1].y - graph.setting.path[0].y), 2),
+        1 / 2
+      )
+    )
+
   context.save()
 
   context.globalAlpha = graph.setting.alpha
@@ -128,8 +160,8 @@ const pencilRender = (canvas, context, layer, graph) => {
   context.lineWidth = graph.setting.width
 
   context.beginPath()
-  
-  context.rect(graph.setting.path[0].x, graph.setting.path[0].y, graph.setting.path[1].x - graph.setting.path[0].x, graph.setting.path[1].y - graph.setting.path[0].y)
+
+  context.arc(graph.setting.path[0].x, graph.setting.path[0].y, r, graph.setting.sAngle * Math.PI, graph.setting.eAngle * Math.PI, graph.setting.counterclockwise)
 
   if (graph.setting.stroke) context.stroke()
   if (graph.setting.fill) context.fill()

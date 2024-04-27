@@ -14,7 +14,7 @@ function App() {
   const canvasLayerFind = ImitationPageCanvas.state.memo.canvasLayerFind(ImitationPageCanvas.state.store.active.layer)
   const canvasLayerRefFind = ImitationPageCanvas.state.memo.canvasLayerRefFind(ImitationPageCanvas.state.store.active.layer)
   const pencilFind = ImitationPageCanvas.state.memo.pencilFind(ImitationPageCanvas.state.store.active.pencil)
-  const pencilActionRunFind = ImitationPageCanvas.state.memo.pencilActionRunFind(ImitationPageCanvas.state.store.active.pencil)
+  const pencilDrawRunFind = ImitationPageCanvas.state.memo.pencilDrawRunFind(ImitationPageCanvas.state.store.active.pencil)
 
   const inControlDraw = ImitationPageCanvas.state.store.control.draw
   const inControlMove = ImitationPageCanvas.state.store.control.move
@@ -48,13 +48,13 @@ function App() {
         }
         ImitationGlobal.state.function.messageAppendThrottlePipeTime500('No Layer Select')
       }
-      if (pencilActionRunFind === undefined) {
+      if (pencilDrawRunFind === undefined) {
         if (ImitationNavigation.state.store.accordionWindow.find(i => i.accordionWindowsHash === 'CanvasPencils') === undefined) {
           ImitationNavigation.state.function.accordionWindowsAppendThrottlePipeTime500('CanvasPencils')
         }
         ImitationGlobal.state.function.messageAppendThrottlePipeTime500('No Pencil Select')
       }
-      if (canvasLayerFind !== undefined && canvasLayerFind.visibility === true && pencilActionRunFind !== undefined) {
+      if (canvasLayerFind !== undefined && canvasLayerFind.visibility === true && pencilDrawRunFind !== undefined) {
         dragControlType.current = 0
       }
     }
@@ -73,11 +73,11 @@ function App() {
       const relativeX = offsetX - translateX
       const relativeY = offsetY - translateY
 
-      pencilActionRunFind(ImitationPageCanvas.state.store.ref.canvas, ImitationPageCanvas.state.store.ref.context, pencilFind.setting, canvasLayerFind, canvasLayerFind.action, status, relativeX, relativeY)
+      pencilDrawRunFind(ImitationPageCanvas.state.store.ref.canvas, ImitationPageCanvas.state.store.ref.context, pencilFind.setting, canvasLayerFind, canvasLayerFind.graph, status, relativeX, relativeY)
 
-      if (status === 'afterStart') canvasLayerRefFind.offscreenExceptLastActionUpdate = true
+      if (status === 'afterStart') canvasLayerRefFind.offscreenExceptLastGraphUpdate = true
 
-      canvasLayerRefFind.offscreenComposeLastActionUpdate = true
+      canvasLayerRefFind.offscreenComposeLastGraphUpdate = true
 
       updateCanvasOffscreenRenderThrottleLastRAF()
       updateDebounce500()
@@ -139,13 +139,13 @@ function App() {
         }
         ImitationGlobal.state.function.messageAppendThrottlePipeTime500('No Layer Select')
       }
-      if (pencilActionRunFind === undefined) {
+      if (pencilDrawRunFind === undefined) {
         if (ImitationNavigation.state.store.accordionWindow.find(i => i.accordionWindowsHash === 'CanvasPencils') === undefined) {
           ImitationNavigation.state.function.accordionWindowsAppendThrottlePipeTime500('CanvasPencils')
         }
         ImitationGlobal.state.function.messageAppendThrottlePipeTime500('No Pencil Select')
       }
-      if (canvasLayerFind !== undefined && canvasLayerFind.visibility === true && pencilActionRunFind !== undefined) {
+      if (canvasLayerFind !== undefined && canvasLayerFind.visibility === true && pencilDrawRunFind !== undefined) {
         dragControlType.current = 0
       }
     }
@@ -166,11 +166,11 @@ function App() {
       const relativeX = offsetX - translateX
       const relativeY = offsetY - translateY
 
-      pencilActionRunFind(ImitationPageCanvas.state.store.ref.canvas, ImitationPageCanvas.state.store.ref.context, pencilFind.setting, canvasLayerFind, canvasLayerFind.action, status, relativeX, relativeY)
+      pencilDrawRunFind(ImitationPageCanvas.state.store.ref.canvas, ImitationPageCanvas.state.store.ref.context, pencilFind.setting, canvasLayerFind, canvasLayerFind.graph, status, relativeX, relativeY)
 
-      if (status === 'afterStart') canvasLayerRefFind.offscreenExceptLastActionUpdate = true
+      if (status === 'afterStart') canvasLayerRefFind.offscreenExceptLastGraphUpdate = true
 
-      canvasLayerRefFind.offscreenComposeLastActionUpdate = true
+      canvasLayerRefFind.offscreenComposeLastGraphUpdate = true
 
       updateCanvasOffscreenRenderThrottleLastRAF()
       updateDebounce500()
@@ -236,6 +236,12 @@ function App() {
       var scaleY = range(Number(Number(ImitationPageCanvas.state.store.view.scaleY - ImitationPageCanvas.state.store.view.scaleY * 0.01 * e.nativeEvent.deltaY).toFixed(2)), 0.02, 24)
       if (e.nativeEvent.deltaY < 0 && scaleY === ImitationPageCanvas.state.store.view.scaleY) var scaleY = range(ImitationPageCanvas.state.store.view.scaleY + 0.01, 0.02, 24)
       if (e.nativeEvent.deltaY > 0 && scaleY === ImitationPageCanvas.state.store.view.scaleY) var scaleY = range(ImitationPageCanvas.state.store.view.scaleY - 0.01, 0.02, 24)
+
+      const offsetX = (e.pageX - ImitationPageCanvas.state.store.rect.width / 2 - ImitationPageCanvas.state.store.rect.left) / ImitationPageCanvas.state.store.view.scaleX / canvasLayerFind.scaleX * ImitationPageCanvas.state.store.view.dpr * (1 - scaleX / ImitationPageCanvas.state.store.view.scaleX)
+      const offsetY = (e.pageY - ImitationPageCanvas.state.store.rect.height / 2 - ImitationPageCanvas.state.store.rect.top) / ImitationPageCanvas.state.store.view.scaleY / canvasLayerFind.scaleY * ImitationPageCanvas.state.store.view.dpr * (1 - scaleY / ImitationPageCanvas.state.store.view.scaleY)
+
+      ImitationPageCanvas.state.store.view.translateX = ImitationPageCanvas.state.store.view.translateX + offsetX
+      ImitationPageCanvas.state.store.view.translateY = ImitationPageCanvas.state.store.view.translateY + offsetY
 
       ImitationPageCanvas.state.store.view.scaleX = scaleX
       ImitationPageCanvas.state.store.view.scaleY = scaleY
