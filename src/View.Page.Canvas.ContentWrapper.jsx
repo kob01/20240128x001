@@ -73,11 +73,11 @@ function App() {
       const relativeX = offsetX - translateX
       const relativeY = offsetY - translateY
 
-      pencilDrawRunFind(ImitationPageCanvas.state.store.ref.canvas, ImitationPageCanvas.state.store.ref.context, pencilFind.setting, canvasLayerFind, canvasLayerFind.graph, status, relativeX, relativeY)
+      pencilDrawRunFind(ImitationPageCanvas.state.store.ref.canvas, ImitationPageCanvas.state.store.ref.context, pencilFind.setting, canvasLayerFind, canvasLayerFind.operation, status, relativeX, relativeY)
 
-      if (status === 'afterStart') canvasLayerRefFind.offscreenExceptLastGraphUpdate = true
+      if (status === 'afterStart') canvasLayerRefFind.offscreenExceptLastOperationUpdate = true
 
-      canvasLayerRefFind.offscreenComposeLastGraphUpdate = true
+      canvasLayerRefFind.offscreenComposeLastOperationUpdate = true
 
       updateCanvasOffscreenRenderThrottleLastRAF()
       updateDebounce500()
@@ -166,11 +166,11 @@ function App() {
       const relativeX = offsetX - translateX
       const relativeY = offsetY - translateY
 
-      pencilDrawRunFind(ImitationPageCanvas.state.store.ref.canvas, ImitationPageCanvas.state.store.ref.context, pencilFind.setting, canvasLayerFind, canvasLayerFind.graph, status, relativeX, relativeY)
+      pencilDrawRunFind(ImitationPageCanvas.state.store.ref.canvas, ImitationPageCanvas.state.store.ref.context, pencilFind.setting, canvasLayerFind, canvasLayerFind.operation, status, relativeX, relativeY)
 
-      if (status === 'afterStart') canvasLayerRefFind.offscreenExceptLastGraphUpdate = true
+      if (status === 'afterStart') canvasLayerRefFind.offscreenExceptLastOperationUpdate = true
 
-      canvasLayerRefFind.offscreenComposeLastGraphUpdate = true
+      canvasLayerRefFind.offscreenComposeLastOperationUpdate = true
 
       updateCanvasOffscreenRenderThrottleLastRAF()
       updateDebounce500()

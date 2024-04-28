@@ -7,7 +7,7 @@ import Paper from '@mui/material/Paper'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 
-import { ClickAwayListener } from './View.Component.ClickAwayListener'
+import { ClickAwayListenerIfOpen } from './View.Component.ClickAwayListenerIfOpen'
 import { ColorPicker } from './View.Component.ColorPicker'
 
 import { TextFieldSXSmall, TooltipSX, PaperSX } from './utils.mui.sx'
@@ -21,7 +21,7 @@ const type = 'Line'
 const name = 'Line-V1'
 
 function settingComponent(props) {
-  const { value, onChange, inDraw, inGraph } = props
+  const { value, onChange, inDraw, inOperation } = props
 
   const [pathIndex, setPathIndex] = React.useState(0)
 
@@ -31,7 +31,7 @@ function settingComponent(props) {
         Color
       </div>
       <div>
-        <ClickAwayListener>
+        <ClickAwayListenerIfOpen onClick={({ inContainStart, inContainEnd, setOpen }) => { if (inContainStart === false && inContainEnd === false) setOpen(false) }}>
           {
             ({ open, setOpen, pushClickAwayRef }) => {
               return <Tooltip
@@ -48,7 +48,7 @@ function settingComponent(props) {
               />
             }
           }
-        </ClickAwayListener>
+        </ClickAwayListenerIfOpen>
       </div>
     </Grid>
 
@@ -69,7 +69,7 @@ function settingComponent(props) {
     </Grid>
 
     {
-      inGraph ?
+      inOperation ?
         <>
           <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
             <div>Path Index</div>
@@ -100,16 +100,16 @@ function settingComponent(props) {
 
 const settingDefault = { color: 'rgba(0, 0, 0, 1)', alpha: 1, width: 1, path: [] }
 
-const pencilRender = (canvas, context, layer, graph) => {
+const pencilRender = (canvas, context, layer, operation) => {
   context.save()
 
-  context.globalAlpha = graph.setting.alpha
-  context.strokeStyle = graph.setting.color
-  context.lineWidth = graph.setting.width
+  context.globalAlpha = operation.setting.alpha
+  context.strokeStyle = operation.setting.color
+  context.lineWidth = operation.setting.width
 
   context.beginPath()
 
-  graph.setting.path.forEach((i, index) => {
+  operation.setting.path.forEach((i, index) => {
     if (index === 0) context.moveTo(i.x, i.y)
     if (index !== 0) context.lineTo(i.x, i.y)
   })
@@ -120,42 +120,42 @@ const pencilRender = (canvas, context, layer, graph) => {
 }
 
 const pencilDraw = () => {
-  const ref = { graph: undefined }
+  const ref = { operation: undefined }
 
-  return (canvas, context, setting, layer, graph, status, x, y) => {
+  return (canvas, context, setting, layer, operation, status, x, y) => {
 
     if (status === 'afterStart') {
-      ref.graph = { _hash: hash(), pencilHash: _hash, visibility: true, setting: structuredClone(setting) }
-      graph.push(ref.graph)
+      ref.operation = { _hash: hash(), pencilHash: _hash, visibility: true, setting: structuredClone(setting) }
+      operation.push(ref.operation)
     }
 
     if (status === 'afterStart') {
-      ref.graph.setting.path.push({ x: Math.round(x), y: Math.round(y) })
+      ref.operation.setting.path.push({ x: Math.round(x), y: Math.round(y) })
     }
 
     if (status === 'afterMove') {
-      if (Math.round(x) !== ref.graph.setting.path[ref.graph.setting.path.length - 1].x || Math.round(y) !== ref.graph.setting.path[ref.graph.setting.path.length - 1].y) {
-        ref.graph.setting.path.push({ x: Math.round(x), y: Math.round(y) })
+      if (Math.round(x) !== ref.operation.setting.path[ref.operation.setting.path.length - 1].x || Math.round(y) !== ref.operation.setting.path[ref.operation.setting.path.length - 1].y) {
+        ref.operation.setting.path.push({ x: Math.round(x), y: Math.round(y) })
         while (
-          ref.graph.setting.path[ref.graph.setting.path.length - 1] !== undefined &&
-          ref.graph.setting.path[ref.graph.setting.path.length - 2] !== undefined &&
-          ref.graph.setting.path[ref.graph.setting.path.length - 3] !== undefined &&
+          ref.operation.setting.path[ref.operation.setting.path.length - 1] !== undefined &&
+          ref.operation.setting.path[ref.operation.setting.path.length - 2] !== undefined &&
+          ref.operation.setting.path[ref.operation.setting.path.length - 3] !== undefined &&
           (
-            (ref.graph.setting.path[ref.graph.setting.path.length - 1].x === ref.graph.setting.path[ref.graph.setting.path.length - 2].x && ref.graph.setting.path[ref.graph.setting.path.length - 2].x === ref.graph.setting.path[ref.graph.setting.path.length - 3].x) ||
-            (ref.graph.setting.path[ref.graph.setting.path.length - 1].y === ref.graph.setting.path[ref.graph.setting.path.length - 2].y && ref.graph.setting.path[ref.graph.setting.path.length - 2].y === ref.graph.setting.path[ref.graph.setting.path.length - 3].y)
+            (ref.operation.setting.path[ref.operation.setting.path.length - 1].x === ref.operation.setting.path[ref.operation.setting.path.length - 2].x && ref.operation.setting.path[ref.operation.setting.path.length - 2].x === ref.operation.setting.path[ref.operation.setting.path.length - 3].x) ||
+            (ref.operation.setting.path[ref.operation.setting.path.length - 1].y === ref.operation.setting.path[ref.operation.setting.path.length - 2].y && ref.operation.setting.path[ref.operation.setting.path.length - 2].y === ref.operation.setting.path[ref.operation.setting.path.length - 3].y)
           ) &&
           (
-            (ref.graph.setting.path[ref.graph.setting.path.length - 1].x - ref.graph.setting.path[ref.graph.setting.path.length - 2].x === ref.graph.setting.path[ref.graph.setting.path.length - 2].x - ref.graph.setting.path[ref.graph.setting.path.length - 3].x) &&
-            (ref.graph.setting.path[ref.graph.setting.path.length - 1].y - ref.graph.setting.path[ref.graph.setting.path.length - 2].y === ref.graph.setting.path[ref.graph.setting.path.length - 2].y - ref.graph.setting.path[ref.graph.setting.path.length - 3].y)
+            (ref.operation.setting.path[ref.operation.setting.path.length - 1].x - ref.operation.setting.path[ref.operation.setting.path.length - 2].x === ref.operation.setting.path[ref.operation.setting.path.length - 2].x - ref.operation.setting.path[ref.operation.setting.path.length - 3].x) &&
+            (ref.operation.setting.path[ref.operation.setting.path.length - 1].y - ref.operation.setting.path[ref.operation.setting.path.length - 2].y === ref.operation.setting.path[ref.operation.setting.path.length - 2].y - ref.operation.setting.path[ref.operation.setting.path.length - 3].y)
           )
         ) {
-          ref.graph.setting.path = ref.graph.setting.path.filter((i) => i !== ref.graph.setting.path[ref.graph.setting.path.length - 2])
+          ref.operation.setting.path = ref.operation.setting.path.filter((i) => i !== ref.operation.setting.path[ref.operation.setting.path.length - 2])
         }
       }
     }
 
     if (status === 'afterEnd') {
-      ref.graph = undefined
+      ref.operation = undefined
     }
 
   }

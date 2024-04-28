@@ -16,8 +16,8 @@ import GlobalSetting from './View.Navigation.Map.GlobalSetting'
 import CanvasControl from './View.Navigation.Map.CanvasControl'
 import CanvasLayers from './View.Navigation.Map.CanvasLayers'
 import CanvasLayer from './View.Navigation.Map.CanvasLayer'
-import CanvasGraphs from './View.Navigation.Map.CanvasGraphs'
-import CanvasGraph from './View.Navigation.Map.CanvasGraph'
+import CanvasOperations from './View.Navigation.Map.CanvasOperations'
+import CanvasOperation from './View.Navigation.Map.CanvasOperation'
 import CanvasPencils from './View.Navigation.Map.CanvasPencils'
 import CanvasPencil from './View.Navigation.Map.CanvasPencil'
 import CanvasView from './View.Navigation.Map.CanvasView'
@@ -30,8 +30,8 @@ const App = [
   { Component: CanvasControl, _hash: 'CanvasControl', summary: 'Control', page: 'Canvas', Icon: LockIcon },
   { Component: CanvasLayers, _hash: 'CanvasLayers', summary: 'Layers', page: 'Canvas', Icon: LayersIcon },
   { Component: CanvasLayer, _hash: 'CanvasLayer', summary: 'Layer', page: 'Canvas' },
-  { Component: CanvasGraphs, _hash: 'CanvasGraphs', summary: 'Layer Graphs', page: 'Canvas' },
-  { Component: CanvasGraph, _hash: 'CanvasGraph', summary: 'Layer Graph', page: 'Canvas' },
+  { Component: CanvasOperations, _hash: 'CanvasOperations', summary: 'Layer Operations', page: 'Canvas' },
+  { Component: CanvasOperation, _hash: 'CanvasOperation', summary: 'Layer Operation', page: 'Canvas' },
   { Component: CanvasPencils, _hash: 'CanvasPencils', summary: 'Pencils', page: 'Canvas', Icon: DrawIcon },
   { Component: CanvasPencil, _hash: 'CanvasPencil', summary: 'Pencil', page: 'Canvas'},
   { Component: CanvasView, _hash: 'CanvasView', summary: 'View', page: 'Canvas', Icon: ViewCarouselIcon },

@@ -5,21 +5,19 @@ const useState = (props) => {
 
   const positionStart = React.useRef()
 
-  const [open, setOpen] = React.useState(false)
-
   React.useEffect(() => {
     if (window.ontouchstart !== undefined) return
 
     const mousedown = (e) => {
-      positionStart.current = { x: e.pageX, y: e.pageY, contains: clickAwayRef.current.some(i => i.target && i.target.contains(e.target)) }
+      positionStart.current = { x: e.pageX, y: e.pageY, inContain: clickAwayRef.current.some(i => i.target && i.target.contains(e.target)) }
     }
 
     const mouseup = (e) => {
       if (!positionStart.current) return
-      if (e.pageX !== positionStart.current.x || e.pageY !== positionStart.current.y) return
-      if (clickAwayRef.current.some(i => i.target && i.target.contains(e.target)) === true) return
-      setOpen(false)
-      if (props.onClick) props.onClick()
+      const inStay = e.pageX === positionStart.current.x && e.pageY === positionStart.current.y
+      const inContainStart = positionStart.current.inContain
+      const inContainEnd = clickAwayRef.current.some(i => i.target && i.target.contains(e.target))
+      if (props.onClick) props.onClick({ inStay, inContainStart, inContainEnd })
     }
 
     document.addEventListener('mousedown', mousedown)
@@ -35,15 +33,15 @@ const useState = (props) => {
     if (window.ontouchstart === undefined) return
 
     const touchstart = (e) => {
-      positionStart.current = { x: e.targetTouches[0].pageX, y: e.targetTouches[0].pageY, contains: clickAwayRef.current.some(i => i.target && i.target.contains(e.target)) }
+      positionStart.current = { x: e.targetTouches[0].pageX, y: e.targetTouches[0].pageY, inContain: clickAwayRef.current.some(i => i.target && i.target.contains(e.target)) }
     }
 
     const touchend = (e) => {
       if (!positionStart.current) return
-      if (e.changedTouches[0].pageX !== positionStart.current.x || e.changedTouches[0].pageY !== positionStart.current.y) return
-      if (clickAwayRef.current.some(i => i.target && i.target.contains(e.target)) === true) return
-      setOpen(false)
-      if (props.onClick) props.onClick()
+      const inStay = e.changedTouches[0].pageX === positionStart.current.x && e.changedTouches[0].pageY === positionStart.current.y
+      const inContainStart = positionStart.current.inContain
+      const inContainEnd = clickAwayRef.current.some(i => i.target && i.target.contains(e.target))
+      if (props.onClick) props.onClick({ inStay, inContainStart, inContainEnd })
     }
 
     document.addEventListener('touchstart', touchstart)
@@ -60,7 +58,7 @@ const useState = (props) => {
     clickAwayRef.current.push({ key, target })
   }
 
-  return { open, setOpen, pushClickAwayRef }
+  return { pushClickAwayRef }
 }
 
 const ClickAwayListener = (props) => { const state = useState(props); return props.children(state); }

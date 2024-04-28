@@ -6,7 +6,7 @@ import Tooltip from '@mui/material/Tooltip'
 import Paper from '@mui/material/Paper'
 import Button from '@mui/material/Button'
 
-import { ClickAwayListener } from './View.Component.ClickAwayListener'
+import { ClickAwayListenerIfOpen } from './View.Component.ClickAwayListenerIfOpen'
 import { ColorPicker } from './View.Component.ColorPicker'
 
 import { TextFieldSX, TooltipSX, PaperSX } from './utils.mui.sx'
@@ -20,7 +20,7 @@ const type = 'StraightLine'
 const name = 'StraightLine-V1'
 
 function settingComponent(props) {
-  const { value, onChange, inDraw, inGraph } = props
+  const { value, onChange, inDraw, inOperation } = props
 
   return <Grid container spacing={0}>
     <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
@@ -28,7 +28,7 @@ function settingComponent(props) {
         Color
       </div>
       <div>
-        <ClickAwayListener>
+        <ClickAwayListenerIfOpen onClick={({ inContainStart, inContainEnd, setOpen }) => { if (inContainStart === false && inContainEnd === false) setOpen(false) }}>
           {
             ({ open, setOpen, pushClickAwayRef }) => {
               return <Tooltip
@@ -45,7 +45,7 @@ function settingComponent(props) {
               />
             }
           }
-        </ClickAwayListener>
+        </ClickAwayListenerIfOpen>
       </div>
     </Grid>
 
@@ -66,7 +66,7 @@ function settingComponent(props) {
     </Grid>
 
     {
-      inGraph ?
+      inOperation ?
         <>
           <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
             <div>Path Start X</div>
@@ -103,16 +103,16 @@ function settingComponent(props) {
 
 const settingDefault = { color: 'rgba(0, 0, 0, 1)', alpha: 1, width: 1, path: [] }
 
-const pencilRender = (canvas, context, layer, graph) => {
+const pencilRender = (canvas, context, layer, operation) => {
   context.save()
 
-  context.globalAlpha = graph.setting.alpha
-  context.strokeStyle = graph.setting.color
-  context.lineWidth = graph.setting.width
+  context.globalAlpha = operation.setting.alpha
+  context.strokeStyle = operation.setting.color
+  context.lineWidth = operation.setting.width
 
-  context.beginPath(graph.setting.path[0].x, graph.setting.path[0].y)
-  context.moveTo(graph.setting.path[0].x, graph.setting.path[0].y)
-  context.lineTo(graph.setting.path[1].x, graph.setting.path[1].y)
+  context.beginPath(operation.setting.path[0].x, operation.setting.path[0].y)
+  context.moveTo(operation.setting.path[0].x, operation.setting.path[0].y)
+  context.lineTo(operation.setting.path[1].x, operation.setting.path[1].y)
 
   context.stroke()
 
@@ -120,26 +120,26 @@ const pencilRender = (canvas, context, layer, graph) => {
 }
 
 const pencilDraw = () => {
-  const ref = { graph: undefined }
+  const ref = { operation: undefined }
 
-  return (canvas, context, setting, layer, graph, status, x, y) => {
+  return (canvas, context, setting, layer, operation, status, x, y) => {
 
     if (status === 'afterStart') {
-      ref.graph = { _hash: hash(), pencilHash: _hash, visibility: true, setting: structuredClone(setting) }
-      graph.push(ref.graph)
+      ref.operation = { _hash: hash(), pencilHash: _hash, visibility: true, setting: structuredClone(setting) }
+      operation.push(ref.operation)
     }
 
     if (status === 'afterStart') {
-      ref.graph.setting.path.push({ x: Math.round(x), y: Math.round(y) }, { x: Math.round(x), y: Math.round(y) })
+      ref.operation.setting.path.push({ x: Math.round(x), y: Math.round(y) }, { x: Math.round(x), y: Math.round(y) })
     }
 
     if (status === 'afterMove') {
-      ref.graph.setting.path[1].x = Math.round(x)
-      ref.graph.setting.path[1].y = Math.round(y)
+      ref.operation.setting.path[1].x = Math.round(x)
+      ref.operation.setting.path[1].y = Math.round(y)
     }
 
     if (status === 'afterEnd') {
-      ref.graph = undefined
+      ref.operation = undefined
     }
 
   }

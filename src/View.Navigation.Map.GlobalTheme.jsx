@@ -6,7 +6,7 @@ import Grid from '@mui/material/Grid'
 import Tooltip from '@mui/material/Tooltip'
 import Slider from '@mui/material/Slider'
 
-import { ClickAwayListener } from './View.Component.ClickAwayListener'
+import { ClickAwayListenerIfOpen } from './View.Component.ClickAwayListenerIfOpen'
 import { ColorPicker } from './View.Component.ColorPicker'
 
 import { ImitationGlobal, withBindComponentPure } from './Imitation'
@@ -35,7 +35,7 @@ function App() {
         Theme Color Background
       </div>
       <div>
-        <ClickAwayListener>
+        <ClickAwayListenerIfOpen onClick={({ inContainStart, inContainEnd, setOpen }) => { if (inContainStart === false && inContainEnd === false) setOpen(false) }}>
           {
             ({ open, setOpen, pushClickAwayRef }) => {
               return <Tooltip
@@ -52,7 +52,7 @@ function App() {
               />
             }
           }
-        </ClickAwayListener>
+        </ClickAwayListenerIfOpen>
       </div>
     </Grid>
 
@@ -61,7 +61,7 @@ function App() {
         Theme Color Primary
       </div>
       <div>
-        <ClickAwayListener>
+        <ClickAwayListenerIfOpen onClick={({ inContainStart, inContainEnd, setOpen }) => { if (inContainStart === false && inContainEnd === false) setOpen(false) }}>
           {
             ({ open, setOpen, pushClickAwayRef }) => {
               return <Tooltip
@@ -78,7 +78,7 @@ function App() {
               />
             }
           }
-        </ClickAwayListener>
+        </ClickAwayListenerIfOpen>
       </div>
     </Grid>
   </Grid >

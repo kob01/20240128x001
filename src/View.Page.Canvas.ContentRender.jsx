@@ -19,7 +19,7 @@ function App() {
 
   const refFunction = el => ImitationPageCanvas.state.store.ref.canvas = el
 
-  const graphRender = (layer, canvas, context, graph) => {
+  const operationRender = (layer, canvas, context, operation) => {
     context.save()
 
     context.translate(canvas.width / 2, canvas.height / 2)
@@ -30,7 +30,7 @@ function App() {
     context.scale(layer.scale, layer.scale)
     context.translate(layer.translateX, layer.translateY)
 
-    graph
+    operation
       .filter(i => i.visibility === true && pencilRenderFindMap[i.pencilHash])
       .forEach(i => pencilRenderFindMap[i.pencilHash](canvas, context, layer, i))
 
@@ -52,16 +52,16 @@ function App() {
         i.offscreenUpdate = true
       }
 
-      if (i.offscreenExceptLastGraphCanvas === undefined) {
-        i.offscreenExceptLastGraphCanvas = new OffscreenCanvas(realW, realH)
-        i.offscreenExceptLastGraphContext = i.offscreenExceptLastGraphCanvas.getContext('2d')
+      if (i.offscreenExceptLastOperationCanvas === undefined) {
+        i.offscreenExceptLastOperationCanvas = new OffscreenCanvas(realW, realH)
+        i.offscreenExceptLastOperationContext = i.offscreenExceptLastOperationCanvas.getContext('2d')
         i.offscreenUpdate = true
       }
 
-      if (i.offscreenExceptLastGraphCanvas.width !== realW || i.offscreenExceptLastGraphCanvas.height !== realH) {
-        i.offscreenExceptLastGraphCanvas.width = realW
-        i.offscreenExceptLastGraphCanvas.height = realH
-        i.offscreenExceptLastGraphContext = i.offscreenExceptLastGraphCanvas.getContext('2d')
+      if (i.offscreenExceptLastOperationCanvas.width !== realW || i.offscreenExceptLastOperationCanvas.height !== realH) {
+        i.offscreenExceptLastOperationCanvas.width = realW
+        i.offscreenExceptLastOperationCanvas.height = realH
+        i.offscreenExceptLastOperationContext = i.offscreenExceptLastOperationCanvas.getContext('2d')
         i.offscreenUpdate = true
       }
     })
@@ -73,24 +73,24 @@ function App() {
     ImitationPageCanvas.state.store.source.canvas.layer.forEach(i => {
       const canvasLayerRefFind = ImitationPageCanvas.state.store.ref.layer.find(i_ => i_.layerHash === i._hash)
 
-      if (i.visibility === true && canvasLayerRefFind.offscreenExceptLastGraphUpdate === true) {
-        canvasLayerRefFind.offscreenExceptLastGraphContext.clearRect(0, 0, canvasLayerRefFind.offscreenExceptLastGraphCanvas.width, canvasLayerRefFind.offscreenExceptLastGraphCanvas.height)
-        graphRender(i, canvasLayerRefFind.offscreenExceptLastGraphCanvas, canvasLayerRefFind.offscreenExceptLastGraphContext, i.graph.slice(0, i.graph.length - 1))
+      if (i.visibility === true && canvasLayerRefFind.offscreenExceptLastOperationUpdate === true) {
+        canvasLayerRefFind.offscreenExceptLastOperationContext.clearRect(0, 0, canvasLayerRefFind.offscreenExceptLastOperationCanvas.width, canvasLayerRefFind.offscreenExceptLastOperationCanvas.height)
+        operationRender(i, canvasLayerRefFind.offscreenExceptLastOperationCanvas, canvasLayerRefFind.offscreenExceptLastOperationContext, i.operation.slice(0, i.operation.length - 1))
       }
 
-      if (i.visibility === true && canvasLayerRefFind.offscreenComposeLastGraphUpdate === true) {
+      if (i.visibility === true && canvasLayerRefFind.offscreenComposeLastOperationUpdate === true) {
         canvasLayerRefFind.offscreenContext.clearRect(0, 0, canvasLayerRefFind.offscreenCanvas.width, canvasLayerRefFind.offscreenCanvas.height)
-        canvasLayerRefFind.offscreenContext.drawImage(canvasLayerRefFind.offscreenExceptLastGraphCanvas, ...caculatePositionCenter(canvasLayerRefFind.offscreenCanvas, canvasLayerRefFind.offscreenExceptLastGraphCanvas, { x: 0, y: 0 }))
-        graphRender(i, canvasLayerRefFind.offscreenCanvas, canvasLayerRefFind.offscreenContext, i.graph.slice(i.graph.length - 1, i.graph.length))
+        canvasLayerRefFind.offscreenContext.drawImage(canvasLayerRefFind.offscreenExceptLastOperationCanvas, ...caculatePositionCenter(canvasLayerRefFind.offscreenCanvas, canvasLayerRefFind.offscreenExceptLastOperationCanvas, { x: 0, y: 0 }))
+        operationRender(i, canvasLayerRefFind.offscreenCanvas, canvasLayerRefFind.offscreenContext, i.operation.slice(i.operation.length - 1, i.operation.length))
       }
 
       if (i.visibility === true && canvasLayerRefFind.offscreenUpdate === true) {
         canvasLayerRefFind.offscreenContext.clearRect(0, 0, canvasLayerRefFind.offscreenCanvas.width, canvasLayerRefFind.offscreenCanvas.height)
-        graphRender(i, canvasLayerRefFind.offscreenCanvas, canvasLayerRefFind.offscreenContext, i.graph)
+        operationRender(i, canvasLayerRefFind.offscreenCanvas, canvasLayerRefFind.offscreenContext, i.operation)
       }
 
-      canvasLayerRefFind.offscreenExceptLastGraphUpdate = false
-      canvasLayerRefFind.offscreenComposeLastGraphUpdate = false
+      canvasLayerRefFind.offscreenExceptLastOperationUpdate = false
+      canvasLayerRefFind.offscreenComposeLastOperationUpdate = false
       canvasLayerRefFind.offscreenUpdate = false
     })
 

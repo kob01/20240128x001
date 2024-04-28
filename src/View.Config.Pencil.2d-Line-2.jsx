@@ -83,11 +83,11 @@ const caculateWidth = (path, width, direction) => {
   if (direction === 'y') return total.map(i => ({ ...path, y: path.y + i }))
 }
 
-const pencilRender = (context, graph) => {
+const pencilRender = (context, operation) => {
   context.save()
-  context.globalAlpha = graph.alpha
-  context.fillStyle = graph.color
-  context.fillRect(graph.x, graph.y, 1, 1)
+  context.globalAlpha = operation.alpha
+  context.fillStyle = operation.color
+  context.fillRect(operation.x, operation.y, 1, 1)
   context.restore()
 }
 

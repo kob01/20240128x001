@@ -59,7 +59,7 @@ ImitationInstance.state.store.active.layer = undefined
 
 ImitationInstance.state.store.active.pencil = undefined
 
-ImitationInstance.state.store.active.graph = undefined
+ImitationInstance.state.store.active.operation = undefined
 
 
 ImitationInstance.state.function.update = () => {
@@ -93,19 +93,19 @@ ImitationInstance.state.function.onLoad = () => {
         return {
           _hash: hash(),
           layerHash: i._hash,
-          offscreenExceptLastGraphCanvas: undefined,
-          offscreenExceptLastGraphContext: undefined,
+          offscreenExceptLastOperationCanvas: undefined,
+          offscreenExceptLastOperationContext: undefined,
           offscreenCanvas: undefined,
           offscreenContext: undefined,
-          offscreenExceptLastGraphUpdate: false,
-          offscreenComposeLastGraphUpdate: false,
+          offscreenExceptLastOperationUpdate: false,
+          offscreenComposeLastOperationUpdate: false,
           offscreenUpdate: false,
         }
       })
 
       ImitationInstance.state.store.active.layer = res.active.layer
       ImitationInstance.state.store.active.pencil = res.active.pencil
-      ImitationInstance.state.store.active.graph = res.active.graph
+      ImitationInstance.state.store.active.operation = res.active.operation
 
       ImitationInstance.state.function.update()
 
@@ -130,7 +130,7 @@ ImitationInstance.state.function.onCanvasLayerCreate = () => {
 
     visibility: true,
 
-    graph: [],
+    operation: [],
 
     scaleX: 1,
     scaleY: 1,
@@ -143,12 +143,12 @@ ImitationInstance.state.function.onCanvasLayerCreate = () => {
   ImitationInstance.state.store.ref.layer.push({
     _hash: hash(),
     layerHash: i._hash,
-    offscreenExceptLastGraphCanvas: undefined,
-    offscreenExceptLastGraphContext: undefined,
+    offscreenExceptLastOperationCanvas: undefined,
+    offscreenExceptLastOperationContext: undefined,
     offscreenCanvas: undefined,
     offscreenContext: undefined,
-    offscreenExceptLastGraphUpdate: false,
-    offscreenComposeLastGraphUpdate: false,
+    offscreenExceptLastOperationUpdate: false,
+    offscreenComposeLastOperationUpdate: false,
     offscreenUpdate: false,
   })
 
@@ -163,16 +163,16 @@ ImitationInstance.state.function.onCanvasLayerCopy = (_hash) => {
 
   result._hash = hash()
 
-  result.graph.forEach(i => {
+  result.operation.forEach(i => {
     i._hash = hash()
   })
 
-  delete result.offscreenExceptLastGraphCanvas
-  delete result.offscreenExceptLastGraphContext
+  delete result.offscreenExceptLastOperationCanvas
+  delete result.offscreenExceptLastOperationContext
   delete result.offscreenCanvas
   delete result.offscreenContext
-  result.offscreenExceptLastGraphUpdate = false
-  result.offscreenComposeLastGraphUpdate = false
+  result.offscreenExceptLastOperationUpdate = false
+  result.offscreenComposeLastOperationUpdate = false
   result.offscreenUpdate = true
 
   ImitationInstance.state.store.source.canvas.layer.push(result)
@@ -180,12 +180,12 @@ ImitationInstance.state.function.onCanvasLayerCopy = (_hash) => {
   ImitationInstance.state.store.ref.layer.push({
     _hash: hash(),
     layerHash: result._hash,
-    offscreenExceptLastGraphCanvas: undefined,
-    offscreenExceptLastGraphContext: undefined,
+    offscreenExceptLastOperationCanvas: undefined,
+    offscreenExceptLastOperationContext: undefined,
     offscreenCanvas: undefined,
     offscreenContext: undefined,
-    offscreenExceptLastGraphUpdate: false,
-    offscreenComposeLastGraphUpdate: false,
+    offscreenExceptLastOperationUpdate: false,
+    offscreenComposeLastOperationUpdate: false,
     offscreenUpdate: false,
   })
 
@@ -232,16 +232,16 @@ ImitationInstance.state.function.onCanvasLayerVisibility = (_hash, value) => {
   ImitationInstance.state.function.update()
 }
 
-ImitationInstance.state.function.onCanvasGraphCopy = (layerHash, graphHash) => {
+ImitationInstance.state.function.onCanvasOperationCopy = (layerHash, operationHash) => {
   const canvasLayerFind = ImitationInstance.state.store.source.canvas.layer.find(i => i._hash === layerHash)
   const canvasLayerRefFind = ImitationInstance.state.store.ref.layer.find(i => i.layerHash === layerHash)
-  const canvasLayerGraphFind = canvasLayerFind.graph.find(i => i._hash === graphHash)
+  const canvasLayerOperationFind = canvasLayerFind.operation.find(i => i._hash === operationHash)
 
-  const result = structuredClone(canvasLayerGraphFind)
+  const result = structuredClone(canvasLayerOperationFind)
 
   result._hash = hash()
 
-  canvasLayerFind.graph.push(result)
+  canvasLayerFind.operation.push(result)
 
   canvasLayerRefFind.offscreenUpdate = true
 
@@ -249,11 +249,11 @@ ImitationInstance.state.function.onCanvasGraphCopy = (layerHash, graphHash) => {
   ImitationInstance.state.function.update()
 }
 
-ImitationInstance.state.function.onCanvasGraphRemove = (layerHash, graphHash) => {
+ImitationInstance.state.function.onCanvasOperationRemove = (layerHash, operationHash) => {
   const canvasLayerFind = ImitationInstance.state.store.source.canvas.layer.find(i => i._hash === layerHash)
   const canvasLayerRefFind = ImitationInstance.state.store.ref.layer.find(i => i.layerHash === layerHash)
 
-  canvasLayerFind.graph = canvasLayerFind.graph.filter(i => i._hash !== graphHash)
+  canvasLayerFind.operation = canvasLayerFind.operation.filter(i => i._hash !== operationHash)
 
   canvasLayerRefFind.offscreenUpdate = true
 
@@ -261,21 +261,21 @@ ImitationInstance.state.function.onCanvasGraphRemove = (layerHash, graphHash) =>
   ImitationInstance.state.function.update()
 }
 
-ImitationInstance.state.function.onCanvasGraphMove = (layerHash, graphHash, type) => {
+ImitationInstance.state.function.onCanvasOperationMove = (layerHash, operationHash, type) => {
   const canvasLayerFind = ImitationInstance.state.store.source.canvas.layer.find(i => i._hash === layerHash)
   const canvasLayerRefFind = ImitationInstance.state.store.ref.layer.find(i => i.layerHash === layerHash)
-  const canvasLayerGraphFindIndex = canvasLayerFind.graph.findIndex(i => i._hash === graphHash)
+  const canvasLayerOperationFindIndex = canvasLayerFind.operation.findIndex(i => i._hash === operationHash)
 
-  if (type === 0 && canvasLayerGraphFindIndex !== 0) {
-    const [a, b] = [canvasLayerFind.graph[canvasLayerGraphFindIndex - 1], canvasLayerFind.graph[canvasLayerGraphFindIndex]]
-    canvasLayerFind.graph[canvasLayerGraphFindIndex - 1] = b
-    canvasLayerFind.graph[canvasLayerGraphFindIndex] = a
+  if (type === 0 && canvasLayerOperationFindIndex !== 0) {
+    const [a, b] = [canvasLayerFind.operation[canvasLayerOperationFindIndex - 1], canvasLayerFind.operation[canvasLayerOperationFindIndex]]
+    canvasLayerFind.operation[canvasLayerOperationFindIndex - 1] = b
+    canvasLayerFind.operation[canvasLayerOperationFindIndex] = a
   }
 
-  if (type === 1 && canvasLayerGraphFindIndex !== canvasLayerFind.graph.length - 1) {
-    const [a, b] = [canvasLayerFind.graph[canvasLayerGraphFindIndex], canvasLayerFind.graph[canvasLayerGraphFindIndex + 1]]
-    canvasLayerFind.graph[canvasLayerGraphFindIndex] = b
-    canvasLayerFind.graph[canvasLayerGraphFindIndex + 1] = a
+  if (type === 1 && canvasLayerOperationFindIndex !== canvasLayerFind.operation.length - 1) {
+    const [a, b] = [canvasLayerFind.operation[canvasLayerOperationFindIndex], canvasLayerFind.operation[canvasLayerOperationFindIndex + 1]]
+    canvasLayerFind.operation[canvasLayerOperationFindIndex] = b
+    canvasLayerFind.operation[canvasLayerOperationFindIndex + 1] = a
   }
 
   canvasLayerRefFind.offscreenUpdate = true
@@ -284,12 +284,12 @@ ImitationInstance.state.function.onCanvasGraphMove = (layerHash, graphHash, type
   ImitationInstance.state.function.update()
 }
 
-ImitationInstance.state.function.onCanvasGraphVisibility = (layerHash, graphHash, value) => {
+ImitationInstance.state.function.onCanvasOperationVisibility = (layerHash, operationHash, value) => {
   const canvasLayerFind = ImitationInstance.state.store.source.canvas.layer.find(i => i._hash === layerHash)
   const canvasLayerRefFind = ImitationInstance.state.store.ref.layer.find(i => i.layerHash === layerHash)
-  const canvasLayerGraphFind = canvasLayerFind.graph.find(i => i._hash === graphHash)
+  const canvasLayerOperationFind = canvasLayerFind.operation.find(i => i._hash === operationHash)
 
-  canvasLayerGraphFind.visibility = value
+  canvasLayerOperationFind.visibility = value
 
   canvasLayerRefFind.offscreenUpdate = true
 
@@ -297,11 +297,11 @@ ImitationInstance.state.function.onCanvasGraphVisibility = (layerHash, graphHash
   ImitationInstance.state.function.update()
 }
 
-ImitationInstance.state.function.onCanvasGraphVisibilityTracks = (_hash, index) => {
+ImitationInstance.state.function.onCanvasOperationVisibilityTracks = (_hash, index) => {
   const canvasLayerFind = ImitationInstance.state.store.source.canvas.layer.find(i => i._hash === _hash)
   const canvasLayerRefFind = ImitationInstance.state.store.ref.layer.find(i => i.layerHash === _hash)
 
-  canvasLayerFind.graph.forEach((i, index_) => {
+  canvasLayerFind.operation.forEach((i, index_) => {
     if (index_ === index - 1) i.visibility = true
     if (index_ < index - 1) i.visibility = true
     if (index_ > index - 1) i.visibility = false
@@ -313,11 +313,11 @@ ImitationInstance.state.function.onCanvasGraphVisibilityTracks = (_hash, index) 
   ImitationInstance.state.function.update()
 }
 
-ImitationInstance.state.function.onCanvasGraphVisibilityTrack = (_hash, index) => {
+ImitationInstance.state.function.onCanvasOperationVisibilityTrack = (_hash, index) => {
   const canvasLayerFind = ImitationInstance.state.store.source.canvas.layer.find(i => i._hash === _hash)
   const canvasLayerRefFind = ImitationInstance.state.store.ref.layer.find(i => i.layerHash === _hash)
 
-  canvasLayerFind.graph[index].visibility = !canvasLayerFind.graph[index].visibility
+  canvasLayerFind.operation[index].visibility = !canvasLayerFind.operation[index].visibility
 
   canvasLayerRefFind.offscreenUpdate = true
 
@@ -340,13 +340,13 @@ ImitationInstance.state.memo.canvasLayerFindIndex = (_hash, dep = []) => React.u
   return ImitationInstance.state.store.source.canvas.layer.findIndex(i => i._hash === _hash)
 }, [...dep, _hash, ImitationInstance.state.store.source.canvas.layer, ImitationInstance.state.store.source.canvas.layer.length])
 
-ImitationInstance.state.memo.canvasLayerGraphVisibilityTrackFindIndex = (_hash, dep = []) => React.useMemo(() => {
+ImitationInstance.state.memo.canvasLayerOperationVisibilityTrackFindIndex = (_hash, dep = []) => React.useMemo(() => {
   const canvasLayerFind = ImitationInstance.state.store.source.canvas.layer.find(i => i._hash === _hash)
   if (canvasLayerFind === undefined) return -1
   if (canvasLayerFind !== undefined) {
-    const canvasGraphFalseFindIndex = canvasLayerFind.graph.findIndex(i => i.visibility === false)
-    if (canvasGraphFalseFindIndex === -1) return canvasLayerFind.graph.length
-    if (canvasGraphFalseFindIndex !== -1) return canvasGraphFalseFindIndex
+    const canvasOperationFalseFindIndex = canvasLayerFind.operation.findIndex(i => i.visibility === false)
+    if (canvasOperationFalseFindIndex === -1) return canvasLayerFind.operation.length
+    if (canvasOperationFalseFindIndex !== -1) return canvasOperationFalseFindIndex
   }
 }, [...dep, _hash, ImitationInstance.state.store.source.canvas.layer, ImitationInstance.state.store.source.canvas.layer.length])
 
@@ -354,11 +354,11 @@ ImitationInstance.state.memo.canvasLayerRefFind = (layerHash, dep = []) => React
   return ImitationInstance.state.store.ref.layer.find(i => i.layerHash === layerHash)
 }, [...dep, layerHash, ImitationInstance.state.store.ref.layer, ImitationInstance.state.store.ref.layer.length])
 
-ImitationInstance.state.memo.canvasLayerGraphFind = (layerHash, layerGraphHash, dep = []) => React.useMemo(() => {
+ImitationInstance.state.memo.canvasLayerOperationFind = (layerHash, layerOperationHash, dep = []) => React.useMemo(() => {
   const canvasLayerFind = ImitationInstance.state.store.source.canvas.layer.find(i => i._hash === layerHash)
   if (canvasLayerFind === undefined) return undefined
-  if (canvasLayerFind !== undefined) return canvasLayerFind.graph.find(i => i._hash === layerGraphHash)
-}, [...dep, layerHash, layerGraphHash, ImitationInstance.state.store.source.canvas.layer, ImitationInstance.state.store.source.canvas.layer.length])
+  if (canvasLayerFind !== undefined) return canvasLayerFind.operation.find(i => i._hash === layerOperationHash)
+}, [...dep, layerHash, layerOperationHash, ImitationInstance.state.store.source.canvas.layer, ImitationInstance.state.store.source.canvas.layer.length])
 
 ImitationInstance.state.memo.pencilFind = (_hash, dep = []) => React.useMemo(() => {
   return ImitationInstance.state.store.pencil.find(i => i._hash === _hash)
