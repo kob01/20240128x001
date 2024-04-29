@@ -89,18 +89,10 @@ function settingComponent(props) {
     </Grid>
 
     <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
-      <div>Angle Start</div>
+      <div>Angle</div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ marginRight: 12 }}>{value.sAngle.toFixed(2)}</div>
-        <Slider size='small' style={{ width: 120 }} value={value.sAngle / 2} onChange={(e, v) => { value.sAngle = v * 2; onChange(); }} min={0} max={1} step={0.01} />
-      </div>
-    </Grid>
-
-    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
-      <div>Angle End</div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ marginRight: 12 }}>{value.eAngle.toFixed(2)}</div>
-        <Slider size='small' style={{ width: 120 }} value={value.eAngle / 2} onChange={(e, v) => { value.eAngle = v * 2; onChange(); }} min={0} max={1} step={0.01} />
+        <div style={{ marginRight: 12 }}>{value.angle.toFixed(2)}</div>
+        <Slider size='small' style={{ width: 120 }} value={value.angle} onChange={(e, v) => { value.angle = v; onChange(); }} min={0} max={1} step={0.01} />
       </div>
     </Grid>
 
@@ -140,7 +132,7 @@ function settingComponent(props) {
   </Grid>
 }
 
-const settingDefault = { color: 'rgba(0, 0, 0, 1)', alpha: 1, width: 1, stroke: true, fill: false, counterclockwise: false, sAngle: 0, eAngle: 2, path: [] }
+const settingDefault = { color: 'rgba(0, 0, 0, 1)', alpha: 1, width: 1, stroke: true, fill: false, counterclockwise: false, angle: 1, path: [] }
 
 const pencilRender = (canvas, context, layer, operation) => {
   const r =
@@ -152,6 +144,24 @@ const pencilRender = (canvas, context, layer, operation) => {
       )
     )
 
+  const diffX = operation.setting.path[1].x - operation.setting.path[0].x
+  const diffY = operation.setting.path[1].y - operation.setting.path[0].y
+
+  if (diffX > 0) var atan = Math.atan(diffY / diffX)
+  if (diffX < 0) var atan = Math.PI + Math.atan(diffY / diffX)
+  if (diffX === 0 && diffY > 0) var atan = Math.PI * 0.5
+  if (diffX === 0 && diffY < 0) var atan = Math.PI * 1.5
+
+  if (operation.setting.counterclockwise === true) {
+    var sAngle = (1 - operation.setting.angle) * 2 * Math.PI / 2 * -1 + atan
+    var eAngle = (1 - operation.setting.angle) * 2 * Math.PI / 2 + atan
+  }
+
+  if (operation.setting.counterclockwise === false) {
+    var sAngle = (1 - operation.setting.angle) * 2 * Math.PI / 2 + atan
+    var eAngle = (1 - operation.setting.angle) * 2 * Math.PI / 2 * -1 + atan
+  }
+
   context.save()
 
   context.globalAlpha = operation.setting.alpha
@@ -161,7 +171,7 @@ const pencilRender = (canvas, context, layer, operation) => {
 
   context.beginPath()
 
-  context.arc(operation.setting.path[0].x, operation.setting.path[0].y, r, operation.setting.sAngle * Math.PI, operation.setting.eAngle * Math.PI, operation.setting.counterclockwise)
+  context.arc(operation.setting.path[0].x, operation.setting.path[0].y, r, sAngle, eAngle, operation.setting.counterclockwise)
 
   if (operation.setting.stroke) context.stroke()
   if (operation.setting.fill) context.fill()
@@ -169,32 +179,23 @@ const pencilRender = (canvas, context, layer, operation) => {
   context.restore()
 }
 
-const pencilDraw = () => {
-  const ref = { operation: undefined }
+const pencilAction = () => {
+  const ref = {}
 
-  return (canvas, context, setting, layer, operation, status, x, y) => {
-
-    if (status === 'afterStart') {
-      ref.operation = { _hash: hash(), pencilHash: _hash, visibility: true, setting: structuredClone(setting) }
-      operation.push(ref.operation)
-    }
+  return (status, relativeX, relativeY, canvas, context, layer, operations, operation) => {
 
     if (status === 'afterStart') {
-      ref.operation.setting.path.push({ x: Math.round(x), y: Math.round(y) }, { x: Math.round(x), y: Math.round(y) })
+      operation.setting.path.push({ x: Math.round(relativeX), y: Math.round(relativeY) }, { x: Math.round(relativeX), y: Math.round(relativeY) })
     }
 
     if (status === 'afterMove') {
-      ref.operation.setting.path[1].x = Math.round(x)
-      ref.operation.setting.path[1].y = Math.round(y)
-    }
-
-    if (status === 'afterEnd') {
-      ref.operation = undefined
+      operation.setting.path[1].x = Math.round(relativeX)
+      operation.setting.path[1].y = Math.round(relativeY)
     }
 
   }
 }
 
-const r = { _hash: _hash, type: type, name: name, pencilRender: pencilRender, pencilDraw: pencilDraw, settingComponent: settingComponent, settingDefault: settingDefault }
+const r = { _hash: _hash, type: type, name: name, pencilRender: pencilRender, pencilAction: pencilAction, settingComponent: settingComponent, settingDefault: settingDefault }
 
 export default r

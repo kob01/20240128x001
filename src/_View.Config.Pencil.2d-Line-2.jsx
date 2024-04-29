@@ -91,7 +91,7 @@ const pencilRender = (context, operation) => {
   context.restore()
 }
 
-const pencilDraw = () => {
+const pencilAction = () => {
   const ref = { positionOrigin: undefined, positionTarget: undefined, positionFirst: undefined }
 
   return (canvas, context, setting, status, relativeX, relativeY, offsetX, offsetY) => {
@@ -198,6 +198,6 @@ const pencilDraw = () => {
   }
 }
 
-const r = { _hash: _hash, type: type, label: label, pencilRender: pencilRender, pencilDraw: pencilDraw, settingComponent: settingComponent, settingDefault: settingDefault }
+const r = { _hash: _hash, type: type, label: label, pencilRender: pencilRender, pencilAction: pencilAction, settingComponent: settingComponent, settingDefault: settingDefault }
 
 export default r

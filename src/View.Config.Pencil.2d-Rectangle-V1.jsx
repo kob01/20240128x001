@@ -119,7 +119,7 @@ function settingComponent(props) {
 
 const settingDefault = { color: 'rgba(0, 0, 0, 1)', alpha: 1, width: 1, stroke: true, fill: false, path: [] }
 
-const pencilRender = (canvas, context, layer, operation) => {
+const pencilRender = (canvas, context, layer, operation) => {  
   context.save()
 
   context.globalAlpha = operation.setting.alpha
@@ -137,32 +137,23 @@ const pencilRender = (canvas, context, layer, operation) => {
   context.restore()
 }
 
-const pencilDraw = () => {
-  const ref = { operation: undefined }
+const pencilAction = () => {
+  const ref = {}
 
-  return (canvas, context, setting, layer, operation, status, x, y) => {
-
+  return (status, relativeX, relativeY, canvas, context, layer, operations, operation) => {
+    
     if (status === 'afterStart') {
-      ref.operation = { _hash: hash(), pencilHash: _hash, visibility: true, setting: structuredClone(setting) }
-      operation.push(ref.operation)
-    }
-
-    if (status === 'afterStart') {
-      ref.operation.setting.path.push({ x: Math.round(x), y: Math.round(y) }, { x: Math.round(x), y: Math.round(y) })
+      operation.setting.path.push({ x: Math.round(relativeX), y: Math.round(relativeY) }, { x: Math.round(relativeX), y: Math.round(relativeY) })
     }
 
     if (status === 'afterMove') {
-      ref.operation.setting.path[1].x = Math.round(x)
-      ref.operation.setting.path[1].y = Math.round(y)
-    }
-
-    if (status === 'afterEnd') {
-      ref.operation = undefined
+      operation.setting.path[1].x = Math.round(relativeX)
+      operation.setting.path[1].y = Math.round(relativeY)
     }
 
   }
 }
 
-const r = { _hash: _hash, type: type, name: name, pencilRender: pencilRender, pencilDraw: pencilDraw, settingComponent: settingComponent, settingDefault: settingDefault }
+const r = { _hash: _hash, type: type, name: name, pencilRender: pencilRender, pencilAction: pencilAction, settingComponent: settingComponent, settingDefault: settingDefault }
 
 export default r

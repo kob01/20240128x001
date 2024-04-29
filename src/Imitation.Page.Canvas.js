@@ -364,10 +364,10 @@ ImitationInstance.state.memo.pencilFind = (_hash, dep = []) => React.useMemo(() 
   return ImitationInstance.state.store.pencil.find(i => i._hash === _hash)
 }, [...dep, _hash, ImitationInstance.state.store.pencil, ImitationInstance.state.store.pencil.length])
 
-ImitationInstance.state.memo.pencilDrawRunFind = (_hash, dep = []) => React.useMemo(() => {
+ImitationInstance.state.memo.pencilActionRunFind = (_hash, dep = []) => React.useMemo(() => {
   const pencilFind = ImitationInstance.state.store.pencil.find(i => i._hash === _hash)
   if (pencilFind === undefined) return undefined
-  if (pencilFind !== undefined) return pencilFind.pencilDraw()
+  if (pencilFind !== undefined) return pencilFind.pencilAction()
 }, [...dep, _hash, ImitationInstance.state.store.pencil, ImitationInstance.state.store.pencil.length])
 
 ImitationInstance.state.memo.pencilRenderFindMap = (key, dep = []) => React.useMemo(() => {

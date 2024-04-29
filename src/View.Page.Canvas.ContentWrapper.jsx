@@ -8,13 +8,13 @@ import ContentRender from './View.Page.Canvas.ContentRender'
 
 import { ImitationPageCanvas, ImitationNavigation, ImitationGlobal } from './Imitation'
 
-import { range, debounce, throttleLastRAF, wheelControl } from './utils.common'
+import { hash, range, debounce, throttleLastRAF, wheelControl } from './utils.common'
 
 function App() {
   const canvasLayerFind = ImitationPageCanvas.state.memo.canvasLayerFind(ImitationPageCanvas.state.store.active.layer)
   const canvasLayerRefFind = ImitationPageCanvas.state.memo.canvasLayerRefFind(ImitationPageCanvas.state.store.active.layer)
   const pencilFind = ImitationPageCanvas.state.memo.pencilFind(ImitationPageCanvas.state.store.active.pencil)
-  const pencilDrawRunFind = ImitationPageCanvas.state.memo.pencilDrawRunFind(ImitationPageCanvas.state.store.active.pencil)
+  const pencilActionRunFind = ImitationPageCanvas.state.memo.pencilActionRunFind(ImitationPageCanvas.state.store.active.pencil)
 
   const inControlDraw = ImitationPageCanvas.state.store.control.draw
   const inControlMove = ImitationPageCanvas.state.store.control.move
@@ -48,14 +48,15 @@ function App() {
         }
         ImitationGlobal.state.function.messageAppendThrottlePipeTime500('No Layer Select')
       }
-      if (pencilDrawRunFind === undefined) {
+      if (pencilActionRunFind === undefined) {
         if (ImitationNavigation.state.store.accordionWindow.find(i => i.accordionWindowsHash === 'CanvasPencils') === undefined) {
           ImitationNavigation.state.function.accordionWindowsAppendThrottlePipeTime500('CanvasPencils')
         }
         ImitationGlobal.state.function.messageAppendThrottlePipeTime500('No Pencil Select')
       }
-      if (canvasLayerFind !== undefined && canvasLayerFind.visibility === true && pencilDrawRunFind !== undefined) {
+      if (canvasLayerFind !== undefined && canvasLayerFind.visibility === true && pencilActionRunFind !== undefined) {
         dragControlType.current = 0
+        dragControlProp.current = { operation: undefined }
       }
     }
     if (status === 'afterStart' && inSpace === true && inMeta === false && inControlMove === true) {
@@ -72,8 +73,17 @@ function App() {
       const translateY = ImitationPageCanvas.state.store.view.translateY + canvasLayerFind.translateY
       const relativeX = offsetX - translateX
       const relativeY = offsetY - translateY
+      const canvas = ImitationPageCanvas.state.store.ref.canvas
+      const context = ImitationPageCanvas.state.store.ref.context
+      const layer = canvasLayerFind
+      const operations = canvasLayerFind.operation
 
-      pencilDrawRunFind(ImitationPageCanvas.state.store.ref.canvas, ImitationPageCanvas.state.store.ref.context, pencilFind.setting, canvasLayerFind, canvasLayerFind.operation, status, relativeX, relativeY)
+      if (status === 'afterStart') {
+        dragControlProp.current.operation = { _hash: hash(), pencilHash: pencilFind._hash, visibility: true, setting: structuredClone(pencilFind.setting), transform: { scaleX: 1, scaleY: 1, translateX: 0, translateY: 0, rotate: 0 } }
+        canvasLayerFind.operation.push(dragControlProp.current.operation)
+      }
+
+      pencilActionRunFind(status, relativeX, relativeY, canvas, context, layer, operations, dragControlProp.current.operation)
 
       if (status === 'afterStart') canvasLayerRefFind.offscreenExceptLastOperationUpdate = true
 
@@ -139,14 +149,15 @@ function App() {
         }
         ImitationGlobal.state.function.messageAppendThrottlePipeTime500('No Layer Select')
       }
-      if (pencilDrawRunFind === undefined) {
+      if (pencilActionRunFind === undefined) {
         if (ImitationNavigation.state.store.accordionWindow.find(i => i.accordionWindowsHash === 'CanvasPencils') === undefined) {
           ImitationNavigation.state.function.accordionWindowsAppendThrottlePipeTime500('CanvasPencils')
         }
         ImitationGlobal.state.function.messageAppendThrottlePipeTime500('No Pencil Select')
       }
-      if (canvasLayerFind !== undefined && canvasLayerFind.visibility === true && pencilDrawRunFind !== undefined) {
+      if (canvasLayerFind !== undefined && canvasLayerFind.visibility === true && pencilActionRunFind !== undefined) {
         dragControlType.current = 0
+        dragControlProp.current = { operation: undefined }
       }
     }
     if (status === 'afterStart' && inTouch2 === true && inControlMove === true) {
@@ -159,14 +170,23 @@ function App() {
     }
 
     if (dragControlType.current === 0 && (status === 'afterStart' || status === 'afterMove' || status === 'afterEnd')) {
-      const offsetX = (x[0] - ImitationPageCanvas.state.store.rect.width / 2 - ImitationPageCanvas.state.store.rect.left) / ImitationPageCanvas.state.store.view.scaleX / canvasLayerFind.scaleX * ImitationPageCanvas.state.store.view.dpr
-      const offsetY = (y[0] - ImitationPageCanvas.state.store.rect.height / 2 - ImitationPageCanvas.state.store.rect.top) / ImitationPageCanvas.state.store.view.scaleY / canvasLayerFind.scaleY * ImitationPageCanvas.state.store.view.dpr
+      const offsetX = (x - ImitationPageCanvas.state.store.rect.width / 2 - ImitationPageCanvas.state.store.rect.left) / ImitationPageCanvas.state.store.view.scaleX / canvasLayerFind.scaleX * ImitationPageCanvas.state.store.view.dpr
+      const offsetY = (y - ImitationPageCanvas.state.store.rect.height / 2 - ImitationPageCanvas.state.store.rect.top) / ImitationPageCanvas.state.store.view.scaleY / canvasLayerFind.scaleY * ImitationPageCanvas.state.store.view.dpr
       const translateX = ImitationPageCanvas.state.store.view.translateX + canvasLayerFind.translateX
       const translateY = ImitationPageCanvas.state.store.view.translateY + canvasLayerFind.translateY
       const relativeX = offsetX - translateX
       const relativeY = offsetY - translateY
+      const canvas = ImitationPageCanvas.state.store.ref.canvas
+      const context = ImitationPageCanvas.state.store.ref.context
+      const layer = canvasLayerFind
+      const operations = canvasLayerFind.operation
 
-      pencilDrawRunFind(ImitationPageCanvas.state.store.ref.canvas, ImitationPageCanvas.state.store.ref.context, pencilFind.setting, canvasLayerFind, canvasLayerFind.operation, status, relativeX, relativeY)
+      if (status === 'afterStart') {
+        dragControlProp.current.operation = { _hash: hash(), pencilHash: pencilFind._hash, visibility: true, setting: structuredClone(pencilFind.setting), transform: { scaleX: 1, scaleY: 1, translateX: 0, translateY: 0, rotate: 0 } }
+        canvasLayerFind.operation.push(dragControlProp.current.operation)
+      }
+
+      pencilActionRunFind(status, relativeX, relativeY, canvas, context, layer, operations, dragControlProp.current.operation)
 
       if (status === 'afterStart') canvasLayerRefFind.offscreenExceptLastOperationUpdate = true
 

@@ -100,7 +100,7 @@ function settingComponent(props) {
 
 const settingDefault = { color: 'rgba(0, 0, 0, 1)', alpha: 1, width: 1, path: [] }
 
-const pencilRender = (canvas, context, layer, operation) => {
+const pencilRender = (canvas, context, layer, operation) => {  
   context.save()
 
   context.globalAlpha = operation.setting.alpha
@@ -119,48 +119,39 @@ const pencilRender = (canvas, context, layer, operation) => {
   context.restore()
 }
 
-const pencilDraw = () => {
-  const ref = { operation: undefined }
+const pencilAction = () => {
+  const ref = {}
 
-  return (canvas, context, setting, layer, operation, status, x, y) => {
-
+  return (status, relativeX, relativeY, canvas, context, layer, operations, operation) => {
+    
     if (status === 'afterStart') {
-      ref.operation = { _hash: hash(), pencilHash: _hash, visibility: true, setting: structuredClone(setting) }
-      operation.push(ref.operation)
-    }
-
-    if (status === 'afterStart') {
-      ref.operation.setting.path.push({ x: Math.round(x), y: Math.round(y) })
+      operation.setting.path.push({ x: Math.round(relativeX), y: Math.round(relativeY) })
     }
 
     if (status === 'afterMove') {
-      if (Math.round(x) !== ref.operation.setting.path[ref.operation.setting.path.length - 1].x || Math.round(y) !== ref.operation.setting.path[ref.operation.setting.path.length - 1].y) {
-        ref.operation.setting.path.push({ x: Math.round(x), y: Math.round(y) })
+      if (Math.round(relativeX) !== operation.setting.path[operation.setting.path.length - 1].x || Math.round(relativeY) !== operation.setting.path[operation.setting.path.length - 1].y) {
+        operation.setting.path.push({ x: Math.round(relativeX), y: Math.round(relativeY) })
         while (
-          ref.operation.setting.path[ref.operation.setting.path.length - 1] !== undefined &&
-          ref.operation.setting.path[ref.operation.setting.path.length - 2] !== undefined &&
-          ref.operation.setting.path[ref.operation.setting.path.length - 3] !== undefined &&
+          operation.setting.path[operation.setting.path.length - 1] !== undefined &&
+          operation.setting.path[operation.setting.path.length - 2] !== undefined &&
+          operation.setting.path[operation.setting.path.length - 3] !== undefined &&
           (
-            (ref.operation.setting.path[ref.operation.setting.path.length - 1].x === ref.operation.setting.path[ref.operation.setting.path.length - 2].x && ref.operation.setting.path[ref.operation.setting.path.length - 2].x === ref.operation.setting.path[ref.operation.setting.path.length - 3].x) ||
-            (ref.operation.setting.path[ref.operation.setting.path.length - 1].y === ref.operation.setting.path[ref.operation.setting.path.length - 2].y && ref.operation.setting.path[ref.operation.setting.path.length - 2].y === ref.operation.setting.path[ref.operation.setting.path.length - 3].y)
+            (operation.setting.path[operation.setting.path.length - 1].x === operation.setting.path[operation.setting.path.length - 2].x && operation.setting.path[operation.setting.path.length - 2].x === operation.setting.path[operation.setting.path.length - 3].x) ||
+            (operation.setting.path[operation.setting.path.length - 1].y === operation.setting.path[operation.setting.path.length - 2].y && operation.setting.path[operation.setting.path.length - 2].y === operation.setting.path[operation.setting.path.length - 3].y)
           ) &&
           (
-            (ref.operation.setting.path[ref.operation.setting.path.length - 1].x - ref.operation.setting.path[ref.operation.setting.path.length - 2].x === ref.operation.setting.path[ref.operation.setting.path.length - 2].x - ref.operation.setting.path[ref.operation.setting.path.length - 3].x) &&
-            (ref.operation.setting.path[ref.operation.setting.path.length - 1].y - ref.operation.setting.path[ref.operation.setting.path.length - 2].y === ref.operation.setting.path[ref.operation.setting.path.length - 2].y - ref.operation.setting.path[ref.operation.setting.path.length - 3].y)
+            (operation.setting.path[operation.setting.path.length - 1].x - operation.setting.path[operation.setting.path.length - 2].x === operation.setting.path[operation.setting.path.length - 2].x - operation.setting.path[operation.setting.path.length - 3].x) &&
+            (operation.setting.path[operation.setting.path.length - 1].y - operation.setting.path[operation.setting.path.length - 2].y === operation.setting.path[operation.setting.path.length - 2].y - operation.setting.path[operation.setting.path.length - 3].y)
           )
         ) {
-          ref.operation.setting.path = ref.operation.setting.path.filter((i) => i !== ref.operation.setting.path[ref.operation.setting.path.length - 2])
+          operation.setting.path = operation.setting.path.filter((i) => i !== operation.setting.path[operation.setting.path.length - 2])
         }
       }
-    }
-
-    if (status === 'afterEnd') {
-      ref.operation = undefined
     }
 
   }
 }
 
-const r = { _hash: _hash, type: type, name: name, pencilRender: pencilRender, pencilDraw: pencilDraw, settingComponent: settingComponent, settingDefault: settingDefault }
+const r = { _hash: _hash, type: type, name: name, pencilRender: pencilRender, pencilAction: pencilAction, settingComponent: settingComponent, settingDefault: settingDefault }
 
 export default r

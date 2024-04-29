@@ -20,21 +20,26 @@ function App() {
   const refFunction = el => ImitationPageCanvas.state.store.ref.canvas = el
 
   const operationRender = (layer, canvas, context, operation) => {
-    context.save()
-
-    context.translate(canvas.width / 2, canvas.height / 2)
-
-    context.scale(ImitationPageCanvas.state.store.view.scaleX, ImitationPageCanvas.state.store.view.scaleY)
-    context.translate(ImitationPageCanvas.state.store.view.translateX, ImitationPageCanvas.state.store.view.translateY)
-
-    context.scale(layer.scale, layer.scale)
-    context.translate(layer.translateX, layer.translateY)
-
     operation
       .filter(i => i.visibility === true && pencilRenderFindMap[i.pencilHash])
-      .forEach(i => pencilRenderFindMap[i.pencilHash](canvas, context, layer, i))
+      .forEach(i => {
+        context.save()
 
-    context.restore()
+        context.translate(canvas.width / 2, canvas.height / 2)
+
+        context.scale(ImitationPageCanvas.state.store.view.scaleX, ImitationPageCanvas.state.store.view.scaleY)
+        context.translate(ImitationPageCanvas.state.store.view.translateX, ImitationPageCanvas.state.store.view.translateY)
+
+        context.scale(layer.scaleX, layer.scaleY)
+        context.translate(layer.translateX, layer.translateY)
+
+        context.scale(i.transform.scaleX, i.transform.scaleY)
+        context.translate(i.transform.translateX, i.transform.translateY)
+
+        pencilRenderFindMap[i.pencilHash](canvas, context, layer, i)
+
+        context.restore()
+      })
   }
 
   const canvasOffscreenInit = () => {
