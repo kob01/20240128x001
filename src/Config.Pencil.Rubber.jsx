@@ -4,7 +4,7 @@ import Grid from '@mui/material/Grid'
 import TextField from '@mui/material/TextField'
 import Slider from '@mui/material/Slider'
 
-import { TextFieldSX } from './utils.mui.sx'
+import { PopperSX, TextFieldSX, TextFieldSmallSX, DrawerSX, DialogSX, DividerSX, SwitchSX, AccordionSX, PaperSX } from './utils.mui.sx'
 
 function Color(props) {
   const { value, onChange } = props
@@ -110,35 +110,35 @@ const round = (x, y, area) => {
   return r
 }
 
-const draw = (canvasRef, pencilSetting, xys) => {
+const draw = (refCanvas, pencilSetting, xys) => {
   xys
     .map(i => round(i[0], i[1], pencilSetting.area))
     .flat()
     .map(i => i.join('-'))
     .reduce((t, i) => Array.from(new Set([...t, i])), [])
     .map(i => i.split('-'))
-    .forEach(i => canvasRef.context.clearRect(i[0], i[1], 1, 1))
+    .forEach(i => refCanvas.context.clearRect(i[0], i[1], 1, 1))
 }
 
 const pencil = () => {
   const ref = { position: [] }
 
-  return (canvasRef, pencilSetting, status, x, y) => {
+  return (refCanvas, pencilSetting, status, x, y) => {
     if (status === 0) {
-      canvasRef.context.save()
-      canvasRef.context.globalAlpha = pencilSetting.alpha
-      canvasRef.context.fillStyle = pencilSetting.color
-      draw(canvasRef, pencilSetting, [[x, y]])
+      refCanvas.context.save()
+      refCanvas.context.globalAlpha = pencilSetting.alpha
+      refCanvas.context.fillStyle = pencilSetting.color
+      draw(refCanvas, pencilSetting, [[x, y]])
       ref.position = [x, y]
     }
 
     if (status === 2) {
-      canvasRef.context.restore()
+      refCanvas.context.restore()
     }
 
     if (status === 1) {
       if (x !== ref.position[0] || y !== ref.position[1]) {
-        draw(canvasRef, pencilSetting, [...caculte(ref.position[0], ref.position[1], x, y), [x, y]])
+        draw(refCanvas, pencilSetting, [...caculte(ref.position[0], ref.position[1], x, y), [x, y]])
         ref.position = [x, y]
       }
     }

@@ -1,12 +1,13 @@
 import React from 'react'
 
-import ContentWrapper from './View.Page.Canvas.ContentWrapper'
+import Content from './View.Page.Canvas.Content'
+import Navigation from './View.Page.Canvas.Navigation'
 
-import { AnimationRAF, opacityAnimation } from './View.Component.AnimationRAF'
-
-import { ImitationPageCanvas, withBindComponentPure } from './Imitation'
+import { ImitationGlobal, ImitationPageCanvas, withBindComponentPure } from './Imitation'
 
 import { debounce } from './utils.common'
+
+import { apiCanvas } from './utils.api'
 
 function App() {
   const ref = React.useRef()
@@ -28,19 +29,29 @@ function App() {
     return () => resizeObserver.disconnect()
   }, [])
 
-  React.useEffect(() => ImitationPageCanvas.state.function.onLoad(), [])
-
-  React.useEffect(() => () => ImitationPageCanvas.state.function.onUnload(), [])
+  React.useEffect(async () => {
+    ImitationGlobal.state.function.loadingCallback(apiCanvas().then(res => ImitationPageCanvas.state.function.onLoad(res)))
+    return () => ImitationPageCanvas.state.function.onUnload()
+  }, [])
 
   return <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }} ref={el => ref.current = el}>
     {
-      ImitationPageCanvas.state.store.source !== undefined && ImitationPageCanvas.state.store.rect !== undefined ? <ContentWrapper /> : null
+      ImitationPageCanvas.state.store.rect !== undefined ? <Content /> : null
+    }
+
+    {
+      ImitationPageCanvas.state.store.rect !== undefined ? <Navigation /> : null
     }
   </div>
 }
 
 const dependence = [
-  { instance: ImitationPageCanvas, dependence: state => [ImitationPageCanvas.state.update.now] }
+  {
+    instance: ImitationPageCanvas, dependence: state => [
+      ImitationPageCanvas.state.store.recting,
+      ImitationPageCanvas.state.store.rect,
+    ]
+  }
 ]
 
 export default withBindComponentPure(App, dependence)

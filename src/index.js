@@ -55,7 +55,7 @@ const styleAppendII = () => {
 
 styleAppendII()
 
-ImitationGlobal.register(styleAppendII, state => [...Object.values(ImitationGlobal.state.store.theme.palette).map(i => i.main)])
+ImitationGlobal.register(styleAppendII, state => [JSON.stringify(ImitationGlobal.state.store.theme.palette)])
 
 window.addEventListener('wheel', (e) => { if (e.ctrlKey) e.preventDefault() }, { passive: false })
 window.addEventListener('touchmove', (e) => { if (e.touches.length > 1) e.preventDefault() }, { passive: false })

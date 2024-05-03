@@ -9,14 +9,16 @@ const useState = (props) => {
     if (window.ontouchstart !== undefined) return
 
     const mousedown = (e) => {
-      positionStart.current = { x: e.pageX, y: e.pageY, inContain: clickAwayRef.current.some(i => i.target && i.target.contains(e.target)) }
+      positionStart.current = { x: e.pageX, y: e.pageY, inContain: clickAwayRef.current.some(i => i && i.contains(e.target)) }
+      const inContainStart = positionStart.current.inContain
+      if (props.onClick) props.onClick({ inStay: undefined, inContainStart, inContainEnd: undefined })
     }
 
     const mouseup = (e) => {
       if (!positionStart.current) return
       const inStay = e.pageX === positionStart.current.x && e.pageY === positionStart.current.y
       const inContainStart = positionStart.current.inContain
-      const inContainEnd = clickAwayRef.current.some(i => i.target && i.target.contains(e.target))
+      const inContainEnd = clickAwayRef.current.some(i => i && i.contains(e.target))
       if (props.onClick) props.onClick({ inStay, inContainStart, inContainEnd })
     }
 
@@ -33,14 +35,14 @@ const useState = (props) => {
     if (window.ontouchstart === undefined) return
 
     const touchstart = (e) => {
-      positionStart.current = { x: e.targetTouches[0].pageX, y: e.targetTouches[0].pageY, inContain: clickAwayRef.current.some(i => i.target && i.target.contains(e.target)) }
+      positionStart.current = { x: e.targetTouches[0].pageX, y: e.targetTouches[0].pageY, inContain: clickAwayRef.current.some(i => i && i.contains(e.target)) }
     }
 
     const touchend = (e) => {
       if (!positionStart.current) return
       const inStay = e.changedTouches[0].pageX === positionStart.current.x && e.changedTouches[0].pageY === positionStart.current.y
       const inContainStart = positionStart.current.inContain
-      const inContainEnd = clickAwayRef.current.some(i => i.target && i.target.contains(e.target))
+      const inContainEnd = clickAwayRef.current.some(i => i && i.contains(e.target))
       if (props.onClick) props.onClick({ inStay, inContainStart, inContainEnd })
     }
 
@@ -53,9 +55,9 @@ const useState = (props) => {
     }
   }, [])
 
-  const pushClickAwayRef = (key, target) => {
-    clickAwayRef.current = clickAwayRef.current.filter(i => i.key !== key)
-    clickAwayRef.current.push({ key, target })
+  const pushClickAwayRef = (target) => {
+    clickAwayRef.current = clickAwayRef.current.filter(i => i !== target).filter(i => document.contains(i))
+    clickAwayRef.current.push(target)
   }
 
   return { pushClickAwayRef }

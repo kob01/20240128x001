@@ -1,8 +1,7 @@
-import { ImitationGlobal, ImitationNavigation, ImitationPageCanvas, ImitationPageLibrary, withBindComponentPure } from './Imitation'
+import { ImitationGlobal, ImitationPageCanvas, ImitationPageLibrary, withBindComponentPure } from './Imitation'
 
-import { localStorageCache } from  './const'
+import { localStorageCache } from './utils.const'
 
-import mockNavigationAccordionWindow from './mock.navigation.accordionWindow.json'
 import mockCanvasSource from './mock.canvas.source.json'
 import mockCanvasSourceEmpty from './mock.canvas.source.empty.json'
 import mockCanvasActive from './mock.canvas.active.json'
@@ -19,7 +18,6 @@ const load = () => {
       status: 'mock',
       source: structuredClone(mockCanvasSource),
       active: structuredClone(mockCanvasActive),
-      accordionWindow: structuredClone(mockNavigationAccordionWindow)
     }
   }
 
@@ -28,16 +26,13 @@ const load = () => {
 
     if (cache === undefined) return {
       status: 'empty',
-      source: mockCanvasSourceEmpty,
-      active: {},
-      accordionWindow: []
+
     }
 
     if (cache !== undefined) return {
       status: 'filled',
       source: cache.localStorageCanvasSource,
       active: cache.localStorageCanvasActive,
-      accordionWindow: cache.localStorageNavigationAccordionWindow
     }
   }
 }

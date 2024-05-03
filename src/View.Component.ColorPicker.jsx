@@ -17,7 +17,7 @@ const ColorPicker = (props) => {
           <Grid container spacing={0}>
             {
               props.colors.map(i => {
-                return <Grid item key={i} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: 30, height: 30 }}>
+                return <Grid item key={i} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: 30, height: 32 }}>
                   <Button variant='contained' style={{ background: i, width: 24, height: 24, borderRadius: '100%', minWidth: 'initial', padding: 0 }} onClick={() => { props.onChange(i) }} />
                 </Grid>
               })
@@ -27,7 +27,7 @@ const ColorPicker = (props) => {
         : null
     }
 
-    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
+    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 32 }}>
       <div>Red</div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ marginRight: 12 }}>{Number(rgbaObject.r)}</div>
@@ -35,7 +35,7 @@ const ColorPicker = (props) => {
       </div>
     </Grid>
 
-    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
+    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 32 }}>
       <div>Green</div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ marginRight: 12 }}>{Number(rgbaObject.g)}</div>
@@ -43,7 +43,7 @@ const ColorPicker = (props) => {
       </div>
     </Grid>
 
-    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
+    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 32 }}>
       <div>Blue</div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ marginRight: 12 }}>{Number(rgbaObject.b)}</div>
@@ -51,7 +51,7 @@ const ColorPicker = (props) => {
       </div>
     </Grid>
 
-    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
+    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 32 }}>
       <div>Alpha</div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ marginRight: 12 }}>{Number(rgbaObject.a)}</div>
@@ -59,7 +59,7 @@ const ColorPicker = (props) => {
       </div>
     </Grid>
 
-    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 30 }}>
+    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 32 }}>
       <div>
         <div>{rgbaString}</div>
       </div>

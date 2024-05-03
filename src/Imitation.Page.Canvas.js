@@ -2,20 +2,18 @@ import React from 'react'
 
 import Imitation from 'imitation-imm'
 
-import PencilInit from './View.Config.Pencil'
+import pencilInit from './Config.Pencil'
 
 import ImitationGlobal from './Imitation.Global'
 
 import { hash, debounce, throttleLastRAF, throttlePipeTime } from './utils.common'
 
-import { apiCanvas } from './api'
+import mockCanvasSourceEmpty from './mock.canvas.source.empty.json'
 
 const ImitationInstance = new Imitation()
 
 
-ImitationInstance.state = { update: {}, store: {}, function: {}, memo: {} }
-
-ImitationInstance.state.store = { ref: {}, pencil: {}, view: {}, control: {}, active: {} }
+ImitationInstance.state = { update: {}, store: {}, init: {}, function: {}, memo: {} }
 
 
 ImitationInstance.state.update.now = performance.now()
@@ -26,40 +24,44 @@ ImitationInstance.state.update.canvasOffscreenRender = performance.now()
 
 ImitationInstance.state.update.canvasOnlinescreenRender = performance.now()
 
+ImitationInstance.state.update.navigationWindow = performance.now()
 
 ImitationInstance.state.store.rect = undefined
 
 ImitationInstance.state.store.recting = false
 
-ImitationInstance.state.store.source = undefined
+ImitationInstance.state.store.source = { _hash: hash(), canvas: { layer: [], color: [], point: [] } }
 
-ImitationInstance.state.store.pencil = PencilInit()
+ImitationInstance.state.store.pencil = []
 
-ImitationInstance.state.store.ref.canvas = undefined
+ImitationInstance.state.store.refCanvas = undefined
 
-ImitationInstance.state.store.ref.context = undefined
+ImitationInstance.state.store.refContext = undefined
 
-ImitationInstance.state.store.ref.layer = []
+ImitationInstance.state.store.refLayer = []
 
-ImitationInstance.state.store.view.dpr = 2
+ImitationInstance.state.store.viewDpr = 2
 
-ImitationInstance.state.store.view.scaleX = 1
+ImitationInstance.state.store.viewScaleX = 1
 
-ImitationInstance.state.store.view.scaleY = 1
+ImitationInstance.state.store.viewScaleY = 1
 
-ImitationInstance.state.store.view.translateX = 0
+ImitationInstance.state.store.viewTranslateX = 0
 
-ImitationInstance.state.store.view.translateY = 0
+ImitationInstance.state.store.viewTranslateY = 0
 
-ImitationInstance.state.store.control.draw = true
+ImitationInstance.state.store.controlDraw = true
 
-ImitationInstance.state.store.control.move = true
+ImitationInstance.state.store.controlMove = true
 
-ImitationInstance.state.store.active.layer = undefined
+ImitationInstance.state.store.activeLayer = undefined
 
-ImitationInstance.state.store.active.pencil = undefined
+ImitationInstance.state.store.activePencil = undefined
 
-ImitationInstance.state.store.active.operation = undefined
+ImitationInstance.state.store.activeOperation = undefined
+
+
+ImitationInstance.state.init.store = JSON.parse(JSON.stringify(ImitationInstance.state.store))
 
 
 ImitationInstance.state.function.update = () => {
@@ -82,39 +84,42 @@ ImitationInstance.state.function.updateCanvasOnlinescreenRender = () => {
   ImitationInstance.dispatch()
 }
 
-ImitationInstance.state.function.onLoad = () => {
-  ImitationGlobal.state.function.loadingUp()
+ImitationInstance.state.function.updateNavigationWindow = () => {
+  ImitationInstance.state.update.navigationWindow = performance.now()
+  ImitationInstance.dispatch()
+}
 
-  apiCanvas()
-    .then(res => {
-      ImitationInstance.state.store.source = res.source
+ImitationInstance.state.function.onLoad = (data) => {
+  ImitationInstance.state.store.pencil = pencilInit()
 
-      ImitationInstance.state.store.ref.layer = ImitationInstance.state.store.source.canvas.layer.map(i => {
-        return {
-          _hash: hash(),
-          layerHash: i._hash,
-          offscreenExceptLastOperationCanvas: undefined,
-          offscreenExceptLastOperationContext: undefined,
-          offscreenCanvas: undefined,
-          offscreenContext: undefined,
-          offscreenExceptLastOperationUpdate: false,
-          offscreenComposeLastOperationUpdate: false,
-          offscreenUpdate: false,
-        }
-      })
-
-      ImitationInstance.state.store.active.layer = res.active.layer
-      ImitationInstance.state.store.active.pencil = res.active.pencil
-      ImitationInstance.state.store.active.operation = res.active.operation
-
-      ImitationInstance.state.function.update()
-
-      ImitationGlobal.state.function.loadingDown()
+  if (data.source) {
+    ImitationInstance.state.store.source = data.source
+    ImitationInstance.state.store.refLayer = ImitationInstance.state.store.source.canvas.layer.map(i => {
+      return {
+        _hash: hash(),
+        layerHash: i._hash,
+        offscreenExceptLastOperationCanvas: undefined,
+        offscreenExceptLastOperationContext: undefined,
+        offscreenCanvas: undefined,
+        offscreenContext: undefined,
+        offscreenExceptLastOperationUpdate: false,
+        offscreenComposeLastOperationUpdate: false,
+        offscreenUpdate: false,
+      }
     })
+  }
+
+  if (data.active) {
+    ImitationInstance.state.store.activeLayer = data.source.activeLayer
+    ImitationInstance.state.store.activePencil = data.source.activePencil
+    ImitationInstance.state.store.activeOperation = data.source.activeOperation
+  }
+
+  ImitationInstance.state.function.update()
 }
 
 ImitationInstance.state.function.onUnload = () => {
-  ImitationInstance.state.function.update()
+  ImitationInstance.state.store = JSON.parse(JSON.stringify(ImitationInstance.state.init.store))
 }
 
 ImitationInstance.state.function.onClear = () => {
@@ -140,7 +145,7 @@ ImitationInstance.state.function.onCanvasLayerCreate = () => {
 
   ImitationInstance.state.store.source.canvas.layer.push(i)
 
-  ImitationInstance.state.store.ref.layer.push({
+  ImitationInstance.state.store.refLayer.push({
     _hash: hash(),
     layerHash: i._hash,
     offscreenExceptLastOperationCanvas: undefined,
@@ -177,7 +182,7 @@ ImitationInstance.state.function.onCanvasLayerCopy = (_hash) => {
 
   ImitationInstance.state.store.source.canvas.layer.push(result)
 
-  ImitationInstance.state.store.ref.layer.push({
+  ImitationInstance.state.store.refLayer.push({
     _hash: hash(),
     layerHash: result._hash,
     offscreenExceptLastOperationCanvas: undefined,
@@ -196,9 +201,9 @@ ImitationInstance.state.function.onCanvasLayerCopy = (_hash) => {
 ImitationInstance.state.function.onCanvasLayerRemove = (_hash) => {
   ImitationInstance.state.store.source.canvas.layer = ImitationInstance.state.store.source.canvas.layer.filter(i => i._hash !== _hash)
 
-  ImitationInstance.state.store.ref.layer = ImitationInstance.state.store.ref.layer.filter(i => i.layerHash !== _hash)
+  ImitationInstance.state.store.refLayer = ImitationInstance.state.store.refLayer.filter(i => i.layerHash !== _hash)
 
-  ImitationInstance.state.store.active.layer = ImitationInstance.state.store.active.layer === _hash ? undefined : ImitationInstance.state.store.active.layer
+  ImitationInstance.state.store.activeLayer = ImitationInstance.state.store.activeLayer === _hash ? undefined : ImitationInstance.state.store.activeLayer
 
   ImitationInstance.state.function.updateCanvasOnlinescreenRender()
   ImitationInstance.state.function.update()
@@ -234,7 +239,7 @@ ImitationInstance.state.function.onCanvasLayerVisibility = (_hash, value) => {
 
 ImitationInstance.state.function.onCanvasOperationCopy = (layerHash, operationHash) => {
   const canvasLayerFind = ImitationInstance.state.store.source.canvas.layer.find(i => i._hash === layerHash)
-  const canvasLayerRefFind = ImitationInstance.state.store.ref.layer.find(i => i.layerHash === layerHash)
+  const canvasLayerRefFind = ImitationInstance.state.store.refLayer.find(i => i.layerHash === layerHash)
   const canvasLayerOperationFind = canvasLayerFind.operation.find(i => i._hash === operationHash)
 
   const result = structuredClone(canvasLayerOperationFind)
@@ -251,7 +256,7 @@ ImitationInstance.state.function.onCanvasOperationCopy = (layerHash, operationHa
 
 ImitationInstance.state.function.onCanvasOperationRemove = (layerHash, operationHash) => {
   const canvasLayerFind = ImitationInstance.state.store.source.canvas.layer.find(i => i._hash === layerHash)
-  const canvasLayerRefFind = ImitationInstance.state.store.ref.layer.find(i => i.layerHash === layerHash)
+  const canvasLayerRefFind = ImitationInstance.state.store.refLayer.find(i => i.layerHash === layerHash)
 
   canvasLayerFind.operation = canvasLayerFind.operation.filter(i => i._hash !== operationHash)
 
@@ -263,7 +268,7 @@ ImitationInstance.state.function.onCanvasOperationRemove = (layerHash, operation
 
 ImitationInstance.state.function.onCanvasOperationMove = (layerHash, operationHash, type) => {
   const canvasLayerFind = ImitationInstance.state.store.source.canvas.layer.find(i => i._hash === layerHash)
-  const canvasLayerRefFind = ImitationInstance.state.store.ref.layer.find(i => i.layerHash === layerHash)
+  const canvasLayerRefFind = ImitationInstance.state.store.refLayer.find(i => i.layerHash === layerHash)
   const canvasLayerOperationFindIndex = canvasLayerFind.operation.findIndex(i => i._hash === operationHash)
 
   if (type === 0 && canvasLayerOperationFindIndex !== 0) {
@@ -286,7 +291,7 @@ ImitationInstance.state.function.onCanvasOperationMove = (layerHash, operationHa
 
 ImitationInstance.state.function.onCanvasOperationVisibility = (layerHash, operationHash, value) => {
   const canvasLayerFind = ImitationInstance.state.store.source.canvas.layer.find(i => i._hash === layerHash)
-  const canvasLayerRefFind = ImitationInstance.state.store.ref.layer.find(i => i.layerHash === layerHash)
+  const canvasLayerRefFind = ImitationInstance.state.store.refLayer.find(i => i.layerHash === layerHash)
   const canvasLayerOperationFind = canvasLayerFind.operation.find(i => i._hash === operationHash)
 
   canvasLayerOperationFind.visibility = value
@@ -299,7 +304,7 @@ ImitationInstance.state.function.onCanvasOperationVisibility = (layerHash, opera
 
 ImitationInstance.state.function.onCanvasOperationVisibilityTracks = (_hash, index) => {
   const canvasLayerFind = ImitationInstance.state.store.source.canvas.layer.find(i => i._hash === _hash)
-  const canvasLayerRefFind = ImitationInstance.state.store.ref.layer.find(i => i.layerHash === _hash)
+  const canvasLayerRefFind = ImitationInstance.state.store.refLayer.find(i => i.layerHash === _hash)
 
   canvasLayerFind.operation.forEach((i, index_) => {
     if (index_ === index - 1) i.visibility = true
@@ -315,7 +320,7 @@ ImitationInstance.state.function.onCanvasOperationVisibilityTracks = (_hash, ind
 
 ImitationInstance.state.function.onCanvasOperationVisibilityTrack = (_hash, index) => {
   const canvasLayerFind = ImitationInstance.state.store.source.canvas.layer.find(i => i._hash === _hash)
-  const canvasLayerRefFind = ImitationInstance.state.store.ref.layer.find(i => i.layerHash === _hash)
+  const canvasLayerRefFind = ImitationInstance.state.store.refLayer.find(i => i.layerHash === _hash)
 
   canvasLayerFind.operation[index].visibility = !canvasLayerFind.operation[index].visibility
 
@@ -327,7 +332,7 @@ ImitationInstance.state.function.onCanvasOperationVisibilityTrack = (_hash, inde
 
 ImitationInstance.state.function.onPencilSwitch = (_hash) => {
   const find = ImitationInstance.state.store.pencil.find(i => i._hash === _hash)
-  ImitationInstance.state.store.active.pencil = find._hash
+  ImitationInstance.state.store.activePencil = find._hash
   ImitationInstance.state.function.update()
 }
 
@@ -351,8 +356,8 @@ ImitationInstance.state.memo.canvasLayerOperationVisibilityTrackFindIndex = (_ha
 }, [...dep, _hash, ImitationInstance.state.store.source.canvas.layer, ImitationInstance.state.store.source.canvas.layer.length])
 
 ImitationInstance.state.memo.canvasLayerRefFind = (layerHash, dep = []) => React.useMemo(() => {
-  return ImitationInstance.state.store.ref.layer.find(i => i.layerHash === layerHash)
-}, [...dep, layerHash, ImitationInstance.state.store.ref.layer, ImitationInstance.state.store.ref.layer.length])
+  return ImitationInstance.state.store.refLayer.find(i => i.layerHash === layerHash)
+}, [...dep, layerHash, ImitationInstance.state.store.refLayer, ImitationInstance.state.store.refLayer.length])
 
 ImitationInstance.state.memo.canvasLayerOperationFind = (layerHash, layerOperationHash, dep = []) => React.useMemo(() => {
   const canvasLayerFind = ImitationInstance.state.store.source.canvas.layer.find(i => i._hash === layerHash)

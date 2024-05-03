@@ -4,7 +4,7 @@ import Grid from '@mui/material/Grid'
 import TextField from '@mui/material/TextField'
 import Slider from '@mui/material/Slider'
 
-import { TextFieldSX } from './utils.mui.sx'
+import { PopperSX, TextFieldSX, TextFieldSmallSX, DrawerSX, DialogSX, DividerSX, SwitchSX, AccordionSX, PaperSX } from './utils.mui.sx'
 
 import { hash } from './utils.common'
 
