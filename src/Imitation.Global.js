@@ -21,8 +21,6 @@ ImitationInstance.state.store.theme = { palette: { background: { main: 'rgba(255
 
 ImitationInstance.state.store.router = [{ path: 'canvas', property: {} }]
 
-ImitationInstance.state.store.settingDialogMode = undefined
-
 
 ImitationInstance.state.function.update = () => {
   ImitationInstance.state.update.now = performance.now()

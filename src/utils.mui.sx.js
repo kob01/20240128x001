@@ -61,7 +61,7 @@ const TextFieldSX = (reverse, addition) => {
 const TextFieldSmallSX = (reverse, addition) => {
   const sx = TextFieldSX(reverse)
 
-  sx['& .MuiInputBase-root:hover fieldset'] = { fontSize: '12px', lineHeight: 1, padding: '4px 8px' }
+  sx['& input, & .MuiInputBase-multiline'] = { fontSize: '12px', lineHeight: 1, padding: '4px 8px' }
 
   if (addition) addition(sx)
 
@@ -152,21 +152,18 @@ const AccordionSX = (reverse, addition) => {
       margin: '0px',
       transition: '1s all',
     },
-    '& .MuiCollapse-root': {
-      overflow: 'visible'
+    '&.MuiAccordion-root:before': {
+      display: 'none'
     },
     '& .MuiAccordionSummary-root': {
-      minHeight: '42px'
+      minHeight: 'initial'
     },
     '& .MuiAccordionSummary-root.Mui-expanded': {
       minHeight: 'initial'
     },
-    '& .MuiAccordionSummary-content.Mui-expanded': {
-      margin: '16px 0'
-    },
-    '& .MuiAccordionDetails-root': {
-      padding: '16px'
-    }
+    '& .MuiAccordionSummary-content': {},
+    '& .MuiAccordionSummary-content.Mui-expanded': {},
+    '& .MuiAccordionDetails-root': {},
   }
 
   if (addition) addition(sx)

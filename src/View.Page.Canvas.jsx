@@ -36,11 +36,12 @@ function App() {
 
   return <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }} ref={el => ref.current = el}>
     {
-      ImitationPageCanvas.state.store.rect !== undefined ? <Content /> : null
-    }
-
-    {
-      ImitationPageCanvas.state.store.rect !== undefined ? <Navigation /> : null
+      ImitationPageCanvas.state.store.rect !== undefined ?
+        <>
+          <Content />
+          <Navigation />
+        </>
+        : null
     }
   </div>
 }
@@ -48,7 +49,6 @@ function App() {
 const dependence = [
   {
     instance: ImitationPageCanvas, dependence: state => [
-      ImitationPageCanvas.state.store.recting,
       ImitationPageCanvas.state.store.rect,
     ]
   }

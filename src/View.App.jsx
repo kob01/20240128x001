@@ -33,21 +33,18 @@ function App() {
 
   return <div style={{ position: 'absolute', width: '100%', height: '100%', overflow: 'hidden' }} ref={el => ref.current = el}>
     <ThemeProvider theme={createTheme(ImitationGlobal.state.store.theme)}>
-
       {
         ImitationGlobal.state.store.rect ?
           <>
             <Loading />
             <Message />
             <Setting />
-
             {
               ImitationGlobal.state.store.router[ImitationGlobal.state.store.router.length - 1].path === 'canvas' ? <Canvas /> : null
             }
           </>
           : null
       }
-
     </ThemeProvider>
   </div>
 }
@@ -56,7 +53,6 @@ const dependence = [
   {
     instance: ImitationGlobal, dependence: state => [
       ImitationGlobal.state.store.rect,
-      ImitationGlobal.state.store.recting,
       JSON.stringify(ImitationGlobal.state.store.router),
       JSON.stringify(ImitationGlobal.state.store.theme.palette),
     ]

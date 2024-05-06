@@ -9,9 +9,9 @@ const useState = (props) => {
     if (props.onClick) props.onClick({ ...params, open, setOpen })
   }
 
-  const { pushClickAwayRef } = useClickAwayListener({ onClick })
+  const { pushIgnoreTarget } = useClickAwayListener({ onClick })
 
-  return { open, setOpen, pushClickAwayRef }
+  return { open, setOpen, pushIgnoreTarget }
 }
 
 const ClickAwayListenerIfOpen = (props) => { const state = useState(props); return props.children(state); }

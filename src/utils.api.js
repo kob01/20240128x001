@@ -3,7 +3,6 @@ import { ImitationGlobal, ImitationPageCanvas, ImitationPageLibrary, withBindCom
 import { localStorageCache } from './utils.const'
 
 import mockCanvasSource from './mock.canvas.source.json'
-import mockCanvasSourceEmpty from './mock.canvas.source.empty.json'
 import mockCanvasActive from './mock.canvas.active.json'
 
 var mode = 'localStorage'
@@ -26,7 +25,6 @@ const load = () => {
 
     if (cache === undefined) return {
       status: 'empty',
-
     }
 
     if (cache !== undefined) return {

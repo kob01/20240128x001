@@ -17,7 +17,7 @@ function App() {
 
     if (ref.current) clearTimeout(ref.current)
 
-    if (ImitationGlobal.state.store.loading !== 0) setOpen(true)
+    if (ImitationGlobal.state.store.loading !== 0) setOpen(!open)
 
     if (ImitationGlobal.state.store.loading === 0) ref.current = setTimeout(() => { setOpen(false); ref.current = null }, 500)
 

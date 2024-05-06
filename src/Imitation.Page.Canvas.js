@@ -8,8 +8,6 @@ import ImitationGlobal from './Imitation.Global'
 
 import { hash, debounce, throttleLastRAF, throttlePipeTime } from './utils.common'
 
-import mockCanvasSourceEmpty from './mock.canvas.source.empty.json'
-
 const ImitationInstance = new Imitation()
 
 
@@ -40,15 +38,15 @@ ImitationInstance.state.store.refContext = undefined
 
 ImitationInstance.state.store.refLayer = []
 
-ImitationInstance.state.store.viewDpr = 2
+ImitationInstance.state.store.dpr = 2
 
-ImitationInstance.state.store.viewScaleX = 1
+ImitationInstance.state.store.scaleX = 1
 
-ImitationInstance.state.store.viewScaleY = 1
+ImitationInstance.state.store.scaleY = 1
 
-ImitationInstance.state.store.viewTranslateX = 0
+ImitationInstance.state.store.translateX = 0
 
-ImitationInstance.state.store.viewTranslateY = 0
+ImitationInstance.state.store.translateY = 0
 
 ImitationInstance.state.store.controlDraw = true
 
@@ -57,8 +55,6 @@ ImitationInstance.state.store.controlMove = true
 ImitationInstance.state.store.activeLayer = undefined
 
 ImitationInstance.state.store.activePencil = undefined
-
-ImitationInstance.state.store.activeOperation = undefined
 
 
 ImitationInstance.state.init.store = JSON.parse(JSON.stringify(ImitationInstance.state.store))
@@ -92,7 +88,7 @@ ImitationInstance.state.function.updateNavigationWindow = () => {
 ImitationInstance.state.function.onLoad = (data) => {
   ImitationInstance.state.store.pencil = pencilInit()
 
-  if (data.source) {
+  if (data.source !== undefined || Boolean(data.source) === true) {
     ImitationInstance.state.store.source = data.source
     ImitationInstance.state.store.refLayer = ImitationInstance.state.store.source.canvas.layer.map(i => {
       return {
@@ -109,10 +105,18 @@ ImitationInstance.state.function.onLoad = (data) => {
     })
   }
 
-  if (data.active) {
+  if (data.active !== undefined || Boolean(data.source) === true) {
     ImitationInstance.state.store.activeLayer = data.source.activeLayer
     ImitationInstance.state.store.activePencil = data.source.activePencil
-    ImitationInstance.state.store.activeOperation = data.source.activeOperation
+  }
+
+  if (data.source === undefined || Boolean(data.source) === false) {
+    ImitationInstance.state.function.onCanvasLayerCreate()
+  }
+
+  if (data.active === undefined || Boolean(data.active) === false) {
+    ImitationInstance.state.store.activeLayer = ImitationInstance.state.store.source.canvas.layer[0]._hash
+    ImitationInstance.state.store.activePencil = ImitationInstance.state.store.pencil[0]._hash
   }
 
   ImitationInstance.state.function.update()

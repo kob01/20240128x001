@@ -65,7 +65,7 @@ function Content(props) {
     const continuedX = params.continuedX
     const continuedY = params.continuedY
 
-    const currentX = styleDragControl ? Number(styleDragControl.transform.match(/[-\d\.]+/)[0]) : 0
+    const currentX = styleDragControl ? Number(styleDragControl.match(/[-\d\.]+/)[0]) : 0
 
     var process = currentX + changedX
 
@@ -116,7 +116,7 @@ function Content(props) {
     const continuedX = params.continuedX[0]
     const continuedY = params.continuedY[0]
 
-    const currentX = styleDragControl ? Number(styleDragControl.transform.match(/[-\d\.]+/)[0]) : 0
+    const currentX = styleDragControl ? Number(styleDragControl.match(/[-\d\.]+/)[0]) : 0
 
     var process = currentX + changedX
 

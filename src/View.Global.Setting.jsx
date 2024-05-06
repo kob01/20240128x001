@@ -16,6 +16,7 @@ import SettingsIcon from '@mui/icons-material/Settings'
 import { AnimationRAF, opacityAnimation } from './View.Component.AnimationRAF'
 import { ClickAwayListenerIfOpen } from './View.Component.ClickAwayListenerIfOpen'
 import { HoverListener } from './View.Component.HoverListener'
+import { ResizeObserverListener } from './View.Component.ResizeObserverListener'
 import { ColorPicker } from './View.Component.ColorPicker'
 
 import { ImitationGlobal, withBindComponentPure } from './Imitation'
@@ -57,7 +58,6 @@ function Theme(props) {
     'rgba(255, 0, 0, 1)',
     'rgba(0, 255, 0, 1)',
     'rgba(0, 0, 255, 1)',
-    'rgba(0, 0, 60, 0.55)'
   ]
 
   const updateThrottleLastRAF = React.useCallback(throttleLastRAF(ImitationGlobal.state.function.update), [])
@@ -70,21 +70,27 @@ function Theme(props) {
       <div>
         <ClickAwayListenerIfOpen onClick={({ inContainStart, inContainEnd, setOpen }) => { if (inContainStart === false && inContainEnd === false) setOpen(false) }}>
           {
-            ({ open, setOpen, pushClickAwayRef }) => {
-              return <Tooltip
-                PopperProps={{ sx: PopperSX() }}
-                open={open}
-                title={
-                  <div style={{ padding: 8, width: 320 }} ref={el => [...props.pushClickAwayRefs, pushClickAwayRef].forEach(i => i(el))}>
-                    <Paper sx={PaperSX()} style={{ padding: 16 }}>
-                      <ColorPicker value={ImitationGlobal.state.store.theme.palette.background.main} onChange={v => { ImitationGlobal.state.store.theme.palette.background.main = v; updateThrottleLastRAF() }} colors={colors} />
-                    </Paper>
-                  </div>
+            ({ open, setOpen, pushIgnoreTarget }) => {
+              return <ResizeObserverListener>
+                {
+                  ({ pushResizeTarget }) => {
+                    return <Tooltip
+                      PopperProps={{ sx: PopperSX() }}
+                      open={open}
+                      title={
+                        <div style={{ padding: 8, width: 320 }} ref={el => [...props.pushIgnoreTargets, pushIgnoreTarget, pushResizeTarget].forEach(i => i(el))}>
+                          <Paper sx={PaperSX()} style={{ padding: 16 }}>
+                            <ColorPicker value={ImitationGlobal.state.store.theme.palette.background.main} onChange={v => { ImitationGlobal.state.store.theme.palette.background.main = v; updateThrottleLastRAF() }} colors={colors} />
+                          </Paper>
+                        </div>
+                      }
+                      children={
+                        <Button variant='contained' style={{ width: 42, height: 24, minWidth: 'initial', background: ImitationGlobal.state.store.theme.palette.background.main }} onClick={() => setOpen(!open)} ref={el => [...props.pushIgnoreTargets, pushIgnoreTarget].forEach(i => i(el))}></Button>
+                      }
+                    />
+                  }
                 }
-                children={
-                  <Button variant='contained' style={{ width: 42, height: 24, minWidth: 'initial', background: ImitationGlobal.state.store.theme.palette.background.main }} onClick={() => setOpen(true)} ref={el => [...props.pushClickAwayRefs, pushClickAwayRef].forEach(i => i(el))}></Button>
-                }
-              />
+              </ResizeObserverListener>
             }
           }
         </ClickAwayListenerIfOpen>
@@ -98,21 +104,27 @@ function Theme(props) {
       <div>
         <ClickAwayListenerIfOpen onClick={({ inContainStart, inContainEnd, setOpen }) => { if (inContainStart === false && inContainEnd === false) setOpen(false) }}>
           {
-            ({ open, setOpen, pushClickAwayRef }) => {
-              return <Tooltip
-                PopperProps={{ sx: PopperSX() }}
-                open={open}
-                title={
-                  <div style={{ padding: 8, width: 320 }} ref={el => [...props.pushClickAwayRefs, pushClickAwayRef].forEach(i => i(el))}>
-                    <Paper sx={PaperSX()} style={{ padding: 16 }}>
-                      <ColorPicker value={ImitationGlobal.state.store.theme.palette.primary.main} onChange={v => { ImitationGlobal.state.store.theme.palette.primary.main = v; updateThrottleLastRAF() }} colors={colors} />
-                    </Paper>
-                  </div>
+            ({ open, setOpen, pushIgnoreTarget }) => {
+              return <ResizeObserverListener>
+                {
+                  ({ pushResizeTarget }) => {
+                    return <Tooltip
+                      PopperProps={{ sx: PopperSX() }}
+                      open={open}
+                      title={
+                        <div style={{ padding: 8, width: 320 }} ref={el => [...props.pushIgnoreTargets, pushIgnoreTarget, pushResizeTarget].forEach(i => i(el))}>
+                          <Paper sx={PaperSX()} style={{ padding: 16 }}>
+                            <ColorPicker value={ImitationGlobal.state.store.theme.palette.primary.main} onChange={v => { ImitationGlobal.state.store.theme.palette.primary.main = v; updateThrottleLastRAF() }} colors={colors} />
+                          </Paper>
+                        </div>
+                      }
+                      children={
+                        <Button variant='contained' style={{ width: 42, height: 24, minWidth: 'initial', background: ImitationGlobal.state.store.theme.palette.primary.main }} onClick={() => setOpen(!open)} ref={el => [...props.pushIgnoreTargets, pushIgnoreTarget].forEach(i => i(el))}></Button>
+                      }
+                    />
+                  }
                 }
-                children={
-                  <Button variant='contained' style={{ width: 42, height: 24, minWidth: 'initial', background: ImitationGlobal.state.store.theme.palette.primary.main }} onClick={() => setOpen(true)} ref={el => [...props.pushClickAwayRefs, pushClickAwayRef].forEach(i => i(el))}></Button>
-                }
-              />
+              </ResizeObserverListener>
             }
           }
         </ClickAwayListenerIfOpen>
@@ -121,53 +133,72 @@ function Theme(props) {
   </Grid >
 }
 
+const ThemeComponent = withBindComponentPure(
+  Theme,
+  [
+    {
+      instance: ImitationGlobal, dependence: state => []
+    }
+  ]
+)
+
 function App() {
   return <div style={{ position: 'absolute', left: 8, top: 8, display: 'flex', zIndex: 1000, transition: '1s all' }}>
     <div style={{ display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', width: 'fit-content', overflowX: 'auto' }}>
-      <AnimationRAF animation={opacityAnimation}>
-        {
-          ({ animationed, style }) => {
-            return <HoverListener>
+      {
+        [
+          { Component: ThemeComponent, Icon: SettingsIcon },
+        ]
+          .map((i, index) => {
+            return <AnimationRAF key={index} animation={opacityAnimation}>
               {
-                ({ hover, onMouseEnter, onMouseLeave }) => {
-                  return <ClickAwayListenerIfOpen onClick={({ inContainStart, inContainEnd, setOpen }) => { if (inContainStart === false && inContainEnd === false) setOpen(false) }}>
+                ({ animationed, style }) => {
+                  return <HoverListener>
                     {
-                      ({ open, setOpen, pushClickAwayRef }) => {
-                        return <Tooltip
-                          PopperProps={{ sx: PopperSX() }}
-                          placement='right'
-                          open={open}
-                          title={
-                            <div style={{ padding: 8, width: 320 }} ref={el => pushClickAwayRef(el)}>
-                              <Paper sx={PaperSX()} style={{ padding: 16 }}>
-                                <Theme pushClickAwayRefs={[pushClickAwayRef]} />
-                              </Paper>
-                            </div>
+                      ({ hover, onMouseEnter, onMouseLeave }) => {
+                        return <ClickAwayListenerIfOpen onClick={({ inContainStart, inContainEnd, setOpen }) => { if (inContainStart === false && inContainEnd === false) setOpen(false) }}>
+                          {
+                            ({ open, setOpen, pushIgnoreTarget }) => {
+                              return <ResizeObserverListener>
+                                {
+                                  ({ pushResizeTarget }) => {
+                                    return <Tooltip
+                                      PopperProps={{ sx: PopperSX() }}
+                                      placement='right'
+                                      open={open}
+                                      title={
+                                        <div style={{ padding: 8, width: 320 }} ref={el => [pushIgnoreTarget, pushResizeTarget].forEach(i => i(el))} >
+                                          <Paper sx={PaperSX()} style={{ padding: 16 }}>
+                                            <i.Component pushIgnoreTargets={[pushIgnoreTarget]} />
+                                          </Paper>
+                                        </div>
+                                      }
+                                      children={
+                                        <IconButton style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', opacity: animationed ? 1 : 0, transition: '1s all' }} ref={el => pushIgnoreTarget(el)} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={() => setOpen(!open)}>
+                                          <i.Icon color='primary' style={{ transform: `translateY(${hover ? -2 : 0}px)`, transition: '1s all' }} />
+                                        </IconButton>
+                                      }
+                                    />
+                                  }
+                                }
+                              </ResizeObserverListener>
+                            }
                           }
-                          children={
-                            <IconButton style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', opacity: animationed ? 1 : 0, transition: '1s all' }} ref={el => pushClickAwayRef(el)} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={() => setOpen(true)}>
-                              <ColorLensIcon color='primary' style={{ transform: `translateY(${hover ? -2 : 0}px)`, transition: '1s all' }} />
-                            </IconButton>
-                          }
-                        />
+                        </ClickAwayListenerIfOpen>
                       }
                     }
-                  </ClickAwayListenerIfOpen>
+                  </HoverListener>
                 }
               }
-            </HoverListener>
-          }
-        }
-      </AnimationRAF>
+            </AnimationRAF>
+          })
+      }
     </div>
   </div>
 }
 
 const dependence = [{
-  instance: ImitationGlobal, dependence: state => [
-    ImitationGlobal.state.store.settingDialogMode,
-    JSON.stringify(ImitationGlobal.state.store.theme.palette)
-  ]
+  instance: ImitationGlobal, dependence: state => []
 }]
 
 export default withBindComponentPure(App, dependence)

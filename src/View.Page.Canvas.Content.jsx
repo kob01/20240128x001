@@ -1,5 +1,7 @@
 import React from 'react'
 
+import Paper from '@mui/material/Paper'
+
 import { useDragControl as useDragControlMouse } from './View.Component.DragControl.Mouse'
 import { useDragControl as useDragControlTouch } from './View.Component.DragControl.Touch'
 import { useKeyboardRecord } from './View.Component.KeyboardRecord'
@@ -62,10 +64,10 @@ function App() {
     }
 
     if (dragControlType.current === 0 && (status === 'afterStart' || status === 'afterMove' || status === 'afterEnd')) {
-      const offsetX = (x - ImitationPageCanvas.state.store.rect.width / 2 - ImitationPageCanvas.state.store.rect.left) / ImitationPageCanvas.state.store.viewScaleX / canvasLayerFind.scaleX * ImitationPageCanvas.state.store.viewDpr
-      const offsetY = (y - ImitationPageCanvas.state.store.rect.height / 2 - ImitationPageCanvas.state.store.rect.top) / ImitationPageCanvas.state.store.viewScaleY / canvasLayerFind.scaleY * ImitationPageCanvas.state.store.viewDpr
-      const translateX = ImitationPageCanvas.state.store.viewTranslateX + canvasLayerFind.translateX
-      const translateY = ImitationPageCanvas.state.store.viewTranslateY + canvasLayerFind.translateY
+      const offsetX = (x - ImitationPageCanvas.state.store.rect.width / 2 - ImitationPageCanvas.state.store.rect.left) / ImitationPageCanvas.state.store.scaleX / canvasLayerFind.scaleX * ImitationPageCanvas.state.store.dpr
+      const offsetY = (y - ImitationPageCanvas.state.store.rect.height / 2 - ImitationPageCanvas.state.store.rect.top) / ImitationPageCanvas.state.store.scaleY / canvasLayerFind.scaleY * ImitationPageCanvas.state.store.dpr
+      const translateX = ImitationPageCanvas.state.store.translateX / canvasLayerFind.scaleX + canvasLayerFind.translateX
+      const translateY = ImitationPageCanvas.state.store.translateY / canvasLayerFind.scaleY + canvasLayerFind.translateY
       const relativeX = offsetX - translateX
       const relativeY = offsetY - translateY
       const canvas = ImitationPageCanvas.state.store.refCanvas
@@ -74,7 +76,7 @@ function App() {
       const operations = canvasLayerFind.operation
 
       if (status === 'afterStart') {
-        dragControlProp.current.operation = { _hash: hash(), pencilHash: pencilFind._hash, visibility: true, setting: structuredClone(pencilFind.setting), transform: { scaleX: 1, scaleY: 1, translateX: 0, translateY: 0, rotate: 0 } }
+        dragControlProp.current.operation = { _hash: hash(), pencilHash: pencilFind._hash, visibility: true, setting: structuredClone(pencilFind.setting) }
         canvasLayerFind.operation.push(dragControlProp.current.operation)
       }
 
@@ -89,11 +91,11 @@ function App() {
     }
 
     if (dragControlType.current === 1 && status === 'afterMove') {
-      const offsetX = changedX / ImitationPageCanvas.state.store.viewScaleX * ImitationPageCanvas.state.store.viewDpr
-      const offsetY = changedY / ImitationPageCanvas.state.store.viewScaleY * ImitationPageCanvas.state.store.viewDpr
+      const offsetX = changedX / ImitationPageCanvas.state.store.scaleX * ImitationPageCanvas.state.store.dpr
+      const offsetY = changedY / ImitationPageCanvas.state.store.scaleY * ImitationPageCanvas.state.store.dpr
 
-      ImitationPageCanvas.state.store.viewTranslateX = ImitationPageCanvas.state.store.viewTranslateX + offsetX
-      ImitationPageCanvas.state.store.viewTranslateY = ImitationPageCanvas.state.store.viewTranslateY + offsetY
+      ImitationPageCanvas.state.store.translateX = ImitationPageCanvas.state.store.translateX + offsetX
+      ImitationPageCanvas.state.store.translateY = ImitationPageCanvas.state.store.translateY + offsetY
 
       ImitationPageCanvas.state.store.refLayer.forEach(i => i.offscreenUpdate = true)
 
@@ -102,8 +104,8 @@ function App() {
     }
 
     if (dragControlType.current === 2 && status === 'afterMove') {
-      const offsetX = changedX / ImitationPageCanvas.state.store.viewScaleX * ImitationPageCanvas.state.store.viewDpr
-      const offsetY = changedY / ImitationPageCanvas.state.store.viewScaleY * ImitationPageCanvas.state.store.viewDpr
+      const offsetX = changedX / ImitationPageCanvas.state.store.scaleX / canvasLayerFind.scaleX * ImitationPageCanvas.state.store.dpr
+      const offsetY = changedY / ImitationPageCanvas.state.store.scaleY / canvasLayerFind.scaleY * ImitationPageCanvas.state.store.dpr
 
       canvasLayerFind.translateX = canvasLayerFind.translateX + offsetX
       canvasLayerFind.translateY = canvasLayerFind.translateY + offsetY
@@ -151,10 +153,10 @@ function App() {
     }
 
     if (dragControlType.current === 0 && (status === 'afterStart' || status === 'afterMove' || status === 'afterEnd')) {
-      const offsetX = (x - ImitationPageCanvas.state.store.rect.width / 2 - ImitationPageCanvas.state.store.rect.left) / ImitationPageCanvas.state.store.viewScaleX / canvasLayerFind.scaleX * ImitationPageCanvas.state.store.viewDpr
-      const offsetY = (y - ImitationPageCanvas.state.store.rect.height / 2 - ImitationPageCanvas.state.store.rect.top) / ImitationPageCanvas.state.store.viewScaleY / canvasLayerFind.scaleY * ImitationPageCanvas.state.store.viewDpr
-      const translateX = ImitationPageCanvas.state.store.viewTranslateX + canvasLayerFind.translateX
-      const translateY = ImitationPageCanvas.state.store.viewTranslateY + canvasLayerFind.translateY
+      const offsetX = (x - ImitationPageCanvas.state.store.rect.width / 2 - ImitationPageCanvas.state.store.rect.left) / ImitationPageCanvas.state.store.scaleX / canvasLayerFind.scaleX * ImitationPageCanvas.state.store.dpr
+      const offsetY = (y - ImitationPageCanvas.state.store.rect.height / 2 - ImitationPageCanvas.state.store.rect.top) / ImitationPageCanvas.state.store.scaleY / canvasLayerFind.scaleY * ImitationPageCanvas.state.store.dpr
+      const translateX = ImitationPageCanvas.state.store.translateX / canvasLayerFind.scaleX + canvasLayerFind.translateX
+      const translateY = ImitationPageCanvas.state.store.translateY / canvasLayerFind.scaleY + canvasLayerFind.translateY
       const relativeX = offsetX - translateX
       const relativeY = offsetY - translateY
       const canvas = ImitationPageCanvas.state.store.refCanvas
@@ -163,7 +165,7 @@ function App() {
       const operations = canvasLayerFind.operation
 
       if (status === 'afterStart') {
-        dragControlProp.current.operation = { _hash: hash(), pencilHash: pencilFind._hash, visibility: true, setting: structuredClone(pencilFind.setting), transform: { scaleX: 1, scaleY: 1, translateX: 0, translateY: 0, rotate: 0 } }
+        dragControlProp.current.operation = { _hash: hash(), pencilHash: pencilFind._hash, visibility: true, setting: structuredClone(pencilFind.setting) }
         canvasLayerFind.operation.push(dragControlProp.current.operation)
       }
 
@@ -178,11 +180,11 @@ function App() {
     }
 
     if (dragControlType.current === 1 && status === 'afterMove' && inTouch2 === true) {
-      const offsetX = (changedX[0] + changedX[1]) / 2 / ImitationPageCanvas.state.store.viewScaleX * ImitationPageCanvas.state.store.viewDpr
-      const offsetY = (changedY[0] + changedY[1]) / 2 / ImitationPageCanvas.state.store.viewScaleY * ImitationPageCanvas.state.store.viewDpr
+      const offsetX = (changedX[0] + changedX[1]) / 2 / ImitationPageCanvas.state.store.scaleX * ImitationPageCanvas.state.store.dpr
+      const offsetY = (changedY[0] + changedY[1]) / 2 / ImitationPageCanvas.state.store.scaleY * ImitationPageCanvas.state.store.dpr
 
-      ImitationPageCanvas.state.store.viewTranslateX = ImitationPageCanvas.state.store.viewTranslateX + offsetX
-      ImitationPageCanvas.state.store.viewTranslateY = ImitationPageCanvas.state.store.viewTranslateY + offsetY
+      ImitationPageCanvas.state.store.translateX = ImitationPageCanvas.state.store.translateX + offsetX
+      ImitationPageCanvas.state.store.translateY = ImitationPageCanvas.state.store.translateY + offsetY
 
       ImitationPageCanvas.state.store.refLayer.forEach(i => i.offscreenUpdate = true)
 
@@ -191,8 +193,8 @@ function App() {
     }
 
     if (dragControlType.current === 2 && status === 'afterMove' && inTouch3 === true) {
-      const offsetX = (changedX[0] + changedX[1] + changedX[2]) / 3 / ImitationPageCanvas.state.store.viewScaleX * ImitationPageCanvas.state.store.viewDpr
-      const offsetY = (changedY[0] + changedY[1] + changedY[2]) / 3 / ImitationPageCanvas.state.store.viewScaleY * ImitationPageCanvas.state.store.viewDpr
+      const offsetX = (changedX[0] + changedX[1] + changedX[2]) / 3 / ImitationPageCanvas.state.store.scaleX / canvasLayerFind.scaleX * ImitationPageCanvas.state.store.dpr
+      const offsetY = (changedY[0] + changedY[1] + changedY[2]) / 3 / ImitationPageCanvas.state.store.scaleY / canvasLayerFind.scaleY * ImitationPageCanvas.state.store.dpr
 
       canvasLayerFind.translateX = canvasLayerFind.translateX + offsetX
       canvasLayerFind.translateY = canvasLayerFind.translateY + offsetY
@@ -216,12 +218,12 @@ function App() {
   const onWheel = (e) => {
     if (ImitationPageCanvas.state.store.recting === true) return
 
-    if (e.nativeEvent.ctrlKey === false && inControlMove === true) {
-      const offsetX = e.nativeEvent.deltaX / ImitationPageCanvas.state.store.viewScaleX * ImitationPageCanvas.state.store.viewDpr * 2 * -1
-      const offsetY = e.nativeEvent.deltaY / ImitationPageCanvas.state.store.viewScaleY * ImitationPageCanvas.state.store.viewDpr * 2 * -1
+    if (e.nativeEvent.ctrlKey === false && inControlMove === true && inMeta === false) {
+      const offsetX = e.nativeEvent.deltaX / ImitationPageCanvas.state.store.scaleX * ImitationPageCanvas.state.store.dpr * 2 * -1
+      const offsetY = e.nativeEvent.deltaY / ImitationPageCanvas.state.store.scaleY * ImitationPageCanvas.state.store.dpr * 2 * -1
 
-      ImitationPageCanvas.state.store.viewTranslateX = ImitationPageCanvas.state.store.viewTranslateX + offsetX
-      ImitationPageCanvas.state.store.viewTranslateY = ImitationPageCanvas.state.store.viewTranslateY + offsetY
+      ImitationPageCanvas.state.store.translateX = ImitationPageCanvas.state.store.translateX + offsetX
+      ImitationPageCanvas.state.store.translateY = ImitationPageCanvas.state.store.translateY + offsetY
 
       ImitationPageCanvas.state.store.refLayer.forEach(i => i.offscreenUpdate = true)
 
@@ -229,25 +231,62 @@ function App() {
       updateDebounce500()
     }
 
-    if (e.nativeEvent.ctrlKey === true) {
-      var scaleX = range(Number(Number(ImitationPageCanvas.state.store.viewScaleX - ImitationPageCanvas.state.store.viewScaleX * 0.01 * e.nativeEvent.deltaY).toFixed(2)), 0.02, 24)
-      if (e.nativeEvent.deltaY < 0 && scaleX === ImitationPageCanvas.state.store.viewScaleX) var scaleX = range(ImitationPageCanvas.state.store.viewScaleX + 0.01, 0.02, 24)
-      if (e.nativeEvent.deltaY > 0 && scaleX === ImitationPageCanvas.state.store.viewScaleX) var scaleX = range(ImitationPageCanvas.state.store.viewScaleX - 0.01, 0.02, 24)
+    if (e.nativeEvent.ctrlKey === false && inControlMove === true && inMeta === true && canvasLayerFind !== undefined && canvasLayerFind.visibility === true) {
+      const offsetX = e.nativeEvent.deltaX / ImitationPageCanvas.state.store.scaleX / canvasLayerFind.scaleX * ImitationPageCanvas.state.store.dpr * 2 * -1
+      const offsetY = e.nativeEvent.deltaY / ImitationPageCanvas.state.store.scaleY / canvasLayerFind.scaleY * ImitationPageCanvas.state.store.dpr * 2 * -1
 
-      var scaleY = range(Number(Number(ImitationPageCanvas.state.store.viewScaleY - ImitationPageCanvas.state.store.viewScaleY * 0.01 * e.nativeEvent.deltaY).toFixed(2)), 0.02, 24)
-      if (e.nativeEvent.deltaY < 0 && scaleY === ImitationPageCanvas.state.store.viewScaleY) var scaleY = range(ImitationPageCanvas.state.store.viewScaleY + 0.01, 0.02, 24)
-      if (e.nativeEvent.deltaY > 0 && scaleY === ImitationPageCanvas.state.store.viewScaleY) var scaleY = range(ImitationPageCanvas.state.store.viewScaleY - 0.01, 0.02, 24)
+      canvasLayerFind.translateX = canvasLayerFind.translateX + offsetX
+      canvasLayerFind.translateY = canvasLayerFind.translateY + offsetY
 
-      const offsetX = (e.pageX - ImitationPageCanvas.state.store.rect.width / 2 - ImitationPageCanvas.state.store.rect.left) / ImitationPageCanvas.state.store.viewScaleX / canvasLayerFind.scaleX * ImitationPageCanvas.state.store.viewDpr * (1 - scaleX / ImitationPageCanvas.state.store.viewScaleX)
-      const offsetY = (e.pageY - ImitationPageCanvas.state.store.rect.height / 2 - ImitationPageCanvas.state.store.rect.top) / ImitationPageCanvas.state.store.viewScaleY / canvasLayerFind.scaleY * ImitationPageCanvas.state.store.viewDpr * (1 - scaleY / ImitationPageCanvas.state.store.viewScaleY)
+      canvasLayerRefFind.offscreenUpdate = true
 
-      ImitationPageCanvas.state.store.viewTranslateX = ImitationPageCanvas.state.store.viewTranslateX + offsetX
-      ImitationPageCanvas.state.store.viewTranslateY = ImitationPageCanvas.state.store.viewTranslateY + offsetY
+      updateCanvasOffscreenRenderThrottleLastRAF()
+      updateDebounce500()
+    }
 
-      ImitationPageCanvas.state.store.viewScaleX = scaleX
-      ImitationPageCanvas.state.store.viewScaleY = scaleY
+    if (e.nativeEvent.ctrlKey === true && inControlMove === true && inMeta === false) {
+      var scaleX = range(Number(Number(ImitationPageCanvas.state.store.scaleX - ImitationPageCanvas.state.store.scaleX * 0.01 * e.nativeEvent.deltaY).toFixed(2)), 0.02, 24)
+      if (e.nativeEvent.deltaY < 0 && scaleX === ImitationPageCanvas.state.store.scaleX) var scaleX = range(ImitationPageCanvas.state.store.scaleX + 0.01, 0.02, 24)
+      if (e.nativeEvent.deltaY > 0 && scaleX === ImitationPageCanvas.state.store.scaleX) var scaleX = range(ImitationPageCanvas.state.store.scaleX - 0.01, 0.02, 24)
+
+      var scaleY = range(Number(Number(ImitationPageCanvas.state.store.scaleY - ImitationPageCanvas.state.store.scaleY * 0.01 * e.nativeEvent.deltaY).toFixed(2)), 0.02, 24)
+      if (e.nativeEvent.deltaY < 0 && scaleY === ImitationPageCanvas.state.store.scaleY) var scaleY = range(ImitationPageCanvas.state.store.scaleY + 0.01, 0.02, 24)
+      if (e.nativeEvent.deltaY > 0 && scaleY === ImitationPageCanvas.state.store.scaleY) var scaleY = range(ImitationPageCanvas.state.store.scaleY - 0.01, 0.02, 24)
+
+      // const offsetX = (e.pageX - ImitationPageCanvas.state.store.rect.width / 2 - ImitationPageCanvas.state.store.rect.left) / ImitationPageCanvas.state.store.scaleX / canvasLayerFind.scaleX * ImitationPageCanvas.state.store.dpr * (1 - scaleX / ImitationPageCanvas.state.store.scaleX)
+      // const offsetY = (e.pageY - ImitationPageCanvas.state.store.rect.height / 2 - ImitationPageCanvas.state.store.rect.top) / ImitationPageCanvas.state.store.scaleY / canvasLayerFind.scaleY * ImitationPageCanvas.state.store.dpr * (1 - scaleY / ImitationPageCanvas.state.store.scaleY)
+
+      // ImitationPageCanvas.state.store.translateX = ImitationPageCanvas.state.store.translateX + offsetX
+      // ImitationPageCanvas.state.store.translateY = ImitationPageCanvas.state.store.translateY + offsetY
+
+      ImitationPageCanvas.state.store.scaleX = scaleX
+      ImitationPageCanvas.state.store.scaleY = scaleY
 
       ImitationPageCanvas.state.store.refLayer.forEach(i => i.offscreenUpdate = true)
+
+      updateCanvasOffscreenRenderThrottleLastRAF()
+      updateDebounce500()
+    }
+
+    if (e.nativeEvent.ctrlKey === true && inControlMove === true && inMeta === true && canvasLayerFind !== undefined && canvasLayerFind.visibility === true) {
+      var scaleX = range(Number(Number(canvasLayerFind.scaleX - canvasLayerFind.scaleX * 0.01 * e.nativeEvent.deltaY).toFixed(2)), 0.02, 24)
+      if (e.nativeEvent.deltaY < 0 && scaleX === canvasLayerFind.scaleX) var scaleX = range(canvasLayerFind.scaleX + 0.01, 0.02, 24)
+      if (e.nativeEvent.deltaY > 0 && scaleX === canvasLayerFind.scaleX) var scaleX = range(canvasLayerFind.scaleX - 0.01, 0.02, 24)
+
+      var scaleY = range(Number(Number(canvasLayerFind.scaleY - canvasLayerFind.scaleY * 0.01 * e.nativeEvent.deltaY).toFixed(2)), 0.02, 24)
+      if (e.nativeEvent.deltaY < 0 && scaleY === canvasLayerFind.scaleY) var scaleY = range(canvasLayerFind.scaleY + 0.01, 0.02, 24)
+      if (e.nativeEvent.deltaY > 0 && scaleY === canvasLayerFind.scaleY) var scaleY = range(canvasLayerFind.scaleY - 0.01, 0.02, 24)
+
+      // const offsetX = (e.pageX - ImitationPageCanvas.state.store.rect.width / 2 - ImitationPageCanvas.state.store.rect.left) / ImitationPageCanvas.state.store.scaleX / canvasLayerFind.scaleX * ImitationPageCanvas.state.store.dpr * (1 - scaleX / ImitationPageCanvas.state.store.scaleX)
+      // const offsetY = (e.pageY - ImitationPageCanvas.state.store.rect.height / 2 - ImitationPageCanvas.state.store.rect.top) / ImitationPageCanvas.state.store.scaleY / canvasLayerFind.scaleY * ImitationPageCanvas.state.store.dpr * (1 - scaleY / ImitationPageCanvas.state.store.scaleY)
+
+      // canvasLayerFind.translateX = canvasLayerFind.translateX + offsetX
+      // canvasLayerFind.translateY = canvasLayerFind.translateY + offsetY
+
+      canvasLayerFind.scaleX = scaleX
+      canvasLayerFind.scaleY = scaleY
+
+      canvasLayerRefFind.offscreenUpdate = true
 
       updateCanvasOffscreenRenderThrottleLastRAF()
       updateDebounce500()
@@ -262,14 +301,10 @@ function App() {
 
         context.translate(canvas.width / 2, canvas.height / 2)
 
-        context.scale(ImitationPageCanvas.state.store.viewScaleX, ImitationPageCanvas.state.store.viewScaleY)
-        context.translate(ImitationPageCanvas.state.store.viewTranslateX, ImitationPageCanvas.state.store.viewTranslateY)
-
+        context.scale(ImitationPageCanvas.state.store.scaleX, ImitationPageCanvas.state.store.scaleY)
+        context.translate(ImitationPageCanvas.state.store.translateX, ImitationPageCanvas.state.store.translateY)
         context.scale(layer.scaleX, layer.scaleY)
         context.translate(layer.translateX, layer.translateY)
-
-        context.scale(i.transform.scaleX, i.transform.scaleY)
-        context.translate(i.transform.translateX, i.transform.translateY)
 
         pencilRenderFindMap[i.pencilHash](canvas, context, layer, i)
 
@@ -313,18 +348,18 @@ function App() {
     ImitationPageCanvas.state.store.source.canvas.layer.forEach(i => {
       const canvasLayerRefFind = ImitationPageCanvas.state.store.refLayer.find(i_ => i_.layerHash === i._hash)
 
-      if (i.visibility === true && canvasLayerRefFind.offscreenExceptLastOperationUpdate === true) {
+      if (canvasLayerRefFind.offscreenExceptLastOperationUpdate === true) {
         canvasLayerRefFind.offscreenExceptLastOperationContext.clearRect(0, 0, canvasLayerRefFind.offscreenExceptLastOperationCanvas.width, canvasLayerRefFind.offscreenExceptLastOperationCanvas.height)
         operationRender(i, canvasLayerRefFind.offscreenExceptLastOperationCanvas, canvasLayerRefFind.offscreenExceptLastOperationContext, i.operation.slice(0, i.operation.length - 1))
       }
 
-      if (i.visibility === true && canvasLayerRefFind.offscreenComposeLastOperationUpdate === true) {
+      if (canvasLayerRefFind.offscreenComposeLastOperationUpdate === true) {
         canvasLayerRefFind.offscreenContext.clearRect(0, 0, canvasLayerRefFind.offscreenCanvas.width, canvasLayerRefFind.offscreenCanvas.height)
         canvasLayerRefFind.offscreenContext.drawImage(canvasLayerRefFind.offscreenExceptLastOperationCanvas, ...caculatePositionCenter(canvasLayerRefFind.offscreenCanvas, canvasLayerRefFind.offscreenExceptLastOperationCanvas, { x: 0, y: 0 }))
         operationRender(i, canvasLayerRefFind.offscreenCanvas, canvasLayerRefFind.offscreenContext, i.operation.slice(i.operation.length - 1, i.operation.length))
       }
 
-      if (i.visibility === true && canvasLayerRefFind.offscreenUpdate === true) {
+      if (canvasLayerRefFind.offscreenUpdate === true) {
         canvasLayerRefFind.offscreenContext.clearRect(0, 0, canvasLayerRefFind.offscreenCanvas.width, canvasLayerRefFind.offscreenCanvas.height)
         operationRender(i, canvasLayerRefFind.offscreenCanvas, canvasLayerRefFind.offscreenContext, i.operation)
       }
@@ -359,9 +394,9 @@ function App() {
 
     setStyleW(ImitationPageCanvas.state.store.rect.width)
     setStyleH(ImitationPageCanvas.state.store.rect.height)
-    setRealW(ImitationPageCanvas.state.store.rect.width * ImitationPageCanvas.state.store.viewDpr)
-    setRealH(ImitationPageCanvas.state.store.rect.height * ImitationPageCanvas.state.store.viewDpr)
-  }, [ImitationPageCanvas.state.store.recting, ImitationPageCanvas.state.store.rect, ImitationPageCanvas.state.store.viewDpr])
+    setRealW(ImitationPageCanvas.state.store.rect.width * ImitationPageCanvas.state.store.dpr)
+    setRealH(ImitationPageCanvas.state.store.rect.height * ImitationPageCanvas.state.store.dpr)
+  }, [ImitationPageCanvas.state.store.recting, ImitationPageCanvas.state.store.rect, ImitationPageCanvas.state.store.dpr])
 
   React.useEffect(() => {
     if (ImitationPageCanvas.state.store.recting === true || ImitationPageCanvas.state.store.rect === undefined) {
@@ -406,7 +441,7 @@ const dependence = [
     instance: ImitationPageCanvas, dependence: state => [
       ImitationPageCanvas.state.store.recting,
       ImitationPageCanvas.state.store.rect,
-      ImitationPageCanvas.state.store.viewDpr,
+      ImitationPageCanvas.state.store.dpr,
       ImitationPageCanvas.state.store.controlDraw,
       ImitationPageCanvas.state.store.controlMove,
       ImitationPageCanvas.state.store.activeLayer,
